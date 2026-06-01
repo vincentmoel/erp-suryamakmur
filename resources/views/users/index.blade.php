@@ -46,34 +46,33 @@
                     name: 'DT_RowIndex',
                     orderable: false,
                     searchable: false,
-                    render: d => `<span class="dt-cell-index">${d}</span>`,
+                    className: 'dt-cell-index dt-center'
                 },
                 {
                     data: 'name',
-                    name: 'name',
-                    render: d => `<span>${d}</span>`,
+                    name: 'name'
                 },
                 {
                     data: 'username',
                     name: 'username',
-                    render: d => `<span class="dt-cell-muted">${d}</span>`,
+                    className: 'dt-cell-muted'
                 },
                 {
                     data: 'last_seen',
                     name: 'last_seen',
                     orderable: false,
-                    searchable: false,
+                    searchable: false
                 },
                 {
                     data: 'created_at',
                     name: 'created_at',
-                    render: d => `<span class="dt-cell-muted">${d}</span>`,
+                    className: 'dt-cell-muted'
                 },
                 {
                     data: 'action',
                     name: 'action',
                     orderable: false,
-                    searchable: false,
+                    searchable: false
                 },
             ],
         });

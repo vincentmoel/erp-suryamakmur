@@ -32,12 +32,26 @@ window.initDataTable = function (config) {
         pageLength,
         columns,
         language: {
-            processing  : 'Loading...',
+            processing  : '<div class="dt-loading"><span class="dt-loading-spinner"></span><span>Loading...</span></div>',
             emptyTable  : '<span class="dt-cell-muted">No data found.</span>',
             zeroRecords : '<span class="dt-cell-muted">No matching records found.</span>',
             ...language,
         },
-        drawCallback() { _updateFooter(this.api()); },
+        drawCallback() {
+            const api = this.api();
+            // Reapply className + inline textAlign ke <th> setiap draw.
+            // Inline style digunakan agar tidak terkalahkan oleh CSS DataTables
+            // yang inject padding-right: 30px dan menggeser posisi teks.
+            columns.forEach((col, idx) => {
+                const th = api.column(idx).header();
+                if (col.className) {
+                    col.className.split(' ').forEach(cls => th.classList.add(cls));
+                    if (col.className.includes('dt-center')) th.style.textAlign = 'center';
+                    else if (col.className.includes('dt-right'))  th.style.textAlign = 'right';
+                }
+            });
+            _updateFooter(api);
+        },
     });
 
     // ── Search (debounced 350ms) ───────────────────────────────
