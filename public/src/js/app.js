@@ -198,6 +198,24 @@ document.addEventListener("click", (event) => {
   }
 }, true);
 
+// ── CONFIRM DELETE DIALOG ─────────────────────────────────────
+$(function () {
+  let $pendingForm = null;
+
+  $(document).on("submit", ".dt-delete-form", function (e) {
+    e.preventDefault();
+    $pendingForm = $(this);
+    $("#confirm-delete-dialog").removeClass("hidden");
+  });
+
+  $("#confirm-delete-btn").on("click", function () {
+    if ($pendingForm) {
+      $pendingForm[0].submit();
+      $pendingForm = null;
+    }
+  });
+});
+
 // ── INIT ─────────────────────────────────────────────────────
 renderFallbackIcons();
 enhanceTables();

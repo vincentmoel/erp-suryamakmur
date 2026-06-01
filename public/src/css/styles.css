@@ -6564,6 +6564,15 @@
       }
     }
   }
+  .btn-destructive {
+    background-color: var(--destructive);
+    color: var(--destructive-foreground);
+    &:hover {
+      @media (hover: hover) {
+        opacity: 90%;
+      }
+    }
+  }
   .icon-btn {
     display: inline-flex;
     width: calc(var(--spacing) * 8);
@@ -7793,6 +7802,39 @@ body.sidebar-collapsed .sidebar-mini-logo {
 /* When sidebar is collapsed, hide the roles row */
 body.sidebar-collapsed .sidebar-roles-wrapper {
   display: none;
+}
+
+/* ── Dialog ──────────────────────────────────────────────────── */
+.dialog-panel {
+  background: var(--background);
+  border: 1px solid var(--border);
+  border-radius: var(--radius);
+  padding: 1.5rem;
+  width: 100%;
+  max-width: 28rem;
+  box-shadow: 0 10px 25px rgba(0, 0, 0, 0.15);
+}
+
+.dialog-header {
+  margin-bottom: 1.25rem;
+}
+
+.dialog-title {
+  font-size: 1.125rem;
+  font-weight: 600;
+  margin: 0 0 0.375rem;
+}
+
+.dialog-description {
+  font-size: 0.875rem;
+  color: var(--muted-foreground);
+  margin: 0;
+}
+
+.dialog-footer {
+  display: flex;
+  justify-content: flex-end;
+  gap: 0.5rem;
 }
 
 /* Override DataTables CDN padding */
