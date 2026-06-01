@@ -7742,3 +7742,33 @@ body.sidebar-collapsed .sidebar-mini-logo {
     }
   }
 }
+
+/* ============================================================
+   Sidebar user roles — marquee / running text
+   ============================================================ */
+@keyframes sidebar-roles-scroll {
+  0%   { transform: translateX(0); }
+  100% { transform: translateX(-50%); }
+}
+
+.sidebar-roles-wrapper {
+  position: relative;
+  overflow: hidden;
+  width: 100%;
+}
+
+.sidebar-roles-marquee {
+  display: inline-block;
+  white-space: nowrap;
+  /* Duplicate the text in the blade component via JS so the scroll loops */
+  animation: sidebar-roles-scroll 8s linear infinite;
+}
+
+.sidebar-roles-marquee:hover {
+  animation-play-state: paused;
+}
+
+/* When sidebar is collapsed, hide the roles row */
+body.sidebar-collapsed .sidebar-roles-wrapper {
+  display: none;
+}

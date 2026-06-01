@@ -63,7 +63,36 @@ class DataTablesComponentBuilder
                ' onmouseout="this.style.backgroundColor=\'transparent\';this.style.color=\'var(--muted-foreground)\'"';
     }
 
-    // ── Public method ──────────────────────────────────────────
+    // ── Public methods ─────────────────────────────────────────
+
+    /**
+     * Render a user avatar + name + roles cell for DataTables.
+     * Expects $user->roles to already be eager-loaded (no extra query fired here).
+     *
+     * @param  \App\Models\User  $user
+     * @param  string|null       $avatarUrl  Falls back to a default avatar when null.
+     * @return string
+     */
+    public static function userProfile($user, ?string $avatarUrl = null): string
+    {
+        $avatar = $avatarUrl ?? asset('src/img/default-profile.jpg');
+        $name   = e($user->name);
+
+        $roles = $user->roles->pluck('name')->map(fn($r) => e($r))->implode(' | ');
+
+        $rolesHtml = $roles !== ''
+            ? '<span style="font-size:0.7rem;color:var(--muted-foreground);line-height:1.2;display:block;white-space:nowrap;overflow:hidden;text-overflow:ellipsis;max-width:14rem;" title="' . $roles . '">' . $roles . '</span>'
+            : '';
+
+        return '<div style="display:flex;align-items:center;gap:0.5rem;">'
+            . '<img src="' . $avatar . '" alt="' . $name . '" style="width:2rem;height:2rem;border-radius:9999px;object-fit:cover;flex-shrink:0;">'
+            . '<div style="display:flex;flex-direction:column;line-height:1.3;min-width:0;">'
+            . '<span style="font-size:0.875rem;font-weight:600;white-space:nowrap;overflow:hidden;text-overflow:ellipsis;max-width:14rem;">' . $name . '</span>'
+            . $rolesHtml
+            . '</div>'
+            . '</div>';
+    }
+
     public static function actionButton(array $route, $module, $customButtons = []): string
     {
         $container = '<div style="display:flex;gap:0.25rem;align-items:center;justify-content:center;">';

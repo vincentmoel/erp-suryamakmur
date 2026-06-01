@@ -60,16 +60,13 @@
             <div data-dropdown class="relative">
                 <button data-dropdown-trigger class="nav-link sidebar-user-btn h-12 w-full">
                     <img src="{{ asset('src/img/default-profile.jpg') }}" class="size-8 shrink-0 rounded-full object-cover" alt="Profile">
-                    <div class="sidebar-profile-meta grid flex-1 text-left text-sm leading-tight">
-                        <span class="truncate font-semibold">{{ auth()->user()->name }}</span>
-                        <span class="text-muted-foreground truncate text-xs">fatmuh@moccilabs.com</span>
-                    </div>
+                    <x-sidebar-user-info />
                     <x-icon name="more-horizontal" class="ml-auto size-4 opacity-60 nav-chevron" />
                 </button>
                 <div data-dropdown-menu class="hidden w-56 rounded-md border bg-popover p-1 text-popover-foreground shadow-md" style="position:absolute; bottom:calc(100% + 4px); left:0; z-index:50;">
                     <div class="px-2 py-1.5">
                         <p class="text-sm font-medium truncate">{{ auth()->user()->name }}</p>
-                        <p class="text-xs text-muted-foreground truncate">fatmuh@moccilabs.com</p>
+                        <p class="text-xs text-muted-foreground truncate">{{ auth()->user()->email }}</p>
                     </div>
                     <div class="my-1 h-px bg-border"></div>
                     <a href="#" class="flex items-center gap-2 rounded-sm px-2 py-2 text-sm hover:bg-accent transition-colors">

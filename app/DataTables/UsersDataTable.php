@@ -35,6 +35,7 @@ class UsersDataTable extends DataTable
 
         return (new EloquentDataTable($query))
             ->addIndexColumn()
+            ->editColumn('name', fn($row) => DataTablesComponentBuilder::userProfile($row))
             ->addColumn('action', function($row){
                 $encryptedId = Encryption::encrypt($row->id);
 
@@ -81,7 +82,7 @@ class UsersDataTable extends DataTable
             ->editColumn('updated_at', function($row){
                 return Carbon::parse($row->updated_at)->translatedFormat('d F Y | H:i:s');
             })
-            ->rawColumns(['last_seen', 'action']);
+            ->rawColumns(['name', 'last_seen', 'action']);
     }
  
     /**
@@ -92,6 +93,6 @@ class UsersDataTable extends DataTable
      */
     public function query(User $model): QueryBuilder
     {
-        return $model->with('user_created_by', 'user_updated_by')->latest()->newQuery();
+        return $model->with('user_created_by', 'user_updated_by', 'roles')->latest()->newQuery();
     }
 }
