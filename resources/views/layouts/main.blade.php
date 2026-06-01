@@ -12,6 +12,7 @@
             if (localStorage.getItem("mocci-theme") === "dark") document.documentElement.classList.add("dark")
         } catch (e) {}
     </script>
+    @stack('styles')
 </head>
 
 <body class="min-h-screen bg-background text-foreground antialiased">
@@ -23,11 +24,12 @@
         @include('partials.header')
         <main class="p-4 lg:p-6">
             <div class="space-y-4">
-
+                @yield('content')
             </div>
         </main>
     </div>
     <script src="{{ asset('src/js/app.js') }}"></script>
+    @stack('scripts')
 </body>
 
 </html>

@@ -17,11 +17,6 @@ use Illuminate\Support\Facades\Route;
 | be assigned to the "web" middleware group. Make something great!
 |
 */
-
-Route::get('/asd', function(){
-    return view('layouts.main');
-});
-
 Route::group(['middleware' => ['revalidate']], function () {
     Route::post('/login', [AuthController::class, 'authenticate'])->name('authenticate');
 

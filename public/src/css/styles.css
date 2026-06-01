@@ -6782,11 +6782,124 @@
     vector-effect: non-scaling-stroke;
   }
 }
+/* ── MOBILE DRAWER ──────────────────────────────────────────
+   Di bawah lg, sidebar berperilaku sebagai drawer dari kiri.
+   sidebar-collapsed TIDAK berlaku di mobile.
+─────────────────────────────────────────────────────────── */
+/* ── DROPDOWN MENU ITEM ─────────────────────────────────────
+   Hover effect untuk semua item di dalam dropdown menu.
+   Berlaku untuk <a> dan <button> di dalam [data-dropdown-menu].
+─────────────────────────────────────────────────────────── */
+[data-dropdown-menu] button[type="submit"] {
+  background: none;
+  border: none;
+  text-align: left;
+  width: 100%;
+  cursor: pointer;
+}
+[data-dropdown-menu] button[type="submit"]:hover {
+  background-color: var(--accent);
+}
+
+/* ── FORM CHECKBOX ───────────────────────────────────────────
+   Replika visual Radix UI Checkbox.
+   Penggunaan: <input type="checkbox" class="form-checkbox">
+─────────────────────────────────────────────────────────── */
+.form-checkbox {
+  appearance: none;
+  -webkit-appearance: none;
+  width: 1rem;
+  height: 1rem;
+  border-radius: 4px;
+  border: 1px solid var(--input);
+  background-color: transparent;
+  cursor: pointer;
+  flex-shrink: 0;
+  box-shadow: 0 1px 2px 0 rgb(0 0 0 / 0.05);
+  transition: box-shadow 150ms;
+  display: grid;
+  place-content: center;
+}
+.dark .form-checkbox {
+  background-color: color-mix(in oklab, var(--input) 30%, transparent);
+}
+.form-checkbox::before {
+  content: "";
+  width: 0.5rem;
+  height: 0.5rem;
+  clip-path: polygon(14% 44%, 0 65%, 50% 100%, 100% 16%, 80% 0%, 43% 62%);
+  transform: scale(0);
+  background-color: var(--primary-foreground);
+  transition: transform 100ms ease-in-out;
+}
+.form-checkbox:checked {
+  background-color: var(--primary);
+  border-color: var(--primary);
+}
+.form-checkbox:checked::before {
+  transform: scale(1);
+}
+.form-checkbox:focus-visible {
+  outline: none;
+  border-color: var(--ring);
+  box-shadow: 0 0 0 3px color-mix(in oklab, var(--ring) 50%, transparent);
+}
+
 body.sidebar-open aside {
-  transform: translateX(0);
+  translate: 0 0;
 }
 body.sidebar-open [data-sidebar-backdrop] {
   display: block;
+}
+/* Cegah scroll body saat drawer mobile terbuka */
+body.sidebar-open {
+  overflow: hidden;
+}
+/* Backdrop blur di mobile */
+[data-sidebar-backdrop] {
+  backdrop-filter: blur(2px);
+  -webkit-backdrop-filter: blur(2px);
+}
+/* sidebar-collapsed tidak berlaku di bawah lg */
+@media (max-width: 1023px) {
+  body.sidebar-collapsed .app-sidebar {
+    width: 16rem;
+    overflow: hidden;
+  }
+  body.sidebar-collapsed .app-shell {
+    padding-left: 0;
+  }
+  body.sidebar-collapsed .sidebar-label,
+  body.sidebar-collapsed .sidebar-text,
+  body.sidebar-collapsed .nav-chevron,
+  body.sidebar-collapsed .sidebar-profile-meta {
+    display: revert;
+  }
+  body.sidebar-collapsed [data-sidebar="header"],
+  body.sidebar-collapsed [data-sidebar="footer"],
+  body.sidebar-collapsed [data-sidebar="group"] {
+    align-items: flex-start;
+    padding-inline: 0.5rem;
+  }
+  body.sidebar-collapsed [data-sidebar="group-content"],
+  body.sidebar-collapsed [data-sidebar="menu"] {
+    align-items: stretch;
+  }
+  body.sidebar-collapsed .nav-link,
+  body.sidebar-collapsed .sidebar-user-btn {
+    width: 100%;
+    height: 2.5rem;
+    justify-content: flex-start;
+    gap: 0.5rem;
+    padding: 0 0.75rem;
+  }
+  body.sidebar-collapsed .sidebar-full-logo {
+    display: block !important;
+  }
+  body.sidebar-collapsed .sidebar-mini-logo,
+  body.sidebar-collapsed .sidebar-mini-logo-dark {
+    display: none !important;
+  }
 }
 body.sidebar-collapsed .app-sidebar {
   width: 3rem;

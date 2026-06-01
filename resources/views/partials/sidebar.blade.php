@@ -16,26 +16,29 @@
                 <div data-sidebar="group-content" class="w-full text-sm">
                     <ul data-sidebar="menu" class="flex w-full min-w-0 flex-col gap-1">
                         <li data-sidebar="menu-item" class="group/menu-item relative">
-                            <a class="nav-link active" href="./dashboard.html" data-active="true">
+                            <a class="nav-link active" href="/" data-active="true">
                                 <i data-lucide="chart-no-axes-combined" class="size-4"></i>
                                 <span class="sidebar-text">Dashboard</span>
-                            </a>
-                        </li>
-                        <li data-sidebar="menu-item" class="group/menu-item relative">
-                            <a class="nav-link " href="./dashboard-saas.html">
-                                <i data-lucide="gauge" class="size-4"></i>
-                                <span class="sidebar-text">SaaS Dashboard</span>
-                            </a>
-                        </li>
-                        <li data-sidebar="menu-item" class="group/menu-item relative">
-                            <a class="nav-link " href="./analytics.html">
-                                <i data-lucide="chart-pie" class="size-4"></i>
-                                <span class="sidebar-text">Analytics</span>
                             </a>
                         </li>
                     </ul>
                 </div>
             </div>
+          
+            <div data-sidebar="group" class="relative flex w-full min-w-0 flex-col p-2">
+
+                <div data-sidebar="group-content" class="w-full text-sm">
+                    <ul data-sidebar="menu" class="flex w-full min-w-0 flex-col gap-1">
+                        <li data-sidebar="menu-item" class="group/menu-item relative">
+                            <a class="nav-link" href="{{ route('users.index') }}" data-active="true">
+                                <i data-lucide="users" class="size-4"></i>
+                                <span class="sidebar-text">Users</span>
+                            </a>
+                        </li>
+                    </ul>
+                </div>
+            </div>
+          
             <div data-sidebar="group" class="relative flex w-full min-w-0 flex-col p-2">
                 <div data-sidebar="group-label"
                     class="sidebar-label flex h-8 shrink-0 items-center rounded-md px-2 text-xs font-medium text-sidebar-foreground/70">
@@ -72,14 +75,14 @@
                 <button data-dropdown-trigger class="nav-link sidebar-user-btn h-12 w-full">
                     <img src="{{ asset('src/img/default-profile.jpg') }}" class="size-8 shrink-0 rounded-full object-cover" alt="Profile">
                     <div class="sidebar-profile-meta grid flex-1 text-left text-sm leading-tight">
-                        <span class="truncate font-semibold">Fatmuh</span>
+                        <span class="truncate font-semibold">{{ auth()->user()->name }}</span>
                         <span class="text-muted-foreground truncate text-xs">fatmuh@moccilabs.com</span>
                     </div>
                     <x-icon name="more-horizontal" class="ml-auto size-4 opacity-60 nav-chevron" />
                 </button>
                 <div data-dropdown-menu class="hidden w-56 rounded-md border bg-popover p-1 text-popover-foreground shadow-md" style="position:absolute; bottom:calc(100% + 4px); left:0; z-index:50;">
                     <div class="px-2 py-1.5">
-                        <p class="text-sm font-medium truncate">Fatmuh</p>
+                        <p class="text-sm font-medium truncate">{{ auth()->user()->name }}</p>
                         <p class="text-xs text-muted-foreground truncate">fatmuh@moccilabs.com</p>
                     </div>
                     <div class="my-1 h-px bg-border"></div>
@@ -88,10 +91,13 @@
                         <span>Profile</span>
                     </a>
                     <div class="my-1 h-px bg-border"></div>
-                    <a href="#" class="flex items-center gap-2 rounded-sm px-2 py-2 text-sm text-destructive hover:bg-destructive/10 transition-colors">
-                        <x-icon name="logout" class="size-4" />
-                        <span>Logout</span>
-                    </a>
+                    <form method="POST" action="{{ route('logout') }}">
+                        @csrf
+                        <button type="submit" class="flex w-full items-center gap-2 rounded-sm px-2 py-2 text-sm text-destructive hover:bg-accent transition-colors cursor-pointer">
+                            <x-icon name="logout" class="size-4" />
+                            <span>Logout</span>
+                        </button>
+                    </form>
                 </div>
             </div>
         </div>
