@@ -1,0 +1,42 @@
+.line-separator {
+    border-bottom: 1px solid rgba(0, 0, 0, 0.05);
+    padding-bottom: 0.5rem;
+    margin-bottom: 2rem;
+    position: relative;
+    z-index: 1;
+}
+
+.line-separator:after {
+    content: "";
+    background-color: #539BFF;
+    width: 25px;
+    height: 4px;
+    border-radius: 0px;
+    display: block;
+    position: absolute;
+    bottom: -3px;
+    left: 0px;
+}
+
+.table-responsive .dataTables_wrapper .dataTables_paginate .paginate_button {
+    cursor: pointer;
+    padding: 6px 12px;
+    border: 1px solid var(--bs-border-color);
+    border-radius: var(--bs-border-radius);
+    margin: 0 3px
+}
+
+.table-responsive .dataTables_wrapper .dataTables_paginate .paginate_button.current {
+    color: #fff;
+    background-color: var(--bs-primary);
+    border-color: var(--bs-primary)
+}
+
+.dataTables_info {
+    margin-bottom: 25px;
+}
+
+
+.left-sidebar .scroll-sidebar {
+    height: calc(100vh - 229px) !important; 
+}

@@ -1,0 +1,51 @@
+<div data-command-palette class="fixed inset-0 z-50 hidden bg-black/40 p-4">
+    <div class="mx-auto mt-20 max-w-xl overflow-hidden rounded-xl border bg-popover text-popover-foreground shadow-2xl">
+        <div class="flex items-center gap-2 border-b px-4 py-3"><i data-lucide="search" class="size-4"></i><input
+                data-command-input class="w-full bg-transparent text-sm outline-none"
+                placeholder="Search pages, components, commands"></div>
+        <div class="max-h-80 overflow-y-auto p-2">
+            <a data-command-item class="flex items-center justify-between rounded-md px-3 py-2 text-sm hover:bg-accent"
+                href="./index.html"><span>Dashboard</span><span
+                    class="text-xs text-muted-foreground">index.html</span></a><a data-command-item
+                class="flex items-center justify-between rounded-md px-3 py-2 text-sm hover:bg-accent"
+                href="./dashboard.html"><span>Dashboard</span><span
+                    class="text-xs text-muted-foreground">dashboard.html</span></a><a data-command-item
+                class="flex items-center justify-between rounded-md px-3 py-2 text-sm hover:bg-accent"
+                href="./dashboard-saas.html"><span>SaaS Dashboard</span><span
+                    class="text-xs text-muted-foreground">dashboard-saas.html</span></a><a data-command-item
+                class="flex items-center justify-between rounded-md px-3 py-2 text-sm hover:bg-accent"
+                href="./analytics.html"><span>Analytics</span><span
+                    class="text-xs text-muted-foreground">analytics.html</span></a><a data-command-item
+                class="flex items-center justify-between rounded-md px-3 py-2 text-sm hover:bg-accent"
+                href="./pages/ecommerce/dashboard.html"><span>E-Commerce Dashboard</span><span
+                    class="text-xs text-muted-foreground">pages/ecommerce/dashboard.html</span></a><a data-command-item
+                class="flex items-center justify-between rounded-md px-3 py-2 text-sm hover:bg-accent"
+                href="./pages/ecommerce/products.html"><span>Products</span><span
+                    class="text-xs text-muted-foreground">pages/ecommerce/products.html</span></a><a data-command-item
+                class="flex items-center justify-between rounded-md px-3 py-2 text-sm hover:bg-accent"
+                href="./pages/ecommerce/orders.html"><span>Orders</span><span
+                    class="text-xs text-muted-foreground">pages/ecommerce/orders.html</span></a><a data-command-item
+                class="flex items-center justify-between rounded-md px-3 py-2 text-sm hover:bg-accent"
+                href="./pages/ecommerce/customers.html"><span>Customers</span><span
+                    class="text-xs text-muted-foreground">pages/ecommerce/customers.html</span></a><a data-command-item
+                class="flex items-center justify-between rounded-md px-3 py-2 text-sm hover:bg-accent"
+                href="./pages/calendar.html"><span>Calendar</span><span
+                    class="text-xs text-muted-foreground">pages/calendar.html</span></a><a data-command-item
+                class="flex items-center justify-between rounded-md px-3 py-2 text-sm hover:bg-accent"
+                href="./pages/inbox.html"><span>Inbox</span><span
+                    class="text-xs text-muted-foreground">pages/inbox.html</span></a><a data-command-item
+                class="flex items-center justify-between rounded-md px-3 py-2 text-sm hover:bg-accent"
+                href="./pages/chat.html"><span>Chat</span><span
+                    class="text-xs text-muted-foreground">pages/chat.html</span></a><a data-command-item
+                class="flex items-center justify-between rounded-md px-3 py-2 text-sm hover:bg-accent"
+                href="./pages/files.html"><span>Files</span><span
+                    class="text-xs text-muted-foreground">pages/files.html</span></a><a data-command-item
+                class="flex items-center justify-between rounded-md px-3 py-2 text-sm hover:bg-accent"
+                href="./pages/kanban.html"><span>Kanban</span><span
+                    class="text-xs text-muted-foreground">pages/kanban.html</span></a><a data-command-item
+                class="flex items-center justify-between rounded-md px-3 py-2 text-sm hover:bg-accent"
+                href="./pages/activity.html"><span>Activity</span><span
+                    class="text-xs text-muted-foreground">pages/activity.html</span></a>
+        </div>
+    </div>
+</div>
