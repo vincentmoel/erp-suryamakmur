@@ -73,7 +73,7 @@
 
         if (file.size > maxBytes) {
             input.value = '';
-            showToast('File too large', 'Maximum allowed size is {{ $maxSizeMb }}MB.');
+            showToast('File too large', 'Maximum allowed size is {{ $maxSizeMb }}MB.', 'warning');
             return;
         }
 

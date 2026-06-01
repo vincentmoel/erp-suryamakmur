@@ -45,19 +45,46 @@ function renderFallbackIcons() {
 }
 
 // ── TOAST ────────────────────────────────────────────────────
-function showToast(title, description = "") {
+const _toastIcons = {
+  success: '<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M22 11.08V12a10 10 0 1 1-5.93-9.14"/><path d="m9 11 3 3L22 4"/></svg>',
+  error  : '<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="10"/><path d="m15 9-6 6"/><path d="m9 9 6 6"/></svg>',
+  warning: '<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="m21.73 18-8-14a2 2 0 0 0-3.48 0l-8 14A2 2 0 0 0 4 21h16a2 2 0 0 0 1.73-3Z"/><path d="M12 9v4"/><path d="M12 17h.01"/></svg>',
+  info   : '<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="10"/><path d="M12 16v-4"/><path d="M12 8h.01"/></svg>',
+};
+
+function showToast(title, description = "", type = "info") {
   let host = document.querySelector("[data-toast-host]");
   if (!host) {
     host = document.createElement("div");
     host.dataset.toastHost = "";
-    host.className = "fixed bottom-4 right-4 z-[70] flex w-80 max-w-[calc(100vw-2rem)] flex-col gap-2";
+    host.className = "toast-host";
     document.body.append(host);
   }
+
   const toast = document.createElement("div");
-  toast.className = "rounded-lg border bg-popover p-4 text-popover-foreground shadow-lg";
-  toast.innerHTML = `<p class="text-sm font-medium">${title}</p>${description ? `<p class="mt-1 text-xs text-muted-foreground">${description}</p>` : ""}`;
+  toast.className = `toast toast--${type}`;
+  toast.innerHTML = `
+    <span class="toast-icon">${_toastIcons[type] ?? _toastIcons.info}</span>
+    <div class="toast-body">
+      <p class="toast-title">${title}</p>
+      ${description ? `<p class="toast-description">${description}</p>` : ""}
+    </div>
+    <button class="toast-close" aria-label="Close">&times;</button>
+  `;
+
+  toast.querySelector(".toast-close").addEventListener("click", () => _dismissToast(toast));
   host.append(toast);
-  setTimeout(() => toast.remove(), 3200);
+
+  requestAnimationFrame(() => toast.classList.add("toast--visible"));
+
+  const timer = setTimeout(() => _dismissToast(toast), 4000);
+  toast._timer = timer;
+}
+
+function _dismissToast(toast) {
+  clearTimeout(toast._timer);
+  toast.classList.remove("toast--visible");
+  toast.addEventListener("transitionend", () => toast.remove(), { once: true });
 }
 
 // ── TABLE SORT & FILTER ──────────────────────────────────────
@@ -154,7 +181,7 @@ document.addEventListener("click", (event) => {
 
   // Toast trigger
   const toast = event.target.closest("[data-toast]");
-  if (toast) showToast(toast.dataset.toast || "Action completed", toast.dataset.toastDescription || "");
+  if (toast) showToast(toast.dataset.toast || "Action completed", toast.dataset.toastDescription || "", toast.dataset.toastType || "info");
 });
 
 // ── COMMAND PALETTE SEARCH ───────────────────────────────────
@@ -222,11 +249,11 @@ $(function () {
       success: function (res) {
         $("#confirm-delete-dialog").addClass("hidden");
         $(document).trigger("dt:refresh");
-        showToast(res.success.title, res.success.message);
+        showToast(res.success.title, res.success.message, "success");
       },
       error  : function (xhr) {
         const err = xhr.responseJSON?.error;
-        showToast(err?.message ?? "Failed to delete. Please try again.", "");
+        showToast(err?.message ?? "Failed to delete. Please try again.", "", "error");
       },
       complete: function () {
         $btn.prop("disabled", false).text("Delete");

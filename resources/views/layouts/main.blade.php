@@ -38,7 +38,8 @@
             document.addEventListener('DOMContentLoaded', function () {
                 showToast(
                     {{ Js::from(session('success.title')) }},
-                    {{ Js::from(session('success.message')) }}
+                    {{ Js::from(session('success.message')) }},
+                    'success'
                 );
             });
         </script>
@@ -48,7 +49,19 @@
             document.addEventListener('DOMContentLoaded', function () {
                 showToast(
                     {{ Js::from(session('error.message') ?? 'Error') }},
-                    ''
+                    '',
+                    'error'
+                );
+            });
+        </script>
+    @endif
+    @if(session('warning'))
+        <script>
+            document.addEventListener('DOMContentLoaded', function () {
+                showToast(
+                    {{ Js::from(session('warning.title') ?? 'Warning') }},
+                    {{ Js::from(session('warning.message') ?? '') }},
+                    'warning'
                 );
             });
         </script>
