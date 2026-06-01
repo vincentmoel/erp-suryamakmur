@@ -7053,7 +7053,7 @@ div.dt-processing > div:last-child { display: none !important; }
 .dt-table tbody tr                       { border-bottom: 1px solid var(--border); transition: background-color 150ms; }
 .dt-table tbody tr:last-child            { border-bottom: none; }
 .dt-table tbody tr:hover                 { background-color: color-mix(in oklab, var(--muted) 50%, transparent); }
-.dt-table tbody td                       { padding: 0.625rem 0.5rem; vertical-align: middle; white-space: nowrap; }
+.dt-table tbody td                       { padding: 0.75rem 0.625rem; vertical-align: middle; white-space: nowrap; }
 .dt-table tbody td:first-child           { padding-left: 1rem; }
 
 /* ── DataTable structural classes ─── */
@@ -7771,4 +7771,10 @@ body.sidebar-collapsed .sidebar-mini-logo {
 /* When sidebar is collapsed, hide the roles row */
 body.sidebar-collapsed .sidebar-roles-wrapper {
   display: none;
+}
+
+/* Override DataTables CDN padding */
+table.dataTable > tbody > tr > th,
+table.dataTable > tbody > tr > td {
+    padding: 12px 10px !important;
 }
