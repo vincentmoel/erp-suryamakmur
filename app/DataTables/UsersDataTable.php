@@ -67,7 +67,7 @@ class UsersDataTable extends DataTable
                     $lastSeen = Carbon::parse($row->last_seen)->diffForHumans();
                 }
 
-                return '<span class="logged-in text-muted">● Offline (' . $lastSeen . ')</span>';
+                return '<span class="logged-in text-muted-foreground">● Offline (' . $lastSeen . ')</span>';
             })
             ->editColumn('created_by', function($row){
                 return $row->user_created_by->name;

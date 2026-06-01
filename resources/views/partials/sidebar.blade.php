@@ -11,64 +11,50 @@
             <img src="{{ asset('src/img/logo-mini-light.png') }}" alt="Logo" class="size-10 object-contain hidden dark:hidden sidebar-mini-logo-dark">
         </div>
         <nav data-sidebar="content" class="flex min-h-0 flex-1 flex-col gap-2 overflow-auto">
-            <div data-sidebar="group" class="relative flex w-full min-w-0 flex-col p-2">
+            @foreach (config('sidebar') as $item)
+                <div data-sidebar="group" class="relative flex w-full min-w-0 flex-col p-2">
+                    @if (!empty($item['group']))
+                        <div data-sidebar="group-label"
+                            class="sidebar-label flex h-8 shrink-0 items-center rounded-md px-2 text-xs font-medium text-sidebar-foreground/70">
+                            {{ $item['group'] }}
+                        </div>
+                    @endif
 
-                <div data-sidebar="group-content" class="w-full text-sm">
-                    <ul data-sidebar="menu" class="flex w-full min-w-0 flex-col gap-1">
-                        <li data-sidebar="menu-item" class="group/menu-item relative">
-                            <a class="nav-link active" href="/" data-active="true">
-                                <i data-lucide="chart-no-axes-combined" class="size-4"></i>
-                                <span class="sidebar-text">Dashboard</span>
-                            </a>
-                        </li>
-                    </ul>
-                </div>
-            </div>
-          
-            <div data-sidebar="group" class="relative flex w-full min-w-0 flex-col p-2">
+                    <div data-sidebar="group-content" class="w-full text-sm">
+                        <ul data-sidebar="menu" class="flex w-full min-w-0 flex-col gap-1">
 
-                <div data-sidebar="group-content" class="w-full text-sm">
-                    <ul data-sidebar="menu" class="flex w-full min-w-0 flex-col gap-1">
-                        <li data-sidebar="menu-item" class="group/menu-item relative">
-                            <a class="nav-link" href="{{ route('users.index') }}" data-active="true">
-                                <i data-lucide="users" class="size-4"></i>
-                                <span class="sidebar-text">Users</span>
-                            </a>
-                        </li>
-                    </ul>
+                            @if (!empty($item['children']))
+                                <li data-nav-parent data-sidebar="menu-item" class="group/menu-item relative">
+                                    <button data-nav-toggle aria-expanded="false" class="nav-link" type="button">
+                                        <i data-lucide="{{ $item['icon'] }}" class="size-4"></i>
+                                        <span class="sidebar-text">{{ $item['title'] }}</span>
+                                        <i data-lucide="chevron-right" class="nav-chevron"></i>
+                                    </button>
+                                    <ul data-nav-sub data-sidebar="menu-sub" class="nav-sub hidden">
+                                        @foreach ($item['children'] as $child)
+                                            <li data-sidebar="menu-sub-item" class="group/menu-sub-item relative">
+                                                <a class="nav-sub-link"
+                                                    href="{{ !empty($child['route']) ? route($child['route']) : $child['url'] }}">
+                                                    <span>{{ $child['title'] }}</span>
+                                                </a>
+                                            </li>
+                                        @endforeach
+                                    </ul>
+                                </li>
+                            @else
+                                <li data-sidebar="menu-item" class="group/menu-item relative">
+                                    <a class="nav-link {{ request()->routeIs($item['route'] ?? '') ? 'active' : '' }}"
+                                        href="{{ !empty($item['route']) ? route($item['route']) : ($item['url'] ?? '#') }}">
+                                        <i data-lucide="{{ $item['icon'] }}" class="size-4"></i>
+                                        <span class="sidebar-text">{{ $item['title'] }}</span>
+                                    </a>
+                                </li>
+                            @endif
+
+                        </ul>
+                    </div>
                 </div>
-            </div>
-          
-            <div data-sidebar="group" class="relative flex w-full min-w-0 flex-col p-2">
-                <div data-sidebar="group-label"
-                    class="sidebar-label flex h-8 shrink-0 items-center rounded-md px-2 text-xs font-medium text-sidebar-foreground/70">
-                    E-Commerce</div>
-                <div data-sidebar="group-content" class="w-full text-sm">
-                    <ul data-sidebar="menu" class="flex w-full min-w-0 flex-col gap-1">
-                        <li data-nav-parent data-sidebar="menu-item" class="group/menu-item relative">
-                            <button data-nav-toggle aria-expanded="false" class="nav-link" type="button">
-                                <i data-lucide="shopping-cart" class="size-4"></i>
-                                <span class="sidebar-text">E-Commerce</span>
-                                <i data-lucide="chevron-right" class="nav-chevron"></i>
-                            </button>
-                            <ul data-nav-sub data-sidebar="menu-sub" class="nav-sub hidden">
-                                <li data-sidebar="menu-sub-item" class="group/menu-sub-item relative"><a
-                                        class="nav-sub-link "
-                                        href="./pages/ecommerce/dashboard.html"><span>Dashboard</span></a></li>
-                                <li data-sidebar="menu-sub-item" class="group/menu-sub-item relative"><a
-                                        class="nav-sub-link "
-                                        href="./pages/ecommerce/products.html"><span>Products</span></a></li>
-                                <li data-sidebar="menu-sub-item" class="group/menu-sub-item relative"><a
-                                        class="nav-sub-link "
-                                        href="./pages/ecommerce/orders.html"><span>Orders</span></a></li>
-                                <li data-sidebar="menu-sub-item" class="group/menu-sub-item relative"><a
-                                        class="nav-sub-link "
-                                        href="./pages/ecommerce/customers.html"><span>Customers</span></a></li>
-                            </ul>
-                        </li>
-                    </ul>
-                </div>
-            </div>
+            @endforeach
         </nav>
         <div data-sidebar="footer" class="flex flex-col gap-2 border-t p-2">
             <div data-dropdown class="relative">
