@@ -7929,3 +7929,10 @@ table.dataTable > tbody > tr > th,
 table.dataTable > tbody > tr > td {
     padding: 12px 10px !important;
 }
+
+/* Override DataTables CDN border bawah yang muncul di last-row dan table itu sendiri */
+table.dataTable,
+table.dataTable > tbody > tr:last-child > th,
+table.dataTable > tbody > tr:last-child > td {
+    border-bottom: none !important;
+}
