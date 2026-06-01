@@ -31,6 +31,26 @@
     <script src="https://code.jquery.com/jquery-3.7.1.min.js" integrity="sha256-/JqT3SQfawRcv/BIHPThkBvs0OEvtFFmqPF/lYI/Cxo=" crossorigin="anonymous"></script>
     <script src="{{ asset('src/js/app.js') }}"></script>
     @stack('scripts')
+    @if(session('success'))
+        <script>
+            document.addEventListener('DOMContentLoaded', function () {
+                showToast(
+                    {{ Js::from(session('success.title')) }},
+                    {{ Js::from(session('success.message')) }}
+                );
+            });
+        </script>
+    @endif
+    @if(session('error'))
+        <script>
+            document.addEventListener('DOMContentLoaded', function () {
+                showToast(
+                    {{ Js::from(session('error.message') ?? 'Error') }},
+                    ''
+                );
+            });
+        </script>
+    @endif
 </body>
 
 </html>

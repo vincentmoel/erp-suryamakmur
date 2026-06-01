@@ -4,6 +4,7 @@ namespace App\Http\Controllers;
 
 use App\DataTables\UsersDataTable;
 use App\Helpers\Encryption;
+use App\Helpers\FileManager;
 use App\Http\Requests\UserRequest;
 use App\Models\Role;
 use App\Models\User;
@@ -26,15 +27,25 @@ class UserController extends Controller
 
     public function store(UserRequest $request)
     {
-        $user = User::create($request->validated());
+        $data = $request->validated();
+
+        if ($request->hasFile('photo')) {
+            $data['photo'] = FileManager::store($request->file('photo'), 'users');
+        }
+
+        $user = User::create($data);
 
         foreach($request->roles as $role){
             $user->roles()->attach($role);
         }
 
-        return redirect('users')->with([
-            'success'   => ["title" => "Success Add", "message" => "Your data has been saved."]
-        ]);
+        $flash = ['success' => ["title" => "Success Add", "message" => "Your data has been saved."]];
+
+        if ($request->input('_action') === 'save_and_create') {
+            return redirect()->route('users.create')->with($flash);
+        }
+
+        return redirect()->route('users.index')->with($flash);
     }
 
     public function show($encryptedId)
@@ -61,7 +72,15 @@ class UserController extends Controller
     {
         $user = User::findOrFail(Encryption::decrypt($encryptedId));
 
-        $user->update($request->validated());
+        $data = $request->validated();
+
+        if ($request->hasFile('photo')) {
+            $data['photo'] = FileManager::store($request->file('photo'), 'users');
+        } else {
+            unset($data['photo']);
+        }
+
+        $user->update($data);
 
         $user->roles()->detach();
 

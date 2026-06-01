@@ -42,9 +42,8 @@ class UserRequest extends FormRequest
             "username"  => 'required|min:2|max:255|unique:users,username',
             "password"  => 'required|min:8|confirmed',
             "roles"     => 'required|array',
-            "roles.*"   => [
-                Rule::in($roleIds)
-            ]
+            "roles.*"   => [Rule::in($roleIds)],
+            "photo"     => 'nullable|image|mimes:jpg,jpeg,png,webp|max:2048',
         ];
     }
 
@@ -64,9 +63,8 @@ class UserRequest extends FormRequest
             ],
             'password'  => 'nullable|min:8|confirmed',
             "roles"     => 'sometimes|array',
-            "roles.*"   => [
-                Rule::in($roleIds)
-            ]
+            "roles.*"   => [Rule::in($roleIds)],
+            "photo"     => 'nullable|image|mimes:jpg,jpeg,png,webp|max:2048',
         ];
     }
 }

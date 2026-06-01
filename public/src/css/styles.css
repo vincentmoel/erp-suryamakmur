@@ -6511,6 +6511,7 @@
     justify-content: center;
     gap: calc(var(--spacing) * 2);
     border-radius: calc(var(--radius) - 2px);
+    border: 1px solid transparent;
     padding-inline: calc(var(--spacing) * 3);
     font-size: var(--text-sm);
     cursor: pointer;
@@ -6538,8 +6539,8 @@
   }
   .btn-outline {
     border-style: var(--tw-border-style);
-    border-width: 1px;
-    background-color: var(--background);
+    border-color: var(--border);
+    background-color: transparent;
     &:hover {
       @media (hover: hover) {
         background-color: var(--accent);
