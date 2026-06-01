@@ -4,7 +4,7 @@
 <head>
     <meta charset="utf-8">
     <meta name="viewport" content="width=device-width, initial-scale=1">
-    <title>Dashboard - Mocci Admin HTML</title>
+    <title>{{ $title ?? config('app.name') }}</title>
     <link rel="icon" href="./public/favicon.svg">
     <link rel="stylesheet" href="{{ asset('src/css/styles.css') }}">
     <script>
@@ -28,6 +28,7 @@
             </div>
         </main>
     </div>
+    <script src="https://code.jquery.com/jquery-3.7.1.min.js" integrity="sha256-/JqT3SQfawRcv/BIHPThkBvs0OEvtFFmqPF/lYI/Cxo=" crossorigin="anonymous"></script>
     <script src="{{ asset('src/js/app.js') }}"></script>
     @stack('scripts')
 </body>
