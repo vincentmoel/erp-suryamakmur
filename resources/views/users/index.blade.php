@@ -12,7 +12,7 @@
             <p>Manage user accounts and permissions.</p>
         </div>
 
-        <x-datatable id="users-table" search-placeholder="Search name or username...">
+        <x-datatable id="users-table" search-placeholder="Search">
 
             <x-slot name="actions">
                 <a href="{{ route('users.create') }}" class="btn btn-primary btn-sm">

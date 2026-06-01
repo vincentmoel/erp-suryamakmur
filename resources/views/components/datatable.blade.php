@@ -7,10 +7,13 @@
 
     {{-- Toolbar --}}
     <div class="dt-toolbar">
-        <input type="text"
-               id="{{ $id }}-search"
-               placeholder="{{ $searchPlaceholder }}"
-               class="input dt-search-input">
+        <div class="dt-search-wrapper">
+            <x-icon name="search" class="dt-search-icon" />
+            <input type="text"
+                   id="{{ $id }}-search"
+                   placeholder="{{ $searchPlaceholder }}"
+                   class="input dt-search-input dt-search-input--with-icon">
+        </div>
 
         @isset($actions)
             <div class="dt-toolbar-actions">

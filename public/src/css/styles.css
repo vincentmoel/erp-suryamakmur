@@ -7084,10 +7084,32 @@ div.dt-processing > div:last-child { display: none !important; }
   gap: 0.5rem;
 }
 
+.dt-search-wrapper {
+  position: relative;
+  display: inline-flex;
+  align-items: center;
+}
+
+.dt-search-icon {
+  position: absolute;
+  left: 0.625rem;
+  top: 50%;
+  transform: translateY(-50%);
+  width: 1rem;
+  height: 1rem;
+  color: var(--muted-foreground);
+  pointer-events: none;
+  flex-shrink: 0;
+}
+
 .dt-search-input {
-  height: 2rem;
-  max-width: 20rem;
+  height: 2.5rem;
+  max-width: 28rem;
   font-size: 0.875rem;
+}
+
+.dt-search-input--with-icon {
+  padding-left: 2.25rem;
 }
 
 .dt-footer {
