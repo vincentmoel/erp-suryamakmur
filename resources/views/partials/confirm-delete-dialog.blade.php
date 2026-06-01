@@ -1,12 +1,9 @@
 {{--
-    Reusable delete confirmation dialog.
+    Reusable delete confirmation dialog (AJAX).
 
-    Usage — trigger any .dt-delete-form submit via JS (see app.js),
-    or open manually with: data-dialog-open="#confirm-delete-dialog"
-
-    The dialog intercepts form.dt-delete-form submits globally.
-    To use for non-datatable forms, add class="dt-delete-form" to the form
-    and set data-dialog-title / data-dialog-description attributes if needed.
+    Trigger: any element with class="dt-delete-btn" and data-url="..."
+    On confirm: sends DELETE via AJAX, reloads all active datatables,
+    shows toast, then closes the dialog.
 --}}
 <div id="confirm-delete-dialog"
      data-dialog

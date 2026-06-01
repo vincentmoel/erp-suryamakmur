@@ -8,6 +8,7 @@ use App\Helpers\FileManager;
 use App\Http\Requests\UserRequest;
 use App\Models\Role;
 use App\Models\User;
+use Illuminate\Http\Request;
 
 class UserController extends Controller
 {
@@ -93,21 +94,29 @@ class UserController extends Controller
         ]);
     }
 
-    public function destroy($encryptedId)
+    public function destroy(Request $request, $encryptedId)
     {
         $user = User::findOrFail(Encryption::decrypt($encryptedId));
 
-        if($user->id == auth()->user()->id)
-        {
-            return redirect()->back()->with([
-                'error'   => [ "code"  => 403, "message" => "You cannot delete your own account."]
-            ]);
+        if ($user->id == auth()->user()->id) {
+            $error = ['code' => 403, 'message' => 'You cannot delete your own account.'];
+
+            if ($request->ajax()) {
+                return response()->json(['error' => $error], 403);
+            }
+
+            return redirect()->back()->with(['error' => $error]);
         }
+
         $user->delete();
 
-        return redirect()->back()->with([
-            'success'   => ["title" => "Success Delete", "message" => "Your data has been deleted."]
-        ]);
+        $success = ['title' => 'Success Delete', 'message' => 'Your data has been deleted.'];
+
+        if ($request->ajax()) {
+            return response()->json(['success' => $success]);
+        }
+
+        return redirect()->back()->with(['success' => $success]);
     }
 
     public function trashed()

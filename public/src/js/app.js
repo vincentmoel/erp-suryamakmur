@@ -200,19 +200,39 @@ document.addEventListener("click", (event) => {
 
 // ── CONFIRM DELETE DIALOG ─────────────────────────────────────
 $(function () {
-  let $pendingForm = null;
+  let pendingUrl = null;
 
-  $(document).on("submit", ".dt-delete-form", function (e) {
-    e.preventDefault();
-    $pendingForm = $(this);
+  $.ajaxSetup({
+    headers: { 'X-CSRF-TOKEN': $('meta[name="csrf-token"]').attr('content') },
+  });
+
+  $(document).on("click", ".dt-delete-btn", function () {
+    pendingUrl = $(this).data("url");
     $("#confirm-delete-dialog").removeClass("hidden");
   });
 
   $("#confirm-delete-btn").on("click", function () {
-    if ($pendingForm) {
-      $pendingForm[0].submit();
-      $pendingForm = null;
-    }
+    if (!pendingUrl) return;
+
+    const $btn = $(this).prop("disabled", true).text("Deleting...");
+
+    $.ajax({
+      url    : pendingUrl,
+      type   : "DELETE",
+      success: function (res) {
+        $("#confirm-delete-dialog").addClass("hidden");
+        $(document).trigger("dt:refresh");
+        showToast(res.success.title, res.success.message);
+      },
+      error  : function (xhr) {
+        const err = xhr.responseJSON?.error;
+        showToast(err?.message ?? "Failed to delete. Please try again.", "");
+      },
+      complete: function () {
+        $btn.prop("disabled", false).text("Delete");
+        pendingUrl = null;
+      },
+    });
   });
 });
 

@@ -112,11 +112,7 @@ class DataTablesComponentBuilder
         }
 
         if ((Session::get('permissions')[$module]['delete'] ?? false) && isset($route['delete'])) {
-            $container .= '<form action="' . $route['delete'] . '" method="POST" style="display:inline;" class="dt-delete-form">
-                <input type="hidden" name="_method" value="DELETE">
-                <input type="hidden" name="_token" value="' . csrf_token() . '">
-                <button type="submit" style="' . self::iconBtnStyle(true) . '" ' . self::hoverAttrs(true) . ' title="Delete">' . self::iconDelete() . '</button>
-            </form>';
+            $container .= '<button type="button" class="dt-delete-btn" data-url="' . $route['delete'] . '" style="' . self::iconBtnStyle(true) . '" ' . self::hoverAttrs(true) . ' title="Delete">' . self::iconDelete() . '</button>';
         }
 
         if ((Session::get('permissions')[$module]['restore'] ?? false) && isset($route['restore'])) {

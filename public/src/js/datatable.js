@@ -147,5 +147,9 @@ window.initDataTable = function (config) {
         return pages;
     }
 
+    $(document).on("dt:refresh", function () {
+        dt.ajax.reload(null, false);
+    });
+
     return dt;
 };

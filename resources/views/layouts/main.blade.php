@@ -7,6 +7,7 @@
     <title>{{ $title ?? config('app.name') }}</title>
     <link rel="icon" href="./public/favicon.svg">
     <link rel="stylesheet" href="{{ asset('src/css/styles.css') }}">
+    <meta name="csrf-token" content="{{ csrf_token() }}">
     <script>
         try {
             if (localStorage.getItem("mocci-theme") === "dark") document.documentElement.classList.add("dark")
