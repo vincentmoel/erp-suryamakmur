@@ -23,18 +23,33 @@
                     <div data-sidebar="group-content" class="w-full text-sm">
                         <ul data-sidebar="menu" class="flex w-full min-w-0 flex-col gap-1">
 
-                            @if (!empty($item['children']))
+                            @if (!empty($item['children']) && empty($item['title']) && array_is_list($item['children']))
+                                @foreach ($item['children'] as $flatItem)
+                                    <li data-sidebar="menu-item" class="group/menu-item relative">
+                                        <a class="nav-link {{ request()->routeIs($flatItem['route'] ?? '') ? 'active' : '' }}"
+                                            href="{{ !empty($flatItem['route']) ? route($flatItem['route']) : ($flatItem['url'] ?? '#') }}">
+                                            <x-icon :name="$flatItem['icon']" class="size-4" />
+                                            <span class="sidebar-text">{{ $flatItem['title'] }}</span>
+                                        </a>
+                                    </li>
+                                @endforeach
+                            @elseif (!empty($item['children']) && !array_is_list($item['children']))
+                                @php
+                                    $dropdownTitle = $item['title'] ?? $item['children']['title'] ?? '';
+                                    $dropdownIcon  = $item['icon']  ?? $item['children']['icon']  ?? 'circle';
+                                    $dropdownSubs  = $item['children']['children'] ?? [];
+                                @endphp
                                 <li data-nav-parent data-sidebar="menu-item" class="group/menu-item relative">
                                     <button data-nav-toggle aria-expanded="false" class="nav-link" type="button">
-                                        <x-icon :name="$item['icon']" class="size-4" />
-                                        <span class="sidebar-text">{{ $item['title'] }}</span>
+                                        <x-icon :name="$dropdownIcon" class="size-4" />
+                                        <span class="sidebar-text">{{ $dropdownTitle }}</span>
                                         <x-icon name="chevron-right" class="nav-chevron" />
                                     </button>
                                     <ul data-nav-sub data-sidebar="menu-sub" class="nav-sub hidden">
-                                        @foreach ($item['children'] as $child)
+                                        @foreach ($dropdownSubs as $child)
                                             <li data-sidebar="menu-sub-item" class="group/menu-sub-item relative">
                                                 <a class="nav-sub-link"
-                                                    href="{{ !empty($child['route']) ? route($child['route']) : $child['url'] }}">
+                                                    href="{{ !empty($child['route']) ? route($child['route']) : ($child['url'] ?? '#') }}">
                                                     <span>{{ $child['title'] }}</span>
                                                 </a>
                                             </li>
