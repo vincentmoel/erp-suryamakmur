@@ -3,6 +3,7 @@
 namespace App\Http\Controllers;
 
 use App\DataTables\UsersDataTable;
+use App\Enums\Module;
 use App\Helpers\Encryption;
 use App\Helpers\FileManager;
 use App\Http\Requests\UserRequest;
@@ -10,25 +11,44 @@ use App\Models\Role;
 use App\Models\User;
 use Illuminate\Http\Request;
 
-class UserController extends Controller
+class UserController extends BaseController
 {
-    public function index(UsersDataTable $dataTable)
+    public function __construct()
     {
-        return $dataTable->render('users.index');
+        parent::__construct(
+            User::class,
+            'users',
+            'User',
+            'users',
+            Module::User->name,
+            UserRequest::class,
+            UsersDataTable::class,
+        );
+    }
+
+    public function index()
+    {
+        $dataTable = new UsersDataTable(false);
+
+        return $dataTable->render('users.index', [
+            'title'  => $this->title,
+            'route'  => $this->route,
+            'module' => $this->module,
+        ]);
     }
 
     public function create()
     {
-        $roles = Role::get();
-
         return view('users.create', [
-            'roles' => $roles
+            'title'  => $this->title,
+            'route'  => $this->route,
+            'roles'  => Role::get(),
         ]);
     }
 
-    public function store(UserRequest $request)
+    public function store(Request $request)
     {
-        $data = $request->validated();
+        $data = app(UserRequest::class)->validated();
 
         if ($request->hasFile('photo')) {
             $data['photo'] = FileManager::store($request->file('photo'), 'users');
@@ -36,11 +56,11 @@ class UserController extends Controller
 
         $user = User::create($data);
 
-        foreach($request->roles as $role){
+        foreach ($request->roles ?? [] as $role) {
             $user->roles()->attach($role);
         }
 
-        $flash = ['success' => ["title" => "Success Add", "message" => "Your data has been saved."]];
+        $flash = ['success' => ['title' => 'Success Add', 'message' => 'Your data has been saved.']];
 
         if ($request->input('_action') === 'save_and_create') {
             return redirect()->route('users.create')->with($flash);
@@ -54,28 +74,31 @@ class UserController extends Controller
         $user = User::with('roles', 'user_created_by')->findOrFail(Encryption::decrypt($encryptedId));
 
         return view('users.show', [
-            "user"         => $user,
-            "encryptedId"  => $encryptedId,
+            'title'       => $this->title,
+            'route'       => $this->route,
+            'user'        => $user,
+            'encryptedId' => $encryptedId,
         ]);
     }
 
     public function edit($encryptedId)
     {
         $user = User::with('roles')->findOrFail(Encryption::decrypt($encryptedId));
-        $roles = Role::get();
 
         return view('users.edit', [
-            "user"         => $user,
-            "roles"        => $roles,
-            "encryptedId"  => $encryptedId,
+            'title'       => $this->title,
+            'route'       => $this->route,
+            'user'        => $user,
+            'roles'       => Role::get(),
+            'encryptedId' => $encryptedId,
         ]);
     }
 
-    public function update(UserRequest $request, $encryptedId)
+    public function update(Request $request, $encryptedId)
     {
         $user = User::findOrFail(Encryption::decrypt($encryptedId));
 
-        $data = $request->validated();
+        $data = app(UserRequest::class)->validated();
 
         if (empty($data['password'])) {
             unset($data['password'], $data['password_confirmation']);
@@ -91,23 +114,23 @@ class UserController extends Controller
 
         $user->roles()->detach();
 
-        foreach($request->roles ?? [] as $role){
+        foreach ($request->roles ?? [] as $role) {
             $user->roles()->attach($role);
         }
 
-        return redirect('users')->with([
-            'success'   => ["title" => "Success Update", "message" => "Your data has been updated."]
+        return redirect()->route('users.index')->with([
+            'success' => ['title' => 'Success Update', 'message' => 'Your data has been updated.'],
         ]);
     }
 
-    public function destroy(Request $request, $encryptedId)
+    public function destroy($encryptedId)
     {
         $user = User::findOrFail(Encryption::decrypt($encryptedId));
 
         if ($user->id == auth()->user()->id) {
             $error = ['code' => 403, 'message' => 'You cannot delete your own account.'];
 
-            if ($request->ajax()) {
+            if (request()->ajax()) {
                 return response()->json(['error' => $error], 403);
             }
 
@@ -118,7 +141,7 @@ class UserController extends Controller
 
         $success = ['title' => 'Success Delete', 'message' => 'Your data has been deleted.'];
 
-        if ($request->ajax()) {
+        if (request()->ajax()) {
             return response()->json(['success' => $success]);
         }
 
@@ -129,16 +152,10 @@ class UserController extends Controller
     {
         $dataTable = new UsersDataTable(true);
 
-        return $dataTable->render('users.index');
-    }
-
-    public function restore($encryptedId)
-    {
-        $user = User::onlyTrashed()->findOrFail(Encryption::decrypt($encryptedId));
-        $user->restore();
-        
-        return redirect()->back()->with([
-            'success'   => ["title" => "Success Restore", "message" => "Your data has been restored."]
+        return $dataTable->render('users.index', [
+            'title'  => $this->title,
+            'route'  => $this->route,
+            'module' => $this->module,
         ]);
     }
 }

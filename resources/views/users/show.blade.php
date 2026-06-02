@@ -99,11 +99,14 @@
                             <span class="text-sm font-medium">
                                 @if($isOnline)
                                     <span class="dt-status dt-status--online">
-                                        <x-icon name="circle-filled" class="size-[0.6rem]" />
+                                        <x-icon name="circle-filled" style="width:0.55rem;height:0.55rem;flex-shrink:0;" />
                                         Online
                                     </span>
                                 @elseif($user->last_seen)
-                                    Offline ({{ \Carbon\Carbon::parse($user->last_seen)->diffForHumans() }})
+                                    <span class="dt-status dt-status--offline">
+                                        <x-icon name="circle-outline" style="width:0.55rem;height:0.55rem;flex-shrink:0;" />
+                                        Offline ({{ \Carbon\Carbon::parse($user->last_seen)->diffForHumans() }})
+                                    </span>
                                 @else
                                     Never
                                 @endif

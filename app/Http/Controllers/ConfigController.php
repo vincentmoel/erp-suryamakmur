@@ -17,7 +17,7 @@ class ConfigController extends BaseController
             'configs',
             'Config',
             'configs',
-            Module::IpAddress->name,
+            Module::Config->name,
             ConfigRequest::class,
             ConfigDataTable::class,
             ['show', 'edit', 'delete']

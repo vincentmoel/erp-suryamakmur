@@ -17,15 +17,20 @@ class DataTablesComponentBuilder
 
     public static function userStatus($row): string
     {
+        $dotStyle = 'width:0.55rem;height:0.55rem;flex-shrink:0;';
+
+        $iconOnline  = '<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" style="' . $dotStyle . 'fill:currentColor;stroke:none"><circle cx="12" cy="12" r="8"/></svg>';
+        $iconOffline = '<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" style="' . $dotStyle . 'fill:none;stroke:currentColor;stroke-width:2.5"><circle cx="12" cy="12" r="8"/></svg>';
+
         if ($row->last_seen && Carbon::parse($row->last_seen)->diffInMinutes() < 3) {
-            return '<span class="dt-status dt-status--online">' . self::icon('circle-filled', 'size-[0.6rem]') . 'Online</span>';
+            return '<span class="dt-status dt-status--online">' . $iconOnline . 'Online</span>';
         }
 
         $label = $row->last_seen
             ? 'Offline (' . Carbon::parse($row->last_seen)->diffForHumans() . ')'
             : 'Never';
 
-        return '<span class="dt-status dt-status--offline">' . self::icon('circle-outline', 'size-[0.6rem]') . $label . '</span>';
+        return '<span class="dt-status dt-status--offline">' . $iconOffline . $label . '</span>';
     }
 
     public static function userProfile($user, ?string $avatarUrl = null): string
