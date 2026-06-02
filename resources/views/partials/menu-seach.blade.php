@@ -1,6 +1,6 @@
 <div data-command-palette class="fixed inset-0 z-50 hidden bg-black/40 p-4">
     <div class="mx-auto mt-20 max-w-xl overflow-hidden rounded-xl border bg-popover text-popover-foreground shadow-2xl">
-        <div class="flex items-center gap-2 border-b px-4 py-3"><i data-lucide="search" class="size-4"></i><input
+        <div class="flex items-center gap-2 border-b px-4 py-3"><x-icon name="search" class="size-4" /><input
                 data-command-input class="w-full bg-transparent text-sm outline-none"
                 placeholder="Search pages, components, commands"></div>
         <div class="max-h-80 overflow-y-auto p-2">

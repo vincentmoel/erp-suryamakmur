@@ -26,9 +26,9 @@
                             @if (!empty($item['children']))
                                 <li data-nav-parent data-sidebar="menu-item" class="group/menu-item relative">
                                     <button data-nav-toggle aria-expanded="false" class="nav-link" type="button">
-                                        <i data-lucide="{{ $item['icon'] }}" class="size-4"></i>
+                                        <x-icon :name="$item['icon']" class="size-4" />
                                         <span class="sidebar-text">{{ $item['title'] }}</span>
-                                        <i data-lucide="chevron-right" class="nav-chevron"></i>
+                                        <x-icon name="chevron-right" class="nav-chevron" />
                                     </button>
                                     <ul data-nav-sub data-sidebar="menu-sub" class="nav-sub hidden">
                                         @foreach ($item['children'] as $child)
@@ -45,7 +45,7 @@
                                 <li data-sidebar="menu-item" class="group/menu-item relative">
                                     <a class="nav-link {{ request()->routeIs($item['route'] ?? '') ? 'active' : '' }}"
                                         href="{{ !empty($item['route']) ? route($item['route']) : ($item['url'] ?? '#') }}">
-                                        <i data-lucide="{{ $item['icon'] }}" class="size-4"></i>
+                                        <x-icon :name="$item['icon']" class="size-4" />
                                         <span class="sidebar-text">{{ $item['title'] }}</span>
                                     </a>
                                 </li>
@@ -59,7 +59,8 @@
         <div data-sidebar="footer" class="flex flex-col gap-2 border-t p-2">
             <div data-dropdown class="relative">
                 <button data-dropdown-trigger class="nav-link sidebar-user-btn h-12 w-full">
-                    <img src="{{ asset('src/img/default-profile.jpg') }}" class="size-8 shrink-0 rounded-full object-cover" alt="Profile">
+                    @php $authUser = auth()->user(); @endphp
+                    <img src="{{ $authUser->photo ? asset('storage/' . $authUser->photo) : asset('src/img/default-profile.jpg') }}" class="size-8 shrink-0 rounded-full object-cover" alt="Profile">
                     <x-sidebar-user-info />
                     <x-icon name="more-horizontal" class="ml-auto size-4 opacity-60 nav-chevron" />
                 </button>

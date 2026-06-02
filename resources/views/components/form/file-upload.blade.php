@@ -41,7 +41,7 @@
         {{-- Placeholder icon + text --}}
         <div id="{{ $uid }}-placeholder" class="flex flex-col items-center gap-1 text-center {{ $preview ? 'hidden' : '' }}">
             <div class="flex size-10 items-center justify-center rounded-full bg-muted">
-                <i data-lucide="image-up" class="size-5 text-muted-foreground"></i>
+                <x-icon name="image-up" class="size-5 text-muted-foreground" />
             </div>
             <p class="text-sm font-medium">Click to upload photo</p>
             <p class="text-xs text-muted-foreground">PNG, JPG, WEBP &mdash; max {{ $maxSizeMb }}MB</p>

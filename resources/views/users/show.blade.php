@@ -32,13 +32,7 @@
                         {{-- Name & Status --}}
                         <div class="flex flex-col items-center gap-1.5 text-center">
                             <h2 class="text-lg font-semibold leading-tight">{{ $user->name }}</h2>
-                            <p class="text-sm text-muted-foreground">@{{ $user->username }}</p>
-
-                            <span class="mt-1 inline-flex items-center gap-1.5 rounded-full px-2.5 py-0.5 text-xs font-medium
-                                {{ $isOnline ? 'bg-green-500/10 text-green-600' : 'bg-muted text-muted-foreground' }}">
-                                <span class="size-1.5 rounded-full {{ $isOnline ? 'bg-green-500' : 'bg-muted-foreground/50' }}"></span>
-                                {{ $isOnline ? 'Online' : 'Offline' }}
-                            </span>
+                            <p class="text-sm text-muted-foreground">{{ $user->username }}</p>
                         </div>
 
                         {{-- Roles --}}
@@ -54,14 +48,9 @@
 
                     <div class="flex gap-2 border-t px-6 py-4">
                         <a href="{{ route('users.edit', ['encryptedId' => $encryptedId]) }}"
-                           class="btn btn-outline btn-sm flex-1">
-                            <i data-lucide="pencil" class="size-3.5"></i>
-                            Edit
-                        </a>
-                        <a href="{{ route('users.index') }}"
                            class="btn btn-ghost btn-sm flex-1">
-                            <i data-lucide="arrow-left" class="size-3.5"></i>
-                            Back
+                            <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round" class="size-3.5"><path d="m16.862 4.487 1.687-1.688a1.875 1.875 0 1 1 2.652 2.652L10.582 16.07a4.5 4.5 0 0 1-1.897 1.13L6 18l.8-2.685a4.5 4.5 0 0 1 1.13-1.897l8.932-8.931Zm0 0L19.5 7.125"/></svg>
+                            Edit
                         </a>
                     </div>
                 </div>
@@ -75,7 +64,7 @@
                 <div class="rounded-lg border bg-card text-card-foreground shadow-xs">
                     <div class="flex items-center gap-3 border-b px-6 py-4">
                         <div class="flex size-8 items-center justify-center rounded-md bg-primary/10">
-                            <i data-lucide="user" class="size-4 text-primary"></i>
+                            <x-icon name="user" class="size-4 text-primary" />
                         </div>
                         <h3 class="text-sm font-semibold">Account Information</h3>
                     </div>
@@ -95,36 +84,11 @@
                     </div>
                 </div>
 
-                {{-- Roles --}}
-                <div class="rounded-lg border bg-card text-card-foreground shadow-xs">
-                    <div class="flex items-center gap-3 border-b px-6 py-4">
-                        <div class="flex size-8 items-center justify-center rounded-md bg-primary/10">
-                            <i data-lucide="shield-check" class="size-4 text-primary"></i>
-                        </div>
-                        <h3 class="text-sm font-semibold">Roles & Permissions</h3>
-                    </div>
-
-                    <div class="px-6 py-4">
-                        @if($user->roles->isNotEmpty())
-                            <div class="flex flex-wrap gap-2">
-                                @foreach($user->roles as $role)
-                                    <span class="badge bg-primary/10 text-primary text-xs px-3 py-1">
-                                        <i data-lucide="shield" class="size-3 mr-1"></i>
-                                        {{ $role->name }}
-                                    </span>
-                                @endforeach
-                            </div>
-                        @else
-                            <p class="text-sm text-muted-foreground italic">No roles assigned.</p>
-                        @endif
-                    </div>
-                </div>
-
                 {{-- Activity --}}
                 <div class="rounded-lg border bg-card text-card-foreground shadow-xs">
                     <div class="flex items-center gap-3 border-b px-6 py-4">
                         <div class="flex size-8 items-center justify-center rounded-md bg-primary/10">
-                            <i data-lucide="activity" class="size-4 text-primary"></i>
+                            <x-icon name="calendar-clock" class="size-4 text-primary" />
                         </div>
                         <h3 class="text-sm font-semibold">Activity</h3>
                     </div>
@@ -135,11 +99,14 @@
                             <span class="text-xs font-medium text-muted-foreground uppercase tracking-wide">Last Seen</span>
                             <span class="text-sm font-medium">
                                 @if($isOnline)
-                                    <span class="text-green-600 font-medium">● Online now</span>
+                                    <span style="display:inline-flex;align-items:center;gap:0.35rem;color:#16a34a;">
+                                        <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" style="width:0.6rem;height:0.6rem;flex-shrink:0;fill:currentColor;stroke:none"><circle cx="12" cy="12" r="8"/></svg>
+                                        Online
+                                    </span>
                                 @elseif($user->last_seen)
-                                    {{ \Carbon\Carbon::parse($user->last_seen)->diffForHumans() }}
+                                    Offline ({{ \Carbon\Carbon::parse($user->last_seen)->diffForHumans() }})
                                 @else
-                                    <span class="text-muted-foreground italic">Never logged in</span>
+                                    Never
                                 @endif
                             </span>
                         </div>
