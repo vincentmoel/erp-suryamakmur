@@ -1,4 +1,4 @@
-@extends('layouts.main', ['title' => 'Users | ' . config('app.name')])
+@extends('layouts.main', ['title' => 'Users'])
 
 @push('styles')
     <link rel="stylesheet" href="https://cdn.datatables.net/2.1.8/css/dataTables.dataTables.min.css">

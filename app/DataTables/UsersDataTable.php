@@ -56,19 +56,18 @@ class UsersDataTable extends DataTable
                 );
             })
             ->editColumn('last_seen', function($row){
-                if (Carbon::parse($row->last_seen)->diffInMinutes() < 3 && $row->last_seen != null)
+                $iconOnline  = '<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" style="width:0.6rem;height:0.6rem;flex-shrink:0;fill:currentColor;stroke:none"><circle cx="12" cy="12" r="8"/></svg>';
+                $iconOffline = '<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" style="width:0.6rem;height:0.6rem;flex-shrink:0;fill:none;stroke:currentColor;stroke-width:2.5"><circle cx="12" cy="12" r="8"/></svg>';
+
+                if ($row->last_seen != null && Carbon::parse($row->last_seen)->diffInMinutes() < 3)
                 {
-                    return '<span class="logged-in" style="color:green;">● Online</span>';
+                    return '<span style="display:inline-flex;align-items:center;gap:0.35rem;color:#16a34a;">' . $iconOnline . 'Online</span>';
                 }
 
-                $lastSeen = "Never Logged In";
-                
-                if ($row->last_seen != null)
-                {
-                    $lastSeen = Carbon::parse($row->last_seen)->diffForHumans();
-                }
+                $lastSeen = $row->last_seen ? Carbon::parse($row->last_seen)->diffForHumans() : null;
+                $label    = $lastSeen ? 'Offline (' . $lastSeen . ')' : 'Never';
 
-                return '<span class="logged-in text-muted-foreground">● Offline (' . $lastSeen . ')</span>';
+                return '<span style="display:inline-flex;align-items:center;gap:0.35rem;color:var(--muted-foreground);">' . $iconOffline . $label . '</span>';
             })
             ->editColumn('created_by', function($row){
                 return $row->user_created_by->name;

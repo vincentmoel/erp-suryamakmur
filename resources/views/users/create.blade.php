@@ -1,4 +1,4 @@
-@extends('layouts.main', ['title' => 'Add User | ' . config('app.name')])
+@extends('layouts.main', ['title' => 'Add User'])
 
 @section('content')
     <div class="page-content">
@@ -77,11 +77,11 @@
 
                 <div class="flex items-center justify-end gap-2 border-t px-6 py-4">
                     <button type="submit" name="_action" value="save_and_create" class="btn btn-outline">
-                        <i data-lucide="plus" class="size-3.5"></i>
+                        <x-icon name="plus-circle" class="size-3.5" />
                         Save & Add Another
                     </button>
                     <button type="submit" name="_action" value="save" class="btn btn-primary">
-                        <i data-lucide="save" class="size-3.5"></i>
+                        <x-icon name="check" class="size-3.5" />
                         Save
                     </button>
                 </div>

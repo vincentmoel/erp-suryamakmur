@@ -1,4 +1,4 @@
-@extends('layouts.main', ['title' => 'Edit User | ' . config('app.name')])
+@extends('layouts.main', ['title' => 'Edit User'])
 
 @section('content')
     <div class="page-content">
@@ -82,12 +82,9 @@
                 </div>
 
                 <div class="flex items-center justify-end gap-2 border-t px-6 py-4">
-                    <a href="{{ route('users.index') }}" class="btn btn-outline">
-                        Cancel
-                    </a>
-                    <button type="submit" class="btn btn-primary">
-                        <i data-lucide="save" class="size-3.5"></i>
-                        Save Changes
+                    <button type="submit" name="_action" value="update" class="btn btn-primary">
+                        <x-icon name="refresh-cw" class="size-3.5" />
+                        Update
                     </button>
                 </div>
 

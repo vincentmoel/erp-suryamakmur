@@ -1,5 +1,5 @@
 @extends('layouts.blank', [
-    'title' => 'Sign In | ' . config('app.name')
+    'title' => 'Sign In'
 ])
 
 @section('content')

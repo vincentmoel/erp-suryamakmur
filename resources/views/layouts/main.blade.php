@@ -4,7 +4,7 @@
 <head>
     <meta charset="utf-8">
     <meta name="viewport" content="width=device-width, initial-scale=1">
-    <title>{{ $title ?? config('app.name') }}</title>
+    <title>{{ isset($title) ? $title . ' | ' . config('app.name') : config('app.name') }}</title>
     <link rel="icon" href="./public/favicon.svg">
     <link rel="stylesheet" href="{{ asset('src/css/styles.css') }}">
     <meta name="csrf-token" content="{{ csrf_token() }}">

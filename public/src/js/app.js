@@ -241,7 +241,8 @@ $(function () {
   $("#confirm-delete-btn").on("click", function () {
     if (!pendingUrl) return;
 
-    const $btn = $(this).prop("disabled", true).text("Deleting...");
+    const label = $(this).text().trim();
+    const $btn  = $(this).prop("disabled", true).html('<span class="dt-loading-spinner"></span> ' + label);
 
     $.ajax({
       url    : pendingUrl,
@@ -256,12 +257,36 @@ $(function () {
       },
       complete: function () {
         $("#confirm-delete-dialog").addClass("hidden");
-        $btn.prop("disabled", false).text("Delete");
+        $btn.prop("disabled", false).html("Delete");
         pendingUrl = null;
       },
     });
   });
 });
+
+// ── FORM SUBMIT LOADING ───────────────────────────────────────
+(function () {
+  const spinner = '<span class="dt-loading-spinner"></span>';
+
+  document.querySelectorAll("form").forEach((form) => {
+    let clickedBtn = null;
+
+    form.querySelectorAll('button[type="submit"]').forEach((btn) => {
+      btn.addEventListener("click", () => { clickedBtn = btn; });
+    });
+
+    form.addEventListener("submit", () => {
+      form.querySelectorAll('button[type="submit"]').forEach((btn) => {
+        btn.disabled = true;
+      });
+
+      if (clickedBtn) {
+        const text = clickedBtn.innerText.trim();
+        clickedBtn.innerHTML = spinner + " " + text;
+      }
+    });
+  });
+})();
 
 // ── INIT ─────────────────────────────────────────────────────
 renderFallbackIcons();

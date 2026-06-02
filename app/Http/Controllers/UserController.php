@@ -51,10 +51,11 @@ class UserController extends Controller
 
     public function show($encryptedId)
     {
-        $user = User::findOrFail(Encryption::decrypt($encryptedId));
+        $user = User::with('roles', 'user_created_by')->findOrFail(Encryption::decrypt($encryptedId));
 
         return view('users.show', [
-            "user" => $user
+            "user"         => $user,
+            "encryptedId"  => $encryptedId,
         ]);
     }
 
