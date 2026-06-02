@@ -75,7 +75,7 @@ class DataTablesComponentBuilder
      */
     public static function userProfile($user, ?string $avatarUrl = null): string
     {
-        $avatar = $avatarUrl ?? asset('src/img/default-profile.jpg');
+        $avatar = $avatarUrl ?? ($user->photo ? asset('storage/' . $user->photo) : asset('src/img/default-profile.jpg'));
         $name   = e($user->name);
 
         $roles = $user->roles->pluck('name')->map(fn($r) => e($r))->implode(' | ');

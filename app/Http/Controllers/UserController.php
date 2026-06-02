@@ -64,8 +64,9 @@ class UserController extends Controller
         $roles = Role::get();
 
         return view('users.edit', [
-            "user"  => $user,
-            "roles" => $roles
+            "user"         => $user,
+            "roles"        => $roles,
+            "encryptedId"  => $encryptedId,
         ]);
     }
 
@@ -74,6 +75,10 @@ class UserController extends Controller
         $user = User::findOrFail(Encryption::decrypt($encryptedId));
 
         $data = $request->validated();
+
+        if (empty($data['password'])) {
+            unset($data['password'], $data['password_confirmation']);
+        }
 
         if ($request->hasFile('photo')) {
             $data['photo'] = FileManager::store($request->file('photo'), 'users');
