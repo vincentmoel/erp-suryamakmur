@@ -6969,6 +6969,11 @@ div.dt-processing > div:last-child { display: none !important; }
   flex-shrink: 0;
 }
 
+.btn-primary .dt-loading-spinner {
+  border-color: color-mix(in oklab, var(--primary-foreground) 30%, transparent);
+  border-top-color: var(--primary-foreground);
+}
+
 /* Table base */
 .dt-table {
   width: 100% !important;

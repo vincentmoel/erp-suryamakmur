@@ -31,19 +31,12 @@ class BaseController extends Controller
 
     public function index()
     {
-        $dataTable = new $this->dataTable(
-            false,
-            $this->model,
-            $this->view,
-            $this->route,
-            $this->module,
-            $this->exceptActionButton
-        );
+        $dataTable = new $this->dataTable(false);
 
         return $dataTable->render("{$this->view}.index", [
-            "title"     => $this->title,
-            "route"     => $this->route,
-            "module"    => $this->module
+            "title"  => $this->title,
+            "route"  => $this->route,
+            "module" => $this->module,
         ]);
     }
 
@@ -65,9 +58,13 @@ class BaseController extends Controller
 
         $this->model::create($validatedData);
 
-        return redirect()->back()->with([
-            'success' => ["title" => "Success Add", "message" => "Your data has been saved."]
-        ]);
+        $flash = ['success' => ["title" => "Success Add", "message" => "Your data has been saved."]];
+
+        if ($request->input('_action') === 'save_and_create') {
+            return redirect()->route("{$this->route}.create")->with($flash);
+        }
+
+        return redirect()->route("{$this->route}.index")->with($flash);
     }
 
     public function show($encryptedId)
@@ -75,9 +72,10 @@ class BaseController extends Controller
         $data = $this->model::findOrFail(Encryption::decrypt($encryptedId));
 
         return view("{$this->view}.show", [
-            "title" => $this->title,
-            "route" => $this->route,
-            "data" => $data,
+            "title"       => $this->title,
+            "route"       => $this->route,
+            "data"        => $data,
+            "encryptedId" => $encryptedId,
         ]);
     }
 
@@ -86,9 +84,10 @@ class BaseController extends Controller
         $data = $this->model::findOrFail(Encryption::decrypt($encryptedId));
 
         return view("{$this->view}.edit", [
-            "data"  => $data,
-            "title" => $this->title,
-            "route" => $this->route
+            "data"        => $data,
+            "title"       => $this->title,
+            "route"       => $this->route,
+            "encryptedId" => $encryptedId,
         ]);
     }
 
@@ -125,18 +124,12 @@ class BaseController extends Controller
 
     public function trashed()
     {
-        $dataTable = new $this->dataTable(
-            true,
-            $this->model,
-            $this->view,
-            $this->route,
-            $this->module,
-        );
+        $dataTable = new $this->dataTable(true);
 
         return $dataTable->render("{$this->view}.index", [
-            "title"     => $this->title,
-            "route"     => $this->route,
-            "module"    => $this->module
+            "title"  => $this->title,
+            "route"  => $this->route,
+            "module" => $this->module,
         ]);
     }
 

@@ -12,4 +12,6 @@ enum Module : string{
     case Developer = "Developer";
     case Dashboard = "Dashboard";
     case Config = "Config";
+    case Category = "Category";
+    case Unit = "Unit";
 }

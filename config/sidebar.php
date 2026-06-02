@@ -15,6 +15,18 @@ return [
     ],
 
     [
+        'title' => 'Categories',
+        'icon' => 'tag',
+        'route' => 'categories.index',
+    ],
+
+    [
+        'title' => 'Units',
+        'icon' => 'ruler',
+        'route' => 'units.index',
+    ],
+
+    [
         'group' => 'E-Commerce',
         'title' => 'E-Commerce',
         'icon' => 'shopping-cart',

@@ -6,6 +6,7 @@ use App\DataTables\UsersDataTable;
 use App\Enums\Module;
 use App\Helpers\Encryption;
 use App\Helpers\FileManager;
+use App\Helpers\Response;
 use App\Http\Requests\UserRequest;
 use App\Models\Role;
 use App\Models\User;
@@ -26,23 +27,12 @@ class UserController extends BaseController
         );
     }
 
-    public function index()
-    {
-        $dataTable = new UsersDataTable(false);
-
-        return $dataTable->render('users.index', [
-            'title'  => $this->title,
-            'route'  => $this->route,
-            'module' => $this->module,
-        ]);
-    }
-
     public function create()
     {
         return view('users.create', [
-            'title'  => $this->title,
-            'route'  => $this->route,
-            'roles'  => Role::get(),
+            'title' => $this->title,
+            'route' => $this->route,
+            'roles' => Role::get(),
         ]);
     }
 
@@ -139,23 +129,9 @@ class UserController extends BaseController
 
         $user->delete();
 
-        $success = ['title' => 'Success Delete', 'message' => 'Your data has been deleted.'];
-
-        if (request()->ajax()) {
-            return response()->json(['success' => $success]);
-        }
-
-        return redirect()->back()->with(['success' => $success]);
-    }
-
-    public function trashed()
-    {
-        $dataTable = new UsersDataTable(true);
-
-        return $dataTable->render('users.index', [
-            'title'  => $this->title,
-            'route'  => $this->route,
-            'module' => $this->module,
+        return Response::build(200, 'Success', [
+            'title'   => 'Success Delete',
+            'message' => 'Your data has been deleted.',
         ]);
     }
 }

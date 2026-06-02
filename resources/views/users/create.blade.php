@@ -1,4 +1,4 @@
-@extends('layouts.main', ['title' => 'Add User'])
+@extends('layouts.main', ['title' => "Add $title"])
 
 @section('content')
     <div class="page-content">
@@ -8,7 +8,7 @@
             <p>Create a new user account.</p>
         </div>
 
-        <form action="{{ route('users.store') }}" method="POST" enctype="multipart/form-data">
+        <form action="{{ route("$route.store") }}" method="POST" enctype="multipart/form-data">
             @csrf
 
             <div class="rounded-lg border bg-card text-card-foreground shadow-xs">
@@ -71,16 +71,7 @@
 
                 </div>
 
-                <div class="flex items-center justify-end gap-2 border-t px-6 py-4">
-                    <button type="submit" name="_action" value="save_and_create" class="btn btn-outline">
-                        <x-icon name="plus-circle" class="size-3.5" />
-                        Save & Add Another
-                    </button>
-                    <button type="submit" name="_action" value="save" class="btn btn-primary">
-                        <x-icon name="check" class="size-3.5" />
-                        Save
-                    </button>
-                </div>
+                @include('partials.form-actions-create')
 
             </div>
         </form>

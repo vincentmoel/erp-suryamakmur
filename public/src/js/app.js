@@ -207,7 +207,7 @@ $(function () {
       type   : "DELETE",
       success: function (res) {
         $(document).trigger("dt:refresh");
-        showToast(res.success.title, res.success.message, "success");
+        showToast(res.data.title, res.data.message, "success");
       },
       error  : function (xhr) {
         const err = xhr.responseJSON?.error;
@@ -233,15 +233,19 @@ $(function () {
       btn.addEventListener("click", () => { clickedBtn = btn; });
     });
 
-    form.addEventListener("submit", () => {
-      form.querySelectorAll('button[type="submit"]').forEach((btn) => {
-        btn.disabled = true;
-      });
-
+    form.addEventListener("submit", (e) => {
       if (clickedBtn) {
         const text = clickedBtn.innerText.trim();
         clickedBtn.innerHTML = spinner + " " + text;
       }
+
+      // Delay disable agar nilai button (name/value) sempat masuk ke form data
+      // sebelum browser mengkonstruksi entry list-nya
+      setTimeout(() => {
+        form.querySelectorAll('button[type="submit"]').forEach((btn) => {
+          btn.disabled = true;
+        });
+      }, 0);
     });
   });
 })();

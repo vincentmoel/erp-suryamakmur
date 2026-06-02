@@ -1,4 +1,4 @@
-@extends('layouts.main', ['title' => 'Edit User'])
+@extends('layouts.main', ['title' => "Edit $title"])
 
 @section('content')
     <div class="page-content">
@@ -8,7 +8,7 @@
             <p>Update user account information.</p>
         </div>
 
-        <form action="{{ route('users.update', ['encryptedId' => $encryptedId]) }}" method="POST" enctype="multipart/form-data">
+        <form action="{{ route("$route.update", ['encryptedId' => $encryptedId]) }}" method="POST" enctype="multipart/form-data">
             @csrf
             @method('PATCH')
 
@@ -77,12 +77,7 @@
 
                 </div>
 
-                <div class="flex items-center justify-end gap-2 border-t px-6 py-4">
-                    <button type="submit" name="_action" value="update" class="btn btn-primary">
-                        <x-icon name="refresh-cw" class="size-3.5" />
-                        Update
-                    </button>
-                </div>
+                @include('partials.form-actions-edit')
 
             </div>
         </form>

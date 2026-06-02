@@ -1,9 +1,11 @@
 <?php
 
 use App\Http\Controllers\AuthController;
+use App\Http\Controllers\CategoryController;
 use App\Http\Controllers\ConfigController;
 use App\Http\Controllers\DashboardController;
 use App\Http\Controllers\RoleController;
+use App\Http\Controllers\UnitController;
 use App\Http\Controllers\UserController;
 use Illuminate\Support\Facades\Route;
 
@@ -65,6 +67,36 @@ Route::group(['middleware' => ['revalidate']], function () {
             Route::get('/', 'index')->name('index')->middleware("check.permission:$module,read");
             Route::patch('/{encryptedId}', 'update')->name('update')->middleware("check.permission:$module,update");
             Route::get('/{encryptedId}/edit', 'edit')->name('edit')->middleware("check.permission:$module,update");
+        });
+
+        // =============== CATEGORY =============== \\
+        $module = "Category";
+        Route::group(['prefix' => 'categories', 'as' => 'categories.', 'controller' => CategoryController::class], function () use ($module) {
+            Route::get('/trashed', 'trashed')->name('trashed')->middleware("check.permission:$module,restore");
+            Route::patch('/{encryptedId}/restore', 'restore')->name('restore')->middleware("check.permission:$module,restore");
+
+            Route::get('/', 'index')->name('index')->middleware("check.permission:$module,read");
+            Route::get('/create', 'create')->name('create')->middleware("check.permission:$module,create");
+            Route::post('/', 'store')->name('store')->middleware("check.permission:$module,create");
+            Route::get('/{encryptedId}', 'show')->name('show')->middleware("check.permission:$module,read");
+            Route::patch('/{encryptedId}', 'update')->name('update')->middleware("check.permission:$module,update");
+            Route::get('/{encryptedId}/edit', 'edit')->name('edit')->middleware("check.permission:$module,update");
+            Route::delete('/{encryptedId}/destroy', 'destroy')->name('destroy')->middleware("check.permission:$module,delete");
+        });
+
+        // =============== UNIT =============== \\
+        $module = "Unit";
+        Route::group(['prefix' => 'units', 'as' => 'units.', 'controller' => UnitController::class], function () use ($module) {
+            Route::get('/trashed', 'trashed')->name('trashed')->middleware("check.permission:$module,restore");
+            Route::patch('/{encryptedId}/restore', 'restore')->name('restore')->middleware("check.permission:$module,restore");
+
+            Route::get('/', 'index')->name('index')->middleware("check.permission:$module,read");
+            Route::get('/create', 'create')->name('create')->middleware("check.permission:$module,create");
+            Route::post('/', 'store')->name('store')->middleware("check.permission:$module,create");
+            Route::get('/{encryptedId}', 'show')->name('show')->middleware("check.permission:$module,read");
+            Route::patch('/{encryptedId}', 'update')->name('update')->middleware("check.permission:$module,update");
+            Route::get('/{encryptedId}/edit', 'edit')->name('edit')->middleware("check.permission:$module,update");
+            Route::delete('/{encryptedId}/destroy', 'destroy')->name('destroy')->middleware("check.permission:$module,delete");
         });
 
         Route::post('logout', [AuthController::class, 'logout'])->name('logout');
