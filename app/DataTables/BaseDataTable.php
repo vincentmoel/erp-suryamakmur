@@ -29,12 +29,6 @@ class BaseDataTable extends DataTable
         $this->exceptActionButton = $exceptActionButton;
     }
 
-    /**
-     * Build DataTable class.
-     *
-     * @param  QueryBuilder  $query  Results from query() method.
-     * @return \Yajra\DataTables\EloquentDataTable
-     */
     public function dataTable(QueryBuilder $query): EloquentDataTable
     {
         if($this->trashed)
@@ -46,6 +40,7 @@ class BaseDataTable extends DataTable
             ->addIndexColumn()
             ->addColumn('action', function($row){
                 $encryptedId = Encryption::encrypt($row->id);
+                $route = [];
 
                 if($this->trashed)
                 {

@@ -4,17 +4,6 @@
 ])
 
 @php
-/**
- * ============================================================
- *  ICON COMPONENT
- *  Penggunaan: <x-icon name="logout" class="size-4" />
- *
- *  Semua icon menggunakan Heroicons style (24x24, stroke)
- *  Untuk menambah icon baru, cukup tambahkan entry baru
- *  di array $icons di bawah ini.
- * ============================================================
- */
-
 $icons = [
 
     // ── USER & AUTH ─────────────────────────────────────────

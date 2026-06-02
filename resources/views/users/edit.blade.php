@@ -16,7 +16,6 @@
 
                 <div class="flex flex-col gap-6 p-6">
 
-                    {{-- Row 1: Name & Username --}}
                     <div class="grid grid-cols-1 gap-6 sm:grid-cols-2">
                         <x-form.field name="name" label="Name" :required="true">
                             <input id="name"
@@ -40,7 +39,6 @@
                         </x-form.field>
                     </div>
 
-                    {{-- Row 2: Password & Confirm Password (optional on edit) --}}
                     <div class="grid grid-cols-1 gap-6 sm:grid-cols-2">
                         <x-form.field name="password" label="Password"
                                       hint="Leave blank to keep current password.">
@@ -62,7 +60,6 @@
                         </x-form.field>
                     </div>
 
-                    {{-- Row 3: Roles --}}
                     <x-form.field name="roles" label="Roles" :required="true">
                         <x-form.multi-select
                             name="roles"
@@ -71,7 +68,6 @@
                             :selected="old('roles', $user->roles->pluck('id')->toArray())" />
                     </x-form.field>
 
-                    {{-- Row 4: Photo --}}
                     <x-form.field name="photo" label="Photo">
                         <x-form.file-upload
                             name="photo"

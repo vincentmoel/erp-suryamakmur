@@ -23,7 +23,7 @@
     </div>
 
     {{-- Table --}}
-    <div class="dt-wrapper" style="overflow-x:auto;">
+    <div class="dt-wrapper">
         <table id="{{ $id }}" class="dt-table">
             <thead>
                 <tr>{{ $head }}</tr>

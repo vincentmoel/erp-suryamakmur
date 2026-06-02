@@ -15,7 +15,6 @@
 
                 <div class="flex flex-col gap-6 p-6">
 
-                    {{-- Row 1: Name & Username --}}
                     <div class="grid grid-cols-1 gap-6 sm:grid-cols-2">
                         <x-form.field name="name" label="Name" :required="true">
                             <input id="name"
@@ -39,7 +38,6 @@
                         </x-form.field>
                     </div>
 
-                    {{-- Row 2: Password & Confirm Password --}}
                     <div class="grid grid-cols-1 gap-6 sm:grid-cols-2">
                         <x-form.field name="password" label="Password" :required="true">
                             <input id="password"
@@ -60,7 +58,6 @@
                         </x-form.field>
                     </div>
 
-                    {{-- Row 3: Roles (full width) --}}
                     <x-form.field name="roles" label="Roles" :required="true">
                         <x-form.multi-select
                             name="roles"
@@ -68,7 +65,6 @@
                             :options="$roles->map(fn($r) => ['value' => $r->id, 'label' => $r->name])->toArray()" />
                     </x-form.field>
 
-                    {{-- Row 4: Photo --}}
                     <x-form.field name="photo" label="Photo">
                         <x-form.file-upload name="photo" :max-size-mb="2" />
                     </x-form.field>
