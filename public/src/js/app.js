@@ -247,7 +247,6 @@ $(function () {
       url    : pendingUrl,
       type   : "DELETE",
       success: function (res) {
-        $("#confirm-delete-dialog").addClass("hidden");
         $(document).trigger("dt:refresh");
         showToast(res.success.title, res.success.message, "success");
       },
@@ -256,6 +255,7 @@ $(function () {
         showToast(err?.message ?? "Failed to delete. Please try again.", "", "error");
       },
       complete: function () {
+        $("#confirm-delete-dialog").addClass("hidden");
         $btn.prop("disabled", false).text("Delete");
         pendingUrl = null;
       },
