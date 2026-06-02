@@ -24,40 +24,7 @@ class RoleSeeder extends Seeder
             'hidden'    => true
         ]);
 
-        $role = Role::create([
-            'name'      => 'Owner',
-            'editable'  => false,
-            'deletable' => false,
-            'hidden'    => false
-        ]);
-
         $modules = Module::names();
-
-        foreach ($modules as $module) {
-            $permission = new Permission();
-            $permission->role_id = $role->id;
-            $permission->module = $module;
-
-            foreach ($permissions as $field) {
-                $permission->{$field} = true;
-            }
-
-            $permission->save();
-        }
-
-        $role = Role::create([
-            'name'      => 'Operator',
-            'editable'  => true,
-            'deletable' => true,
-            'hidden'    => false
-        ]);
-
-        $modules = [
-            Module::StationMonitoring->name,
-            Module::Customer->name,
-        ];
-
-        $permissions = ['menu', 'create', 'read', 'update'];
 
         foreach ($modules as $module) {
             $permission = new Permission();

@@ -39,25 +39,8 @@ class DefaultExport{
                 "label"     => "CUSTOMER NAME",
             ],
             [
-                "name"      => "rental_station_name",
-                "label"     => "RENTAL STATION NAME",
-            ],
-            [
-                "name"      => "duration_type",
-                "label"     => "DURATION TYPE",
-            ],
-            [
-                "name"      => "member_discount",
-                "label"     => "MEMBER DISCOUNT",
-            ],
-            [
                 "name"      => "subtotal",
                 "label"     => "SUBTOTAL",
-                "format"    => "currency",
-            ],
-            [
-                "name"      => "member_discount_amount",
-                "label"     => "MEMBER DISCOUNT AMOUNT",
                 "format"    => "currency",
             ],
             [
@@ -68,16 +51,6 @@ class DefaultExport{
             [
                 "name"      => "total",
                 "label"     => "TOTAL",
-                "format"    => "currency",
-            ],
-            [
-                "name"      => "total_price_duration",
-                "label"     => "TOTAL PRICE DURATION - ALL DISCOUNT",
-                "format"    => "currency",
-            ],
-            [
-                "name"      => "total_price_item",
-                "label"     => "TOTAL PRICE ITEM - ALL DISCOUNT",
                 "format"    => "currency",
             ],
             [
@@ -105,10 +78,6 @@ class DefaultExport{
             [
                 "name"      => "stock",
                 "label"     => "STOCK",
-            ],
-            [
-                "name"      => "current_stock",
-                "label"     => "CURRENT STOCK",
             ],
         ];
 
