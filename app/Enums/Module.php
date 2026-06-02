@@ -14,4 +14,5 @@ enum Module : string{
     case Config = "Config";
     case Category = "Category";
     case Unit = "Unit";
+    case Customer = "Customer";
 }

@@ -3,6 +3,7 @@
 use App\Http\Controllers\AuthController;
 use App\Http\Controllers\CategoryController;
 use App\Http\Controllers\ConfigController;
+use App\Http\Controllers\CustomerController;
 use App\Http\Controllers\DashboardController;
 use App\Http\Controllers\RoleController;
 use App\Http\Controllers\UnitController;
@@ -87,6 +88,21 @@ Route::group(['middleware' => ['revalidate']], function () {
         // =============== UNIT =============== \\
         $module = "Unit";
         Route::group(['prefix' => 'units', 'as' => 'units.', 'controller' => UnitController::class], function () use ($module) {
+            Route::get('/trashed', 'trashed')->name('trashed')->middleware("check.permission:$module,restore");
+            Route::patch('/{encryptedId}/restore', 'restore')->name('restore')->middleware("check.permission:$module,restore");
+
+            Route::get('/', 'index')->name('index')->middleware("check.permission:$module,read");
+            Route::get('/create', 'create')->name('create')->middleware("check.permission:$module,create");
+            Route::post('/', 'store')->name('store')->middleware("check.permission:$module,create");
+            Route::get('/{encryptedId}', 'show')->name('show')->middleware("check.permission:$module,read");
+            Route::patch('/{encryptedId}', 'update')->name('update')->middleware("check.permission:$module,update");
+            Route::get('/{encryptedId}/edit', 'edit')->name('edit')->middleware("check.permission:$module,update");
+            Route::delete('/{encryptedId}/destroy', 'destroy')->name('destroy')->middleware("check.permission:$module,delete");
+        });
+
+        // =============== CUSTOMER =============== \\
+        $module = "Customer";
+        Route::group(['prefix' => 'customers', 'as' => 'customers.', 'controller' => CustomerController::class], function () use ($module) {
             Route::get('/trashed', 'trashed')->name('trashed')->middleware("check.permission:$module,restore");
             Route::patch('/{encryptedId}/restore', 'restore')->name('restore')->middleware("check.permission:$module,restore");
 

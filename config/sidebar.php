@@ -30,6 +30,11 @@ return [
                 'icon' => 'ruler',
                 'route' => 'units.index',
             ],
+            [
+                'title' => 'Customers',
+                'icon' => 'contact',
+                'route' => 'customers.index',
+            ],
         ],
     ],
 
