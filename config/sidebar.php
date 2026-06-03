@@ -54,6 +54,17 @@ return [
         ],
     ],
 
+    [
+        'group' => 'Purchase',
+        'children' => [
+            [
+                'title' => 'Vendors',
+                'icon'  => 'building',
+                'route' => 'vendors.index',
+            ],
+        ],
+    ],
+
     // [
     //     'group' => 'E-Commerce',
     //     'children' => [
