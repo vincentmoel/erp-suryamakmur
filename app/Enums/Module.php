@@ -16,4 +16,5 @@ enum Module : string{
     case Unit = "Unit";
     case Customer = "Customer";
     case Product = "Product";
+    case Invoice = "Invoice";
 }

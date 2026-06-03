@@ -143,6 +143,19 @@ All IDs in URLs are encrypted using `App\Helpers\Encryption`. Never expose raw I
 
 **Grid layout:** group form fields using `<div class="grid grid-cols-1 gap-6 sm:grid-cols-2">` — do not stack all fields flat.
 
+### File / Image Handling
+
+Use `App\Helpers\FileManager::store()` to save uploaded files:
+
+```php
+// Store to storage/app/public/{folder}/
+$path = FileManager::store($request->file('photo'), 'customers');
+// Returns e.g. "customers/hashed-filename.jpg"
+// Access via: asset('storage/' . $path)
+```
+
+The helper hashes the filename and stores to the `public` disk by default. Pass a third argument to use a different disk.
+
 ### Icons
 
 Icons are registered in `resources/views/components/icon.blade.php` as a flat PHP array (`$icons`) mapping name → SVG inner path string. Usage: `<x-icon name="icon-name" class="size-4" />`.

@@ -23,6 +23,7 @@
             <x-slot name="head">
                 <th>#</th>
                 <th>Name</th>
+                <th>Abbreviation</th>
                 <th>Created At</th>
                 <th></th>
             </x-slot>
@@ -50,6 +51,10 @@
                 {
                     data: 'name',
                     name: 'name'
+                },
+                {
+                    data: 'abbreviation',
+                    name: 'abbreviation'
                 },
                 {
                     data: 'created_at',

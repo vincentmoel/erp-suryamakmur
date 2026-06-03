@@ -43,6 +43,17 @@ return [
         ],
     ],
 
+    [
+        'group' => 'Sales',
+        'children' => [
+            [
+                'title' => 'Invoices',
+                'icon'  => 'invoice',
+                'route' => 'invoices.index',
+            ],
+        ],
+    ],
+
     // [
     //     'group' => 'E-Commerce',
     //     'children' => [

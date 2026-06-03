@@ -14,5 +14,5 @@ use Illuminate\Support\Facades\Route;
 */
 
 Route::group(['middleware' => ['auth', 'refresh.permission'], 'prefix' => 'ajax', 'as' => 'ajax.'], function () {
-
+    Route::get('/products/{id}', [\App\Http\Controllers\ProductController::class, 'ajaxInfo'])->name('products.info');
 });

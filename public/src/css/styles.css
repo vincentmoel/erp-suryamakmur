@@ -6617,6 +6617,12 @@
     &::placeholder {
       color: var(--muted-foreground);
     }
+    &::-webkit-calendar-picker-indicator {
+      filter: invert(0);
+    }
+    .dark &::-webkit-calendar-picker-indicator {
+      filter: invert(1);
+    }
     &:focus {
       border-color: var(--ring);
     }

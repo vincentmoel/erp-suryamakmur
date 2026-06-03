@@ -26,7 +26,14 @@
                             @if (!empty($item['children']) && empty($item['title']) && array_is_list($item['children']))
                                 @foreach ($item['children'] as $flatItem)
                                     <li data-sidebar="menu-item" class="group/menu-item relative">
-                                        <a class="nav-link {{ request()->routeIs($flatItem['route'] ?? '') ? 'active' : '' }}"
+                                        @php
+                                            $baseRoute = $flatItem['route'] ?? '';
+                                            $routePrefix = str_contains($baseRoute, '.')
+                                                ? substr($baseRoute, 0, strrpos($baseRoute, '.'))
+                                                : $baseRoute;
+                                            $isActive = request()->routeIs($baseRoute) || ($routePrefix !== $baseRoute && request()->routeIs($routePrefix . '.*'));
+                                        @endphp
+                                        <a class="nav-link {{ $isActive ? 'active' : '' }}"
                                             href="{{ !empty($flatItem['route']) ? route($flatItem['route']) : ($flatItem['url'] ?? '#') }}">
                                             <x-icon :name="$flatItem['icon']" class="size-4" />
                                             <span class="sidebar-text">{{ $flatItem['title'] }}</span>

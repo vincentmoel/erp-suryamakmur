@@ -75,6 +75,20 @@ class ProductController extends BaseController
         ]);
     }
 
+    public function ajaxInfo(int $id)
+    {
+        $product = Product::with('unit')->find($id);
+
+        if (! $product) {
+            return response()->json(null, 404);
+        }
+
+        return response()->json([
+            'unit'            => $product->unit?->name,
+            'stock_available' => $product->stock_available,
+        ]);
+    }
+
     public function update(Request $request, $encryptedId)
     {
         $formRequest = app()->make(ProductRequest::class);

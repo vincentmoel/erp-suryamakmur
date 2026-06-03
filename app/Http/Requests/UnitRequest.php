@@ -31,6 +31,7 @@ class UnitRequest extends FormRequest
     {
         return [
             'name' => 'required|min:2|max:255|unique:units,name',
+            'abbreviation' => 'required|min:1|max:20|unique:units,abbreviation',
         ];
     }
 
@@ -45,6 +46,12 @@ class UnitRequest extends FormRequest
                 'min:2',
                 'max:255',
                 Rule::unique('units', 'name')->ignore($id, 'id'),
+            ],
+            'abbreviation' => [
+                'required',
+                'min:1',
+                'max:20',
+                Rule::unique('units', 'abbreviation')->ignore($id, 'id'),
             ],
         ];
     }

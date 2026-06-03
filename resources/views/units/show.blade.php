@@ -25,6 +25,15 @@
                 </div>
 
                 <div class="flex flex-col gap-1 px-6 py-4">
+                    <span class="text-xs font-medium text-muted-foreground uppercase tracking-wide">Abbreviation</span>
+                    <span class="text-sm font-medium">{{ $data->abbreviation }}</span>
+                </div>
+
+            </div>
+
+            <div class="grid grid-cols-1 gap-0 divide-y border-t sm:grid-cols-2 sm:divide-y-0 sm:divide-x">
+
+                <div class="flex flex-col gap-1 px-6 py-4">
                     <span class="text-xs font-medium text-muted-foreground uppercase tracking-wide">Created At</span>
                     <span class="text-sm font-medium">{{ \Carbon\Carbon::parse($data->created_at)->translatedFormat('d F Y | H:i') }}</span>
                 </div>
