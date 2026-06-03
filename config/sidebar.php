@@ -35,33 +35,38 @@ return [
                 'icon' => 'contact',
                 'route' => 'customers.index',
             ],
+            [
+                'title' => 'Products',
+                'icon' => 'box',
+                'route' => 'products.index',
+            ],
         ],
     ],
 
-    [
-        'group' => 'E-Commerce',
-        'children' => [
-            'title' => 'E-Commerce',
-            'icon' => 'shopping-cart',
-            'children' => [
-                [
-                    'title' => 'Dashboard',
-                    'url' => './pages/ecommerce/dashboard.html',
-                ],
-                [
-                    'title' => 'Products',
-                    'url' => './pages/ecommerce/products.html',
-                ],
-                [
-                    'title' => 'Orders',
-                    'url' => './pages/ecommerce/orders.html',
-                ],
-                [
-                    'title' => 'Customers',
-                    'url' => './pages/ecommerce/customers.html',
-                ],
-            ],
-        ]
-    ],
+    // [
+    //     'group' => 'E-Commerce',
+    //     'children' => [
+    //         'title' => 'E-Commerce',
+    //         'icon' => 'shopping-cart',
+    //         'children' => [
+    //             [
+    //                 'title' => 'Dashboard',
+    //                 'url' => './pages/ecommerce/dashboard.html',
+    //             ],
+    //             [
+    //                 'title' => 'Products',
+    //                 'url' => './pages/ecommerce/products.html',
+    //             ],
+    //             [
+    //                 'title' => 'Orders',
+    //                 'url' => './pages/ecommerce/orders.html',
+    //             ],
+    //             [
+    //                 'title' => 'Customers',
+    //                 'url' => './pages/ecommerce/customers.html',
+    //             ],
+    //         ],
+    //     ]
+    // ],
 
 ];
