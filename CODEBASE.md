@@ -86,7 +86,7 @@ Inventory #2 (Barang A, 35.000)
 Audit trail saja. **Tidak dipakai untuk menghitung stok.** Stok selalu dihitung dari `inventory_details.quantity`.
 
 Kolom penting:
-- `source` — `PURCHASE` | `SALE` | `SALES_RETURN` | `STOCK_OPNAME`
+- `source` — nilai dari `InventorySource` enum (`PURCHASE`, `SALE`, `SALES_RETURN`, `STOCK_OPNAME`)
 - `reference_id` — ID record sumber (purchase.id, invoice.id, dst.)
 - `quantity` — positif = masuk, negatif = keluar
 - `balance_after` — sisa stok di batch tersebut setelah mutasi
@@ -102,7 +102,7 @@ InventoryService::addStock(
     unitCost:    $unitCost,          // harga modal efektif per unit
     quantity:    $detail->quantity,
     receivedAt:  $purchase->purchase_date,
-    source:      'PURCHASE',
+    source:      InventorySource::PURCHASE,
     referenceId: $purchase->id,
     notes:       'Purchase #' . $purchase->code,
 );
@@ -111,7 +111,7 @@ InventoryService::addStock(
 InventoryService::deductStock(
     productId:   $product->id,
     quantity:    $qty,
-    source:      'SALE',
+    source:      InventorySource::SALE,
     referenceId: $invoice->id,
     notes:       'Invoice #' . $invoice->code,
 );
@@ -129,6 +129,7 @@ $stock = InventoryService::getStock($product->id);
 | Enum | File | Values |
 |------|------|--------|
 | `Module` | `app/Enums/Module.php` | User, Role, Dashboard, Config, Category, Unit, Customer, Product, Invoice, Vendor, **Purchase** |
+| `InventorySource` | `app/Enums/InventorySource.php` | PURCHASE, SALE, SALES_RETURN, STOCK_OPNAME |
 | `InvoiceStatus` | `app/Enums/InvoiceStatus.php` | DRAFT, WAITING_FOR_PAYMENT, PAID, PARTIALLY_PAID, CANCELLED |
 | `PurchaseStatus` | `app/Enums/PurchaseStatus.php` | DRAFT, ORDERED, RECEIVED, CANCELLED |
 | `CustomerType` | `app/Enums/CustomerType.php` | INDIVIDUAL, COMPANY |

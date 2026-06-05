@@ -5,6 +5,7 @@ namespace App\Http\Controllers;
 use App\DataTables\PurchaseDataTable;
 use App\Enums\Module;
 use App\Enums\PurchaseStatus;
+use App\Enums\InventorySource;
 use App\Helpers\Encryption;
 use App\Http\Requests\PurchaseRequest;
 use App\Models\Product;
@@ -213,7 +214,7 @@ class PurchaseController extends BaseController
                     unitCost:    $unitCost,
                     quantity:    $detail->quantity,
                     receivedAt:  $purchase->purchase_date,
-                    source:      'PURCHASE',
+                    source:      InventorySource::PURCHASE,
                     referenceId: $purchase->id,
                     notes:       'Purchase #' . $purchase->code,
                 );

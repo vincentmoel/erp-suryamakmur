@@ -2,6 +2,7 @@
 
 namespace App\Services;
 
+use App\Enums\InventorySource;
 use App\Models\Inventory;
 use App\Models\InventoryDetail;
 use App\Models\InventoryLog;
@@ -19,7 +20,7 @@ class InventoryService
         int $unitCost,
         int $quantity,
         \DateTimeInterface|string $receivedAt,
-        string $source,
+        InventorySource $source,
         int $referenceId,
         ?string $notes = null,
     ): InventoryDetail {
@@ -36,7 +37,7 @@ class InventoryService
 
         InventoryLog::create([
             'inventory_detail_id' => $inventoryDetail->id,
-            'source'              => $source,
+            'source'              => $source->value,
             'reference_id'        => $referenceId,
             'quantity'            => $quantity,
             'balance_after'       => $quantity,
@@ -55,7 +56,7 @@ class InventoryService
     public static function deductStock(
         int $productId,
         int $quantity,
-        string $source,
+        InventorySource $source,
         int $referenceId,
         ?string $notes = null,
     ): void {
@@ -75,7 +76,7 @@ class InventoryService
 
             InventoryLog::create([
                 'inventory_detail_id' => $batch->id,
-                'source'              => $source,
+                'source'              => $source->value,
                 'reference_id'        => $referenceId,
                 'quantity'            => -$deduct,
                 'balance_after'       => $batch->quantity,
