@@ -26,6 +26,8 @@
                 <th>Type</th>
                 <th>Email</th>
                 <th>Phone</th>
+                <th>Mobile</th>
+                <th>Status</th>
                 <th>Created At</th>
                 <th></th>
             </x-slot>
@@ -39,6 +41,24 @@
     <script src="https://cdn.datatables.net/2.1.8/js/dataTables.min.js"></script>
     <script src="{{ asset('src/js/datatable.js') }}"></script>
     <script>
+        $(document).on('click', '[data-slot="switch"][data-toggle-url]', function () {
+            const btn   = $(this);
+            const thumb = btn.find('[data-slot="switch-thumb"]');
+            const label = btn.closest('.flex').find('.toggle-label');
+
+            $.ajax({
+                url: btn.data('toggle-url'),
+                type: 'PATCH',
+                headers: { 'X-CSRF-TOKEN': $('meta[name="csrf-token"]').attr('content') },
+                success: function (res) {
+                    const state = res.data.is_active ? 'checked' : 'unchecked';
+                    btn.attr('data-state', state);
+                    thumb.attr('data-state', state);
+                    label.text(res.data.is_active ? 'Active' : 'Inactive');
+                },
+            });
+        });
+
         initDataTable({
             tableId: 'customers-table',
             ajaxUrl: '{{ route('customers.index') }}',
@@ -50,35 +70,14 @@
                     searchable: false,
                     className: 'dt-cell-index dt-center'
                 },
-                {
-                    data: 'name',
-                    name: 'name'
-                },
-                {
-                    data: 'type',
-                    name: 'type'
-                },
-                {
-                    data: 'email',
-                    name: 'email',
-                    className: 'dt-cell-muted'
-                },
-                {
-                    data: 'phone',
-                    name: 'phone',
-                    className: 'dt-cell-muted'
-                },
-                {
-                    data: 'created_at',
-                    name: 'created_at',
-                    className: 'dt-cell-muted'
-                },
-                {
-                    data: 'action',
-                    name: 'action',
-                    orderable: false,
-                    searchable: false
-                },
+                { data: 'name', name: 'name' },
+                { data: 'type', name: 'type' },
+                { data: 'email', name: 'email', className: 'dt-cell-muted' },
+                { data: 'phone', name: 'phone', className: 'dt-cell-muted' },
+                { data: 'mobile', name: 'mobile', className: 'dt-cell-muted' },
+                { data: 'is_active', name: 'is_active', orderable: false, searchable: false },
+                { data: 'created_at', name: 'created_at', className: 'dt-cell-muted' },
+                { data: 'action', name: 'action', orderable: false, searchable: false },
             ],
         });
     </script>

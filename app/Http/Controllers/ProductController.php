@@ -5,6 +5,7 @@ namespace App\Http\Controllers;
 use App\DataTables\ProductDataTable;
 use App\Enums\Module;
 use App\Helpers\Encryption;
+use App\Http\Controllers\Traits\IsActive;
 use App\Helpers\FileManager;
 use App\Http\Requests\ProductRequest;
 use App\Models\Category;
@@ -14,6 +15,7 @@ use Illuminate\Http\Request;
 
 class ProductController extends BaseController
 {
+    use IsActive;
     public function __construct()
     {
         parent::__construct(
@@ -84,8 +86,8 @@ class ProductController extends BaseController
         }
 
         return response()->json([
-            'unit'            => $product->unit?->name,
-            'stock_available' => $product->stock_available,
+            'unit'          => $product->unit?->name,
+            'selling_price' => $product->selling_price,
         ]);
     }
 

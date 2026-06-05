@@ -9,6 +9,10 @@ class Product extends BaseModel
 {
     use SoftDeletes;
 
+    protected $casts = [
+        'is_active' => 'boolean',
+    ];
+
     public function category(): BelongsTo
     {
         return $this->belongsTo(Category::class);

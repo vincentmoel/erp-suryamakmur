@@ -5,12 +5,14 @@ namespace App\Http\Controllers;
 use App\DataTables\CustomerDataTable;
 use App\Enums\CustomerType;
 use App\Enums\Module;
+use App\Http\Controllers\Traits\IsActive;
 use App\Http\Requests\CustomerRequest;
 use App\Models\Customer;
 use Illuminate\Http\Request;
 
 class CustomerController extends BaseController
 {
+    use IsActive;
     public function __construct()
     {
         parent::__construct(

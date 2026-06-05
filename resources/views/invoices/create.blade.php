@@ -249,35 +249,6 @@
         }
     })();
 
-    // ── Helpers ───────────────────────────────────────────────
-    function fmt(n) {
-        return 'Rp ' + Number(n || 0).toLocaleString('id-ID');
-    }
-
-    /** Parse a formatted money string back to integer */
-    function parseMoney(str) {
-        return parseInt((str || '').replace(/\D/g, ''), 10) || 0;
-    }
-
-    /** Format as thousands while typing; update paired hidden input */
-    function bindMoneyInput(displayEl, hiddenEl) {
-        // Restore existing value on load
-        var init = parseInt(hiddenEl.value, 10);
-        if (init) displayEl.value = init.toLocaleString('id-ID');
-
-        displayEl.addEventListener('input', function () {
-            var raw  = parseMoney(this.value);
-            var cur  = this.selectionStart;
-            var prev = this.value.length;
-            this.value = raw ? raw.toLocaleString('id-ID') : '';
-            // keep cursor roughly in place
-            var diff = this.value.length - prev;
-            this.setSelectionRange(cur + diff, cur + diff);
-            hiddenEl.value = raw || '';
-            calcTotals();
-        });
-    }
-
     // ── Combobox builder ──────────────────────────────────────
     var CARET_SVG = '<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="size-4 shrink-0 opacity-50"><path d="m7 15 5 5 5-5"/><path d="m7 9 5-5 5 5"/></svg>';
 
@@ -415,7 +386,7 @@
 
         row.querySelector('.row-subtotal-hidden').value = subtotal;
         row.querySelector('.row-amount-hidden').value   = amount;
-        row.querySelector('.row-amount-display').textContent = fmt(amount);
+        row.querySelector('.row-amount-display').textContent = formatRupiah(amount);
     }
 
     function calcTotals() {
@@ -427,8 +398,8 @@
         var tax      = parseInt(invTax.value) || 0;
         var total    = subtotal - discount + tax;
 
-        document.getElementById('summary-subtotal').textContent = fmt(subtotal);
-        document.getElementById('summary-total').textContent    = fmt(total);
+        document.getElementById('summary-subtotal').textContent = formatRupiah(subtotal);
+        document.getElementById('summary-total').textContent    = formatRupiah(total);
     }
 
     // ── Row builder ───────────────────────────────────────────
@@ -448,21 +419,20 @@
             d.product_id || null,
             'Select product...'
         );
-        var stockInfo = document.createElement('div');
-        stockInfo.className = 'mt-1 text-xs text-muted-foreground';
-        stockInfo.textContent = 'Stock: 0';
+        var unitInfo = document.createElement('div');
+        unitInfo.className = 'mt-1 text-xs text-muted-foreground';
         tdProduct.appendChild(combobox);
-        tdProduct.appendChild(stockInfo);
+        tdProduct.appendChild(unitInfo);
 
         // Wire product change → AJAX
         combobox.querySelector('[data-cb-input]').addEventListener('change', function () {
             var pid = this.value;
-            if (!pid) { stockInfo.textContent = 'Stock: 0'; return; }
+            if (!pid) { unitInfo.textContent = ''; return; }
             fetch(productAjaxUrl.replace('__ID__', pid))
                 .then(function (r) { return r.ok ? r.json() : null; })
                 .then(function (data) {
-                    if (!data) { stockInfo.textContent = 'Stock: 0'; return; }
-                    stockInfo.textContent = 'Stock: ' + data.stock_available + (data.unit ? ' ' + data.unit : '');
+                    if (!data) { unitInfo.textContent = ''; return; }
+                    unitInfo.textContent = data.unit ? data.unit : '';
                 });
         });
 
@@ -499,7 +469,7 @@
             '<input type="hidden" name="details[' + i + '][subtotal_amount]" class="row-subtotal-hidden" value="' + (d.subtotal_amount || 0) + '">' +
             '<input type="hidden" name="details[' + i + '][amount]" class="row-amount-hidden" value="' + (d.amount || 0) + '">' +
             '<div class="h-9 flex items-center justify-end">' +
-                '<span class="row-amount-display font-medium tabular-nums">' + fmt(d.amount || 0) + '</span>' +
+                '<span class="row-amount-display font-medium tabular-nums">' + formatRupiah(d.amount || 0) + '</span>' +
             '</div>';
 
         // Remove
@@ -557,8 +527,8 @@
     addBtn.addEventListener('click', function () { addRow(); });
 
     // Bind invoice-level money inputs
-    bindMoneyInput(document.getElementById('inv-discount-display'), invDisc);
-    bindMoneyInput(document.getElementById('inv-tax-display'), invTax);
+    bindMoneyInput(document.getElementById('inv-discount-display'), invDisc, calcTotals);
+    bindMoneyInput(document.getElementById('inv-tax-display'), invTax, calcTotals);
 
     // Init rows
     @if(old('details'))

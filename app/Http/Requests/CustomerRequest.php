@@ -38,6 +38,7 @@ class CustomerRequest extends FormRequest
             'phone'        => 'nullable|max:50',
             'mobile'       => 'nullable|max:50',
             'notes'        => 'nullable',
+            'is_active'    => 'boolean',
         ];
     }
 

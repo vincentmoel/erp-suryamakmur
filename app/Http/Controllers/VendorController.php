@@ -5,6 +5,7 @@ namespace App\Http\Controllers;
 use App\DataTables\VendorDataTable;
 use App\Enums\Module;
 use App\Enums\VendorType;
+use App\Http\Controllers\Traits\IsActive;
 use App\Helpers\CodeGenerator;
 use App\Helpers\Encryption;
 use App\Http\Requests\VendorRequest;
@@ -12,6 +13,7 @@ use App\Models\Vendor;
 
 class VendorController extends BaseController
 {
+    use IsActive;
     public function __construct()
     {
         parent::__construct(

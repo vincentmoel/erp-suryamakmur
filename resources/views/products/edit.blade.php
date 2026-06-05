@@ -37,23 +37,42 @@
                         </x-form.field>
                     </div>
 
-                    {{-- Category --}}
-                    <x-form.field name="category_id" label="Category">
-                        <x-form.single-select
-                            name="category_id"
-                            placeholder="Select category..."
-                            :selected="old('category_id', $data->category_id)"
-                            :options="$categories->map(fn($c) => ['value' => $c->id, 'label' => $c->name])->toArray()" />
-                    </x-form.field>
-
-                    {{-- Unit & Stock Minimum --}}
+                    {{-- Category & Unit --}}
                     <div class="grid grid-cols-1 gap-6 sm:grid-cols-2">
+                        <x-form.field name="category_id" label="Category">
+                            <x-form.single-select
+                                name="category_id"
+                                placeholder="Select category..."
+                                :selected="old('category_id', $data->category_id)"
+                                :options="$categories->map(fn($c) => ['value' => $c->id, 'label' => $c->name])->toArray()" />
+                        </x-form.field>
+
                         <x-form.field name="unit_id" label="Unit" :required="true">
                             <x-form.single-select
                                 name="unit_id"
                                 placeholder="Select unit..."
                                 :selected="old('unit_id', $data->unit_id)"
                                 :options="$units->map(fn($u) => ['value' => $u->id, 'label' => $u->name])->toArray()" />
+                        </x-form.field>
+                    </div>
+
+                    {{-- Selling Price & Stock Minimum --}}
+                    <div class="grid grid-cols-1 gap-6 sm:grid-cols-2">
+                        <x-form.field name="selling_price" label="Selling Price" :required="true">
+                            <div data-slot="input-group" role="group"
+                                 class="group/input-group relative flex w-full items-center rounded-md border border-input shadow-xs h-9 min-w-0 has-[[data-slot=input-group-control]:focus-visible]:border-ring has-[[data-slot=input-group-control]:focus-visible]:ring-[3px] has-[[data-slot=input-group-control]:focus-visible]:ring-ring/50 {{ $errors->has('selling_price') ? 'border-destructive' : '' }}">
+                                <div role="group" data-slot="input-group-addon" data-align="inline-start"
+                                     class="order-first pl-3 flex h-auto cursor-text items-center justify-center gap-2 py-1.5 text-sm font-medium text-muted-foreground select-none">
+                                    Rp
+                                </div>
+                                <input data-slot="input-group-control"
+                                       data-money-display="selling_price"
+                                       type="text"
+                                       inputmode="numeric"
+                                       placeholder="0"
+                                       class="flex-1 rounded-none border-0 bg-transparent shadow-none focus-visible:ring-0 dark:bg-transparent h-full px-2 text-sm outline-none">
+                                <input type="hidden" name="selling_price" id="selling_price" value="{{ old('selling_price', $data->selling_price) }}">
+                            </div>
                         </x-form.field>
 
                         <x-form.field name="stock_minimum" label="Stock Minimum" :required="true">
@@ -83,6 +102,9 @@
                             :max-size-mb="2"
                             :preview="$data->image ? asset('storage/' . $data->image) : null" />
                     </x-form.field>
+
+                    {{-- Status --}}
+                    {!! \App\Helpers\HtmlBuilder::toggle((bool) old('is_active', $data->is_active ? '1' : '0'), inputId: 'is_active_hidden') !!}
 
                 </div>
 

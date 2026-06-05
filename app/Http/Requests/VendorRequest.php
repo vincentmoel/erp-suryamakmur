@@ -33,10 +33,9 @@ class VendorRequest extends FormRequest
             'code'                => 'nullable|string|max:50|unique:vendors,code',
             'type'                => ['required', Rule::enum(VendorType::class)],
             'name'                => 'required|min:2|max:255',
-            'npwp'                => 'nullable|max:30',
+            'tax_number'          => 'nullable|max:30',
             'phone'               => 'nullable|max:50',
             'email'               => 'nullable|email|max:255',
-            'website'             => 'nullable|url|max:255',
             'contact_person'      => 'nullable|max:255',
             'address'             => 'nullable',
             'city'                => 'nullable|max:100',
@@ -46,6 +45,7 @@ class VendorRequest extends FormRequest
             'bank_account_number' => 'nullable|max:50',
             'bank_account_name'   => 'nullable|max:255',
             'notes'               => 'nullable',
+            'is_active'           => 'boolean',
         ];
     }
 

@@ -10,6 +10,7 @@ class Customer extends BaseModel
     use SoftDeletes;
 
     protected $casts = [
-        'type' => CustomerType::class,
+        'type'      => CustomerType::class,
+        'is_active' => 'boolean',
     ];
 }

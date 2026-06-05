@@ -64,26 +64,16 @@ class InvoiceController extends BaseController
         $data = $formRequest->validated();
 
         DB::transaction(function () use ($data) {
-            $subtotalAmount = collect($data['details'])->sum('amount');
-            $discountAmount = $data['discount_amount'] ?? null;
-            $taxAmount      = $data['tax_amount'] ?? null;
-
-            $amount = $subtotalAmount
-                - ($discountAmount ?? 0)
-                + ($taxAmount ?? 0);
-
             $invoice = Invoice::create([
-                'code'             => CodeGenerator::invoice(),
-                'customer_id'      => $data['customer_id'],
-                'salesperson_id'   => $data['salesperson_id'],
-                'invoice_date'     => $data['invoice_date'],
-                'due_date'         => $data['due_date'] ?? null,
-                'subtotal_amount'  => $subtotalAmount,
-                'discount_amount'  => $discountAmount,
-                'tax_amount'       => $taxAmount,
-                'amount'           => $amount,
-                'paid_amount'      => 0,
-                'status'           => $data['status'],
+                'code'            => CodeGenerator::invoice(),
+                'customer_id'     => $data['customer_id'],
+                'salesperson_id'  => $data['salesperson_id'],
+                'invoice_date'    => $data['invoice_date'],
+                'due_date'        => $data['due_date'] ?? null,
+                'discount_amount' => $data['discount_amount'] ?? null,
+                'tax_amount'      => $data['tax_amount'] ?? null,
+                'paid_amount'     => 0,
+                'status'          => $data['status'],
             ]);
 
             foreach ($data['details'] as $detail) {
@@ -93,7 +83,6 @@ class InvoiceController extends BaseController
                     'product_id'      => $detail['product_id'],
                     'quantity'        => $detail['quantity'],
                     'unit_price'      => $detail['unit_price'],
-                    'subtotal_amount' => $detail['subtotal_amount'],
                     'discount_amount' => $detail['discount_amount'] ?? null,
                     'tax_amount'      => $detail['tax_amount'] ?? null,
                     'amount'          => $detail['amount'],
@@ -163,23 +152,13 @@ class InvoiceController extends BaseController
         $data = $formRequest->validated();
 
         DB::transaction(function () use ($invoice, $data) {
-            $subtotalAmount = collect($data['details'])->sum('amount');
-            $discountAmount = $data['discount_amount'] ?? null;
-            $taxAmount      = $data['tax_amount'] ?? null;
-
-            $amount = $subtotalAmount
-                - ($discountAmount ?? 0)
-                + ($taxAmount ?? 0);
-
             $invoice->update([
                 'customer_id'     => $data['customer_id'],
                 'salesperson_id'  => $data['salesperson_id'],
                 'invoice_date'    => $data['invoice_date'],
                 'due_date'        => $data['due_date'] ?? null,
-                'subtotal_amount' => $subtotalAmount,
-                'discount_amount' => $discountAmount,
-                'tax_amount'      => $taxAmount,
-                'amount'          => $amount,
+                'discount_amount' => $data['discount_amount'] ?? null,
+                'tax_amount'      => $data['tax_amount'] ?? null,
                 'status'          => $data['status'],
             ]);
 
@@ -192,7 +171,6 @@ class InvoiceController extends BaseController
                     'product_id'      => $detail['product_id'],
                     'quantity'        => $detail['quantity'],
                     'unit_price'      => $detail['unit_price'],
-                    'subtotal_amount' => $detail['subtotal_amount'],
                     'discount_amount' => $detail['discount_amount'] ?? null,
                     'tax_amount'      => $detail['tax_amount'] ?? null,
                     'amount'          => $detail['amount'],

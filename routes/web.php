@@ -116,6 +116,7 @@ Route::group(['middleware' => ['revalidate']], function () {
             Route::patch('/{encryptedId}', 'update')->name('update')->middleware("check.permission:$module,update");
             Route::get('/{encryptedId}/edit', 'edit')->name('edit')->middleware("check.permission:$module,update");
             Route::delete('/{encryptedId}/destroy', 'destroy')->name('destroy')->middleware("check.permission:$module,delete");
+            Route::patch('/{encryptedId}/toggle-active', 'toggleActive')->name('toggleActive')->middleware("check.permission:$module,update");
         });
 
         // =============== PRODUCT =============== \\
@@ -131,6 +132,7 @@ Route::group(['middleware' => ['revalidate']], function () {
             Route::patch('/{encryptedId}', 'update')->name('update')->middleware("check.permission:$module,update");
             Route::get('/{encryptedId}/edit', 'edit')->name('edit')->middleware("check.permission:$module,update");
             Route::delete('/{encryptedId}/destroy', 'destroy')->name('destroy')->middleware("check.permission:$module,delete");
+            Route::patch('/{encryptedId}/toggle-active', 'toggleActive')->name('toggleActive')->middleware("check.permission:$module,update");
         });
 
         // =============== INVOICE =============== \\
@@ -162,6 +164,7 @@ Route::group(['middleware' => ['revalidate']], function () {
             Route::patch('/{encryptedId}', 'update')->name('update')->middleware("check.permission:$module,update");
             Route::get('/{encryptedId}/edit', 'edit')->name('edit')->middleware("check.permission:$module,update");
             Route::delete('/{encryptedId}/destroy', 'destroy')->name('destroy')->middleware("check.permission:$module,delete");
+            Route::patch('/{encryptedId}/toggle-active', 'toggleActive')->name('toggleActive')->middleware("check.permission:$module,update");
         });
 
         Route::post('logout', [AuthController::class, 'logout'])->name('logout');

@@ -31,4 +31,46 @@ class CodeGenerator
 
         return $prefix . str_pad($next, 4, '0', STR_PAD_LEFT);
     }
+
+    public static function purchase(): string
+    {
+        $prefix = 'PUR-' . now()->format('Ym') . '-';
+
+        $last = \App\Models\Purchase::withTrashed()
+            ->where('code', 'like', $prefix . '%')
+            ->orderByDesc('code')
+            ->value('code');
+
+        $next = $last ? ((int) substr($last, strlen($prefix))) + 1 : 1;
+
+        return $prefix . str_pad($next, 4, '0', STR_PAD_LEFT);
+    }
+
+    public static function receipt(): string
+    {
+        $prefix = 'RCP-' . now()->format('Ym') . '-';
+
+        $last = \App\Models\Receipt::withTrashed()
+            ->where('code', 'like', $prefix . '%')
+            ->orderByDesc('code')
+            ->value('code');
+
+        $next = $last ? ((int) substr($last, strlen($prefix))) + 1 : 1;
+
+        return $prefix . str_pad($next, 4, '0', STR_PAD_LEFT);
+    }
+
+    public static function salesReturn(): string
+    {
+        $prefix = 'RTN-' . now()->format('Ym') . '-';
+
+        $last = \App\Models\SalesReturn::withTrashed()
+            ->where('code', 'like', $prefix . '%')
+            ->orderByDesc('code')
+            ->value('code');
+
+        $next = $last ? ((int) substr($last, strlen($prefix))) + 1 : 1;
+
+        return $prefix . str_pad($next, 4, '0', STR_PAD_LEFT);
+    }
 }

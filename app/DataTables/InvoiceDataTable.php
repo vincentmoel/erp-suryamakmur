@@ -22,7 +22,7 @@ class InvoiceDataTable extends BaseDataTable
 
     public function query(): QueryBuilder
     {
-        return Invoice::with('customer', 'salesperson')->latest()->newQuery();
+        return Invoice::with('customer', 'salesperson')->withSum('details', 'amount')->latest()->newQuery();
     }
 
     public function dataTable(QueryBuilder $query): EloquentDataTable

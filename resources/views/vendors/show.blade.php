@@ -29,15 +29,15 @@
                 </div>
             </div>
 
-            {{-- Name & NPWP --}}
+            {{-- Name & Tax Number --}}
             <div class="grid grid-cols-1 gap-0 divide-y border-t sm:grid-cols-2 sm:divide-y-0 sm:divide-x">
                 <div class="flex flex-col gap-1 px-6 py-4">
                     <span class="text-xs font-medium text-muted-foreground uppercase tracking-wide">Name</span>
                     <span class="text-sm font-medium">{{ $data->name }}</span>
                 </div>
                 <div class="flex flex-col gap-1 px-6 py-4">
-                    <span class="text-xs font-medium text-muted-foreground uppercase tracking-wide">NPWP</span>
-                    <span class="text-sm font-medium">{{ $data->npwp ?? '-' }}</span>
+                    <span class="text-xs font-medium text-muted-foreground uppercase tracking-wide">Tax Number</span>
+                    <span class="text-sm font-medium">{{ $data->tax_number ?? '-' }}</span>
                 </div>
             </div>
 
@@ -53,15 +53,19 @@
                 </div>
             </div>
 
-            {{-- Website & Contact Person --}}
+            {{-- Contact Person & Status --}}
             <div class="grid grid-cols-1 gap-0 divide-y border-t sm:grid-cols-2 sm:divide-y-0 sm:divide-x">
-                <div class="flex flex-col gap-1 px-6 py-4">
-                    <span class="text-xs font-medium text-muted-foreground uppercase tracking-wide">Website</span>
-                    <span class="text-sm font-medium">{{ $data->website ?? '-' }}</span>
-                </div>
                 <div class="flex flex-col gap-1 px-6 py-4">
                     <span class="text-xs font-medium text-muted-foreground uppercase tracking-wide">Contact Person</span>
                     <span class="text-sm font-medium">{{ $data->contact_person ?? '-' }}</span>
+                </div>
+                <div class="flex flex-col gap-1 px-6 py-4">
+                    <span class="text-xs font-medium text-muted-foreground uppercase tracking-wide">Status</span>
+                    @if($data->is_active)
+                        <span class="inline-flex w-fit items-center rounded-full bg-green-100 px-2.5 py-0.5 text-xs font-medium text-green-800 dark:bg-green-900/30 dark:text-green-400">Active</span>
+                    @else
+                        <span class="inline-flex w-fit items-center rounded-full bg-muted px-2.5 py-0.5 text-xs font-medium text-muted-foreground">Inactive</span>
+                    @endif
                 </div>
             </div>
 

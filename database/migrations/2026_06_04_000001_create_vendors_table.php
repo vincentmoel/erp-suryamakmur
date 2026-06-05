@@ -13,10 +13,9 @@ return new class extends Migration
             $table->string('code')->unique();
             $table->string('type');
             $table->string('name');
-            $table->string('npwp')->nullable();
+            $table->string('tax_number')->nullable();
             $table->string('phone')->nullable();
             $table->string('email')->nullable();
-            $table->string('website')->nullable();
             $table->string('contact_person')->nullable();
             $table->text('address')->nullable();
             $table->string('city')->nullable();
@@ -26,6 +25,7 @@ return new class extends Migration
             $table->string('bank_account_number')->nullable();
             $table->string('bank_account_name')->nullable();
             $table->text('notes')->nullable();
+            $table->boolean('is_active')->default(true);
             $table->foreignId('created_by')->nullable()->constrained('users')->nullOnDelete();
             $table->foreignId('updated_by')->nullable()->constrained('users')->nullOnDelete();
             $table->timestamps();

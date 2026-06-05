@@ -11,7 +11,8 @@ class Vendor extends BaseModel
     use SoftDeletes;
 
     protected $casts = [
-        'type' => VendorType::class,
+        'type'      => VendorType::class,
+        'is_active' => 'boolean',
     ];
 
     protected static function booted(): void

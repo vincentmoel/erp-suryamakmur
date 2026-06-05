@@ -53,15 +53,23 @@
                         </x-form.field>
                     </div>
 
-                    {{-- Opening Stock & Minimum Stock --}}
+                    {{-- Selling Price & Stock Minimum --}}
                     <div class="grid grid-cols-1 gap-6 sm:grid-cols-2">
-                        <x-form.field name="stock_available" label="Opening Stock" :required="true">
-                            <input id="stock_available"
-                                   type="number"
-                                   name="stock_available"
-                                   value="{{ old('stock_available', 0) }}"
-                                   min="0"
-                                   class="input {{ $errors->has('stock_available') ? 'border-destructive' : '' }}">
+                        <x-form.field name="selling_price" label="Selling Price" :required="true">
+                            <div data-slot="input-group" role="group"
+                                 class="group/input-group relative flex w-full items-center rounded-md border border-input shadow-xs h-9 min-w-0 has-[[data-slot=input-group-control]:focus-visible]:border-ring has-[[data-slot=input-group-control]:focus-visible]:ring-[3px] has-[[data-slot=input-group-control]:focus-visible]:ring-ring/50 {{ $errors->has('selling_price') ? 'border-destructive' : '' }}">
+                                <div role="group" data-slot="input-group-addon" data-align="inline-start"
+                                     class="order-first pl-3 flex h-auto cursor-text items-center justify-center gap-2 py-1.5 text-sm font-medium text-muted-foreground select-none">
+                                    Rp
+                                </div>
+                                <input data-slot="input-group-control"
+                                       data-money-display="selling_price"
+                                       type="text"
+                                       inputmode="numeric"
+                                       placeholder="0"
+                                       class="flex-1 rounded-none border-0 bg-transparent shadow-none focus-visible:ring-0 dark:bg-transparent h-full px-2 text-sm outline-none">
+                                <input type="hidden" name="selling_price" id="selling_price" value="{{ old('selling_price', 0) }}">
+                            </div>
                         </x-form.field>
 
                         <x-form.field name="stock_minimum" label="Stock Minimum" :required="true">
@@ -88,6 +96,9 @@
                     <x-form.field name="image" label="Image">
                         <x-form.file-upload name="image" :max-size-mb="2" />
                     </x-form.field>
+
+                    {{-- Status --}}
+                    {!! \App\Helpers\HtmlBuilder::toggle(old('is_active', '1') === '1', inputId: 'is_active_hidden') !!}
 
                 </div>
 

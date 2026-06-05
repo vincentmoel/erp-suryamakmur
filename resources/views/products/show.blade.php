@@ -45,19 +45,27 @@
                 </div>
             </div>
 
-            <div class="grid grid-cols-1 gap-0 divide-y border-t sm:grid-cols-3 sm:divide-y-0 sm:divide-x">
+            <div class="grid grid-cols-1 gap-0 divide-y border-t sm:grid-cols-2 sm:divide-y-0 sm:divide-x">
                 <div class="flex flex-col gap-1 px-6 py-4">
-                    <span class="text-xs font-medium text-muted-foreground uppercase tracking-wide">Stock Available</span>
-                    <span class="text-sm font-medium">{{ $data->stock_available }}</span>
-                </div>
-                <div class="flex flex-col gap-1 px-6 py-4">
-                    <span class="text-xs font-medium text-muted-foreground uppercase tracking-wide">Stock Reserved</span>
-                    <span class="text-sm font-medium">{{ $data->stock_reserved }}</span>
+                    <span class="text-xs font-medium text-muted-foreground uppercase tracking-wide">Selling Price</span>
+                    <span class="text-sm font-medium">Rp {{ number_format($data->selling_price, 0, ',', '.') }}</span>
                 </div>
                 <div class="flex flex-col gap-1 px-6 py-4">
                     <span class="text-xs font-medium text-muted-foreground uppercase tracking-wide">Stock Minimum</span>
                     <span class="text-sm font-medium">{{ $data->stock_minimum }}</span>
                 </div>
+            </div>
+
+            <div class="grid grid-cols-1 gap-0 divide-y border-t sm:grid-cols-2 sm:divide-y-0 sm:divide-x">
+                <div class="flex flex-col gap-1 px-6 py-4">
+                    <span class="text-xs font-medium text-muted-foreground uppercase tracking-wide">Status</span>
+                    @if($data->is_active)
+                        <span class="inline-flex w-fit items-center rounded-full bg-green-100 px-2.5 py-0.5 text-xs font-medium text-green-800 dark:bg-green-900/30 dark:text-green-400">Active</span>
+                    @else
+                        <span class="inline-flex w-fit items-center rounded-full bg-muted px-2.5 py-0.5 text-xs font-medium text-muted-foreground">Inactive</span>
+                    @endif
+                </div>
+                <div class="flex flex-col gap-1 px-6 py-4"></div>
             </div>
 
             <div class="grid grid-cols-1 gap-0 border-t">

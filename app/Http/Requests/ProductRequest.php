@@ -28,27 +28,25 @@ class ProductRequest extends FormRequest
     public function store(): array
     {
         return [
-            'category_id'     => 'nullable|exists:categories,id',
-            'unit_id'         => 'required|exists:units,id',
-            'name'            => 'required|min:2|max:255',
-            'description'     => 'nullable',
-            'sku'             => 'nullable|max:100',
-            'image'           => 'nullable|image|max:2048',
-            'stock_available' => 'required|integer|min:0',
-            'stock_minimum'   => 'required|integer|min:0',
+            'category_id'   => 'nullable|exists:categories,id',
+            'unit_id'       => 'required|exists:units,id',
+            'sku'           => 'nullable|string|unique:products,sku|max:100',
+            'name'          => 'required|min:2|max:255',
+            'description'   => 'nullable',
+            'selling_price' => 'required|integer|min:0',
+            'image'         => 'nullable|image|max:2048',
+            'stock_minimum' => 'required|integer|min:0',
+            'is_active'     => 'boolean',
         ];
     }
 
     public function update(): array
     {
-        return [
-            'category_id'  => 'nullable|exists:categories,id',
-            'unit_id'      => 'required|exists:units,id',
-            'name'         => 'required|min:2|max:255',
-            'description'  => 'nullable',
-            'sku'          => 'nullable|max:100',
-            'image'        => 'nullable|image|max:2048',
-            'stock_minimum' => 'required|integer|min:0',
-        ];
+        $id = \App\Helpers\Encryption::decrypt(request()->route('encryptedId'));
+
+        return array_merge($this->store(), [
+            'sku'   => 'nullable|string|unique:products,sku,' . $id . '|max:100',
+            'image' => 'nullable|image|max:2048',
+        ]);
     }
 }

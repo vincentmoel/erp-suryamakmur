@@ -26,7 +26,8 @@
                 <th>SKU</th>
                 <th>Category</th>
                 <th>Unit</th>
-                <th>Stock</th>
+                <th>Price</th>
+                <th>Status</th>
                 <th>Created At</th>
                 <th></th>
             </x-slot>
@@ -40,6 +41,24 @@
     <script src="https://cdn.datatables.net/2.1.8/js/dataTables.min.js"></script>
     <script src="{{ asset('src/js/datatable.js') }}"></script>
     <script>
+        $(document).on('click', '[data-slot="switch"][data-toggle-url]', function () {
+            const btn   = $(this);
+            const thumb = btn.find('[data-slot="switch-thumb"]');
+            const label = btn.closest('.flex').find('.toggle-label');
+
+            $.ajax({
+                url: btn.data('toggle-url'),
+                type: 'PATCH',
+                headers: { 'X-CSRF-TOKEN': $('meta[name="csrf-token"]').attr('content') },
+                success: function (res) {
+                    const state = res.data.is_active ? 'checked' : 'unchecked';
+                    btn.attr('data-state', state);
+                    thumb.attr('data-state', state);
+                    label.text(res.data.is_active ? 'Active' : 'Inactive');
+                },
+            });
+        });
+
         initDataTable({
             tableId: 'products-table',
             ajaxUrl: '{{ route('products.index') }}',
@@ -55,7 +74,8 @@
                 { data: 'sku', name: 'sku', className: 'dt-cell-muted' },
                 { data: 'category_id', name: 'category_id', className: 'dt-cell-muted' },
                 { data: 'unit_id', name: 'unit_id', className: 'dt-cell-muted' },
-                { data: 'stock_available', name: 'stock_available', className: 'dt-cell-muted' },
+                { data: 'selling_price', name: 'selling_price', className: 'dt-cell-muted' },
+                { data: 'is_active', name: 'is_active', orderable: false, searchable: false },
                 { data: 'created_at', name: 'created_at', className: 'dt-cell-muted' },
                 { data: 'action', name: 'action', orderable: false, searchable: false },
             ],

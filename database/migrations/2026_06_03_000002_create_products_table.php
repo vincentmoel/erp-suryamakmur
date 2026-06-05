@@ -14,11 +14,11 @@ return new class extends Migration
             $table->foreignId('unit_id')->constrained('units');
             $table->string('name');
             $table->text('description')->nullable();
-            $table->string('sku')->nullable();
+            $table->bigInteger('selling_price')->default(0);
+            $table->string('sku')->nullable()->unique();
             $table->string('image')->nullable();
-            $table->integer('stock_available')->default(0);
-            $table->integer('stock_reserved')->default(0);
             $table->integer('stock_minimum')->default(0);
+            $table->boolean('is_active')->default(true);
             $table->foreignId('created_by')->nullable()->constrained('users')->nullOnDelete();
             $table->foreignId('updated_by')->nullable()->constrained('users')->nullOnDelete();
             $table->timestamps();

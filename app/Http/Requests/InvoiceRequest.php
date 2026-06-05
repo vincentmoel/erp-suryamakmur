@@ -39,7 +39,6 @@ class InvoiceRequest extends FormRequest
             'details.*.product_id'         => ['required', 'exists:products,id'],
             'details.*.quantity'           => ['required', 'integer', 'min:1'],
             'details.*.unit_price'         => ['required', 'integer', 'min:0'],
-            'details.*.subtotal_amount'    => ['required', 'integer', 'min:0'],
             'details.*.discount_amount'    => ['nullable', 'integer', 'min:0'],
             'details.*.tax_amount'         => ['nullable', 'integer', 'min:0'],
             'details.*.amount'             => ['required', 'integer', 'min:0'],

@@ -15,10 +15,8 @@ return new class extends Migration
             $table->foreignId('salesperson_id')->constrained('users')->restrictOnDelete();
             $table->date('invoice_date');
             $table->date('due_date')->nullable();
-            $table->unsignedBigInteger('subtotal_amount')->default(0);
             $table->unsignedBigInteger('discount_amount')->nullable();
             $table->unsignedBigInteger('tax_amount')->nullable();
-            $table->unsignedBigInteger('amount')->default(0);
             $table->unsignedBigInteger('paid_amount')->default(0);
             $table->string('status');
             $table->foreignId('created_by')->nullable()->constrained('users')->nullOnDelete();
@@ -33,7 +31,6 @@ return new class extends Migration
             $table->foreignId('product_id')->nullable()->constrained('products')->nullOnDelete();
             $table->integer('quantity');
             $table->unsignedBigInteger('unit_price');
-            $table->unsignedBigInteger('subtotal_amount');
             $table->unsignedBigInteger('discount_amount')->nullable();
             $table->unsignedBigInteger('tax_amount')->nullable();
             $table->unsignedBigInteger('amount');
