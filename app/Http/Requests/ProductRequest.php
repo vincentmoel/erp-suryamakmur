@@ -28,15 +28,20 @@ class ProductRequest extends FormRequest
     public function store(): array
     {
         return [
-            'category_id'   => 'nullable|exists:categories,id',
-            'unit_id'       => 'required|exists:units,id',
-            'sku'           => 'nullable|string|unique:products,sku|max:100',
-            'name'          => 'required|min:2|max:255',
-            'description'   => 'nullable',
-            'selling_price' => 'required|integer|min:0',
-            'image'         => 'nullable|image|max:2048',
-            'stock_minimum' => 'required|integer|min:0',
-            'is_active'     => 'boolean',
+            'category_id'           => 'nullable|exists:categories,id',
+            'unit_id'               => 'required|exists:units,id',
+            'sku'                   => 'nullable|string|unique:products,sku|max:100',
+            'name'                  => 'required|min:2|max:255',
+            'description'           => 'nullable',
+            'selling_price'         => 'required|integer|min:0',
+            'image'                 => 'nullable|image|max:2048',
+            'stock_minimum'         => 'required|integer|min:0',
+            'is_active'             => 'boolean',
+            'initial_stock_enabled'              => 'boolean',
+            'initial_stocks'                     => 'nullable|array',
+            'initial_stocks.*.received_at'       => 'nullable|date',
+            'initial_stocks.*.unit_cost'         => 'nullable|integer|min:0',
+            'initial_stocks.*.quantity'          => 'nullable|integer|min:1',
         ];
     }
 

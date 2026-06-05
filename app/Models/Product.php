@@ -22,4 +22,9 @@ class Product extends BaseModel
     {
         return $this->belongsTo(Unit::class);
     }
+
+    public function inventory(): \Illuminate\Database\Eloquent\Relations\HasOne
+    {
+        return $this->hasOne(Inventory::class);
+    }
 }
