@@ -58,6 +58,11 @@ return [
         'group' => 'Purchase',
         'children' => [
             [
+                'title' => 'Purchases',
+                'icon'  => 'receipt',
+                'route' => 'purchases.index',
+            ],
+            [
                 'title' => 'Vendors',
                 'icon'  => 'building',
                 'route' => 'vendors.index',

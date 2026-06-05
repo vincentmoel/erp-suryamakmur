@@ -38,4 +38,14 @@ enum PurchaseStatus: string
     {
         return in_array($this, [self::DRAFT, self::ORDERED]);
     }
+
+    public function canReceive(): bool
+    {
+        return in_array($this, [self::DRAFT, self::ORDERED]);
+    }
+
+    public function canCancel(): bool
+    {
+        return in_array($this, [self::DRAFT, self::ORDERED]);
+    }
 }
