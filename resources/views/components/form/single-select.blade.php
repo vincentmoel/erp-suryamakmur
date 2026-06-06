@@ -7,10 +7,7 @@
 ])
 
 @php
-    $uid       = 'ss-' . Str::random(8);
-    $triggerId = $uid . '-trigger';
-    $contentId = $uid . '-content';
-    $searchId  = $uid . '-search';
+    $uid = 'ss-' . Str::random(8);
 
     $oldValue = old($name, $selected);
     $oldValue = $oldValue !== null ? (string) $oldValue : null;
@@ -22,7 +19,6 @@
 
     {{-- Trigger --}}
     <button type="button"
-            id="{{ $triggerId }}"
             aria-expanded="false"
             aria-haspopup="listbox"
             class="select-trigger flex items-center justify-between w-full {{ $errors->has($name) ? 'border-destructive' : '' }}">
@@ -50,13 +46,11 @@
     </button>
 
     {{-- Dropdown --}}
-    <div id="{{ $contentId }}"
-         role="listbox"
-         class="select-content hidden max-h-60 overflow-auto">
+    <div role="listbox" class="select-content hidden max-h-60 overflow-auto">
 
         @if($searchable)
             <div class="px-1 pb-2 sticky top-0 bg-popover">
-                <input id="{{ $searchId }}"
+                <input data-ss-search
                        type="text"
                        placeholder="Search..."
                        autocomplete="off"
@@ -86,123 +80,7 @@
 
 <script>
 (function () {
-    var uid         = {{ Js::from($uid) }};
-    var placeholder = {{ Js::from($placeholder) }};
-
-    var root        = document.querySelector('[data-single-select="' + uid + '"]');
-    if (!root) return;
-
-    var trigger     = document.getElementById({{ Js::from($triggerId) }});
-    var content     = document.getElementById({{ Js::from($contentId) }});
-    var searchInput = document.getElementById({{ Js::from($searchId) }});
-    var labelEl     = root.querySelector('[data-ss-label]');
-    var hiddenInput = root.querySelector('[data-ss-input]');
-    var emptyEl     = root.querySelector('[data-ss-empty]');
-    var clearBtn    = root.querySelector('[data-ss-clear]');
-    var chevron     = root.querySelector('[data-ss-chevron]');
-
-    // ── Chevron rotate ────────────────────────────────────────
-    function setChevron(open) {
-        chevron.style.transform = open ? 'rotate(180deg)' : '';
-    }
-
-    // ── Position & Open/Close ─────────────────────────────────
-    function openDropdown() {
-        var r = trigger.getBoundingClientRect();
-        content.style.top   = (r.bottom + 4) + 'px';
-        content.style.left  = r.left + 'px';
-        content.style.width = r.width + 'px';
-        content.classList.remove('hidden');
-        trigger.setAttribute('aria-expanded', 'true');
-        setChevron(true);
-        if (searchInput) {
-            searchInput.value = '';
-            filterItems('');
-            searchInput.focus();
-        }
-    }
-
-    function closeDropdown() {
-        content.classList.add('hidden');
-        trigger.setAttribute('aria-expanded', 'false');
-        setChevron(false);
-    }
-
-    trigger.addEventListener('click', function (e) {
-        e.stopPropagation();
-        content.classList.contains('hidden') ? openDropdown() : closeDropdown();
-    });
-
-    document.addEventListener('click', function (e) {
-        if (!root.contains(e.target) && !content.contains(e.target)) closeDropdown();
-    });
-
-    window.addEventListener('scroll', function () { if (!content.classList.contains('hidden')) openDropdown(); }, true);
-    window.addEventListener('resize', function () { if (!content.classList.contains('hidden')) closeDropdown(); });
-
-    // ── Clear button ──────────────────────────────────────────
-    if (clearBtn) {
-        clearBtn.addEventListener('click', function (e) {
-            e.stopPropagation();
-            clearSelection();
-            hiddenInput.dispatchEvent(new Event('change'));
-        });
-        clearBtn.addEventListener('keydown', function (e) {
-            if (e.key === 'Enter' || e.key === ' ') { e.preventDefault(); clearBtn.click(); }
-        });
-    }
-
-    function clearSelection() {
-        hiddenInput.value = '';
-        labelEl.textContent = placeholder;
-        labelEl.classList.add('text-muted-foreground');
-        clearBtn && clearBtn.classList.add('hidden');
-        root.querySelectorAll('[data-ss-item]').forEach(function (i) {
-            i.setAttribute('aria-selected', 'false');
-        });
-        closeDropdown();
-    }
-
-    // ── Item select ───────────────────────────────────────────
-    content.addEventListener('click', function (e) {
-        var item = e.target.closest('[data-ss-item]');
-        if (!item) return;
-        e.stopPropagation();
-
-        root.querySelectorAll('[data-ss-item]').forEach(function (i) {
-            i.setAttribute('aria-selected', 'false');
-        });
-
-        var value = item.dataset.value;
-        var label = item.dataset.label;
-
-        item.setAttribute('aria-selected', 'true');
-        hiddenInput.value = value;
-        labelEl.textContent = label;
-        labelEl.classList.remove('text-muted-foreground');
-        clearBtn && clearBtn.classList.remove('hidden');
-
-        hiddenInput.dispatchEvent(new Event('change'));
-        closeDropdown();
-    });
-
-    // ── Search ────────────────────────────────────────────────
-    function filterItems(query) {
-        var q = query.toLowerCase();
-        var visible = 0;
-        root.querySelectorAll('[data-ss-item]').forEach(function (item) {
-            var match = item.dataset.label.toLowerCase().includes(q);
-            item.style.display = match ? '' : 'none';
-            if (match) visible++;
-        });
-        if (emptyEl) {
-            visible === 0 ? emptyEl.classList.remove('hidden') : emptyEl.classList.add('hidden');
-        }
-    }
-
-    if (searchInput) {
-        searchInput.addEventListener('input', function () { filterItems(searchInput.value); });
-        searchInput.addEventListener('click', function (e) { e.stopPropagation(); });
-    }
+    var root = document.querySelector('[data-single-select="{{ $uid }}"]');
+    if (root) initSingleSelect(root, {{ Js::from($placeholder) }});
 })();
 </script>

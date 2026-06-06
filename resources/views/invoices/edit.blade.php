@@ -110,6 +110,48 @@
                     </table>
                 </div>
 
+                {{-- Row template (cloned by JS, never displayed) --}}
+                <template id="row-tpl">
+                    <tr class="border-b last:border-0">
+                        <td class="px-4 py-3">
+                            <x-form.single-select
+                                name="details[__INDEX__][product_id]"
+                                :options="$productOptions"
+                                :placeholder="__('general.select_product_placeholder')" />
+                            <div class="mt-1 text-xs text-muted-foreground row-unit-info"></div>
+                        </td>
+                        <td class="px-4 py-3">
+                            <input type="number" name="details[__INDEX__][quantity]" class="input row-qty text-right" min="1" value="1" required>
+                        </td>
+                        <td class="px-4 py-3">
+                            <input type="text" class="input row-price-display text-right" placeholder="0" autocomplete="off">
+                            <input type="hidden" name="details[__INDEX__][unit_price]" class="row-price" value="">
+                        </td>
+                        <td class="px-4 py-3">
+                            <input type="text" class="input row-discount-display text-right" placeholder="0" autocomplete="off">
+                            <input type="hidden" name="details[__INDEX__][discount_amount]" class="row-discount" value="">
+                        </td>
+                        <td class="px-4 py-3">
+                            <input type="text" class="input row-tax-display text-right" placeholder="0" autocomplete="off">
+                            <input type="hidden" name="details[__INDEX__][tax_amount]" class="row-tax" value="">
+                        </td>
+                        <td class="px-4 py-3 text-right">
+                            <input type="hidden" name="details[__INDEX__][subtotal_amount]" class="row-subtotal-hidden" value="0">
+                            <input type="hidden" name="details[__INDEX__][amount]" class="row-amount-hidden" value="0">
+                            <div class="h-9 flex items-center justify-end">
+                                <span class="row-amount-display font-medium tabular-nums">Rp 0</span>
+                            </div>
+                        </td>
+                        <td class="px-4 py-3 text-center">
+                            <div class="h-9 flex items-center justify-center">
+                                <button type="button" class="btn-remove text-destructive transition-colors">
+                                    <x-icon name="close" class="size-4" />
+                                </button>
+                            </div>
+                        </td>
+                    </tr>
+                </template>
+
                 @error('details')
                     <p class="px-6 py-2 text-sm text-destructive">{{ $message }}</p>
                 @enderror
@@ -249,131 +291,14 @@
     })();
 
 
-    // ── Combobox builder ──────────────────────────────────────
-    var CARET_SVG = '<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="size-4 shrink-0 opacity-50"><path d="m7 15 5 5 5-5"/><path d="m7 9 5-5 5 5"/></svg>';
-
-    function buildCombobox(name, options, selectedValue, placeholder) {
-        var wrap = document.createElement('div');
-        wrap.className = 'relative';
-
-        var selectedLabel = '';
-        if (selectedValue) {
-            var found = options.find(function(o) { return String(o.value) === String(selectedValue); });
-            if (found) selectedLabel = found.label;
-        }
-
-        var itemsHtml = options.map(function (o) {
-            var sel = selectedValue && String(o.value) === String(selectedValue);
-            return '<div role="option" data-cb-item data-value="' + o.value + '" data-label="' + escAttr(o.label) + '"' +
-                   (sel ? ' aria-selected="true"' : '') +
-                   ' class="select-item cursor-pointer">' + escHtml(o.label) + '</div>';
-        }).join('');
-
-        wrap.innerHTML =
-            '<button type="button" class="select-trigger flex items-center justify-between w-full" aria-haspopup="listbox" aria-expanded="false">' +
-                '<span data-cb-label class="text-sm ' + (selectedLabel ? '' : 'text-muted-foreground') + '">' +
-                    escHtml(selectedLabel || placeholder) +
-                '</span>' +
-                CARET_SVG +
-            '</button>' +
-            '<div data-cb-content role="listbox" class="select-content hidden max-h-60 overflow-auto">' +
-                '<div class="px-1 pb-1 sticky top-0 bg-popover">' +
-                    '<input type="text" data-cb-search placeholder="{{ __('general.search') }}..." autocomplete="off" class="input h-8 text-sm">' +
-                '</div>' +
-                '<div data-cb-list>' +
-                    '<div role="option" data-cb-item data-value="" data-label="' + escAttr(placeholder) + '" class="select-item cursor-pointer text-muted-foreground">' + escHtml(placeholder) + '</div>' +
-                    itemsHtml +
-                '</div>' +
-                '<p data-cb-empty class="hidden px-2 py-4 text-center text-sm text-muted-foreground">{{ __('general.no_results') }}</p>' +
-            '</div>' +
-            '<input type="hidden" name="' + name + '" data-cb-input value="' + escAttr(selectedValue || '') + '">';
-
-        initCombobox(wrap, placeholder);
-        return wrap;
-    }
-
-    function initCombobox(root, placeholder) {
-        var trigger  = root.querySelector('button[aria-haspopup]');
-        var content  = root.querySelector('[data-cb-content]');
-        var search   = root.querySelector('[data-cb-search]');
-        var labelEl  = root.querySelector('[data-cb-label]');
-        var hiddenIn = root.querySelector('[data-cb-input]');
-        var emptyEl  = root.querySelector('[data-cb-empty]');
-
-        function open() {
-            var r = trigger.getBoundingClientRect();
-            content.style.top   = (r.bottom + 4) + 'px';
-            content.style.left  = r.left + 'px';
-            content.style.width = r.width + 'px';
-            content.classList.remove('hidden');
-            trigger.setAttribute('aria-expanded', 'true');
-            if (search) { search.value = ''; filterItems(''); search.focus(); }
-        }
-        function close() {
-            content.classList.add('hidden');
-            trigger.setAttribute('aria-expanded', 'false');
-        }
-
-        trigger.addEventListener('click', function (e) {
-            e.stopPropagation();
-            content.classList.contains('hidden') ? open() : close();
-        });
-        document.addEventListener('click', function (e) {
-            if (!root.contains(e.target) && !content.contains(e.target)) close();
-        });
-        window.addEventListener('scroll', function () { if (!content.classList.contains('hidden')) open(); }, true);
-        window.addEventListener('resize', function () { if (!content.classList.contains('hidden')) close(); });
-
-        content.addEventListener('click', function (e) {
-            var item = e.target.closest('[data-cb-item]');
-            if (!item) return;
-            e.stopPropagation();
-            root.querySelectorAll('[data-cb-item]').forEach(function (i) { i.setAttribute('aria-selected', 'false'); });
-            var val = item.dataset.value;
-            var lbl = item.dataset.label;
-            if (val === '') {
-                hiddenIn.value = '';
-                labelEl.textContent = placeholder;
-                labelEl.classList.add('text-muted-foreground');
-            } else {
-                item.setAttribute('aria-selected', 'true');
-                hiddenIn.value = val;
-                labelEl.textContent = lbl;
-                labelEl.classList.remove('text-muted-foreground');
-            }
-            hiddenIn.dispatchEvent(new Event('change'));
-            close();
-        });
-
-        function filterItems(q) {
-            q = q.toLowerCase();
-            var visible = 0;
-            root.querySelectorAll('[data-cb-item]').forEach(function (item) {
-                if (item.dataset.value === '') return;
-                var match = item.dataset.label.toLowerCase().includes(q);
-                item.style.display = match ? '' : 'none';
-                if (match) visible++;
-            });
-            if (emptyEl) visible === 0 ? emptyEl.classList.remove('hidden') : emptyEl.classList.add('hidden');
-        }
-
-        if (search) {
-            search.addEventListener('input', function () { filterItems(search.value); });
-            search.addEventListener('click', function (e) { e.stopPropagation(); });
-        }
-    }
-
-    function escAttr(s) { return String(s || '').replace(/"/g, '&quot;'); }
-    function escHtml(s) { return String(s || '').replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;'); }
-
     // ── Row calc ──────────────────────────────────────────────
     var tbody   = document.getElementById('items-tbody');
     var addBtn  = document.getElementById('add-row');
     var invDisc = document.getElementById('inv-discount');
     var invTax  = document.getElementById('inv-tax');
 
-    var productOptions = @json($productOptions);
-    var productAjaxUrl = '{{ route('ajax.products.info', ['id' => '__ID__']) }}';
+    var productOptions   = @json($productOptions);
+    var productAjaxUrl   = '{{ route('ajax.products.info', ['id' => '__ID__']) }}';
     var productPlaceholder = '{{ __('general.select_product_placeholder') }}';
     var rowIndex = 0;
 
@@ -408,82 +333,64 @@
         var i = rowIndex++;
         var d = data || {};
 
-        var tr = document.createElement('tr');
-        tr.className = 'border-b last:border-0';
+        // Clone the Blade-rendered template row
+        var tpl = document.getElementById('row-tpl');
+        var tr  = tpl.content.cloneNode(true).querySelector('tr');
 
-        // Product combobox cell
-        var tdProduct = document.createElement('td');
-        tdProduct.className = 'px-4 py-3';
-        var combobox = buildCombobox(
-            'details[' + i + '][product_id]',
-            productOptions,
-            d.product_id || null,
-            productPlaceholder
-        );
-        var unitInfo = document.createElement('div');
-        unitInfo.className = 'mt-1 text-xs text-muted-foreground';
-        tdProduct.appendChild(combobox);
-        tdProduct.appendChild(unitInfo);
+        // Replace __INDEX__ in all name attributes
+        tr.querySelectorAll('[name*="__INDEX__"]').forEach(function (el) {
+            el.name = el.name.replace(/__INDEX__/g, i);
+        });
 
-        // Wire product change → AJAX
-        combobox.querySelector('[data-cb-input]').addEventListener('change', function () {
+        // Remove scripts cloned from the template — initSingleSelect is called manually below
+        tr.querySelectorAll('script').forEach(function (s) { s.remove(); });
+
+        var selectRoot = tr.querySelector('[data-single-select]');
+
+        // Pre-select product if provided (before append, DOM manipulation only)
+        if (d.product_id) {
+            var hiddenInput = selectRoot.querySelector('[data-ss-input]');
+            var labelEl     = selectRoot.querySelector('[data-ss-label]');
+            var clearBtn    = selectRoot.querySelector('[data-ss-clear]');
+            var found       = productOptions.find(function (o) { return String(o.value) === String(d.product_id); });
+
+            hiddenInput.value = d.product_id;
+            if (found) {
+                labelEl.textContent = found.label;
+                labelEl.classList.remove('text-muted-foreground');
+                if (clearBtn) clearBtn.classList.remove('hidden');
+            }
+            selectRoot.querySelectorAll('[data-ss-item]').forEach(function (item) {
+                item.setAttribute('aria-selected', String(item.dataset.value) === String(d.product_id) ? 'true' : 'false');
+            });
+        }
+
+        // Set initial field values
+        if (d.quantity) tr.querySelector('.row-qty').value = d.quantity;
+        if (d.subtotal_amount) tr.querySelector('.row-subtotal-hidden').value = d.subtotal_amount;
+        if (d.amount) {
+            tr.querySelector('.row-amount-hidden').value = d.amount;
+            tr.querySelector('.row-amount-display').textContent = formatRupiah(d.amount);
+        }
+
+        tbody.appendChild(tr);
+
+        // Init single-select after element is in DOM
+        initSingleSelect(selectRoot, productPlaceholder);
+
+        // Wire product change → AJAX (unit info)
+        var unitInfo = tr.querySelector('.row-unit-info');
+        tr.querySelector('[data-ss-input]').addEventListener('change', function () {
             var pid = this.value;
             if (!pid) { unitInfo.textContent = ''; return; }
             fetch(productAjaxUrl.replace('__ID__', pid))
                 .then(function (r) { return r.ok ? r.json() : null; })
-                .then(function (data) {
-                    if (!data) { unitInfo.textContent = ''; return; }
-                    unitInfo.textContent = data.unit ? data.unit : '';
-                });
+                .then(function (res) { unitInfo.textContent = res && res.unit ? res.unit : ''; });
         });
 
-        // Qty
-        var tdQty = document.createElement('td');
-        tdQty.className = 'px-4 py-3';
-        tdQty.innerHTML = '<input type="number" name="details[' + i + '][quantity]" class="input row-qty text-right" min="1" value="' + (d.quantity || 1) + '" required>';
-
-        // Unit price
-        var tdPrice = document.createElement('td');
-        tdPrice.className = 'px-4 py-3';
-        tdPrice.innerHTML =
-            '<input type="text" class="input row-price-display text-right" placeholder="0" autocomplete="off">' +
-            '<input type="hidden" name="details[' + i + '][unit_price]" class="row-price" value="' + (d.unit_price || '') + '">';
-
-        // Discount
-        var tdDisc = document.createElement('td');
-        tdDisc.className = 'px-4 py-3';
-        tdDisc.innerHTML =
-            '<input type="text" class="input row-discount-display text-right" placeholder="0" autocomplete="off">' +
-            '<input type="hidden" name="details[' + i + '][discount_amount]" class="row-discount" value="' + (d.discount_amount || '') + '">';
-
-        // Tax
-        var tdTax = document.createElement('td');
-        tdTax.className = 'px-4 py-3';
-        tdTax.innerHTML =
-            '<input type="text" class="input row-tax-display text-right" placeholder="0" autocomplete="off">' +
-            '<input type="hidden" name="details[' + i + '][tax_amount]" class="row-tax" value="' + (d.tax_amount || '') + '">';
-
-        // Amount
-        var tdAmt = document.createElement('td');
-        tdAmt.className = 'px-4 py-3 text-right';
-        tdAmt.innerHTML =
-            '<input type="hidden" name="details[' + i + '][subtotal_amount]" class="row-subtotal-hidden" value="' + (d.subtotal_amount || 0) + '">' +
-            '<input type="hidden" name="details[' + i + '][amount]" class="row-amount-hidden" value="' + (d.amount || 0) + '">' +
-            '<div class="h-9 flex items-center justify-end">' +
-                '<span class="row-amount-display font-medium tabular-nums">' + formatRupiah(d.amount || 0) + '</span>' +
-            '</div>';
-
-        // Remove
-        var tdDel = document.createElement('td');
-        tdDel.className = 'px-4 py-3 text-center';
-        tdDel.innerHTML = '<div class="h-9 flex items-center justify-center"><button type="button" class="btn-remove text-destructive transition-colors"><svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="1.5" stroke="currentColor" class="size-4"><path stroke-linecap="round" stroke-linejoin="round" d="M6 18 18 6M6 6l12 12"/></svg></button></div>';
-
-        [tdProduct, tdQty, tdPrice, tdDisc, tdTax, tdAmt, tdDel].forEach(function (td) { tr.appendChild(td); });
-        tbody.appendChild(tr);
-
-        bindRowMoney(tdPrice.querySelector('.row-price-display'), tr.querySelector('.row-price'), d.unit_price, tr);
-        bindRowMoney(tdDisc.querySelector('.row-discount-display'), tr.querySelector('.row-discount'), d.discount_amount, tr);
-        bindRowMoney(tdTax.querySelector('.row-tax-display'), tr.querySelector('.row-tax'), d.tax_amount, tr);
+        bindRowMoney(tr.querySelector('.row-price-display'), tr.querySelector('.row-price'), d.unit_price, tr);
+        bindRowMoney(tr.querySelector('.row-discount-display'), tr.querySelector('.row-discount'), d.discount_amount, tr);
+        bindRowMoney(tr.querySelector('.row-tax-display'), tr.querySelector('.row-tax'), d.tax_amount, tr);
 
         tr.querySelector('.row-qty').addEventListener('input', function () { calcRow(tr); calcTotals(); });
         tr.querySelector('.btn-remove').addEventListener('click', function () { tr.remove(); updateRemoveButtons(); calcTotals(); });
