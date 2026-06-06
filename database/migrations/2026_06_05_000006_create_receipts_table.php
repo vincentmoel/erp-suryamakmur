@@ -11,6 +11,7 @@ return new class extends Migration
         Schema::create('receipts', function (Blueprint $table) {
             $table->id();
             $table->string('code')->unique();
+            $table->foreignId('customer_id')->nullable()->constrained('customers')->nullOnDelete();
             $table->date('receipt_date');
             $table->string('payment_method');
             $table->string('reference_number')->nullable();

@@ -12,13 +12,18 @@ return new class extends Migration
             $table->id();
             $table->string('code')->unique();
             $table->foreignId('customer_id')->constrained('customers')->restrictOnDelete();
+            $table->json('customer_snapshot')->nullable();
             $table->foreignId('salesperson_id')->constrained('users')->restrictOnDelete();
             $table->date('invoice_date');
             $table->date('due_date')->nullable();
+            $table->unsignedBigInteger('subtotal')->default(0);
             $table->unsignedBigInteger('discount_amount')->nullable();
+            $table->decimal('tax_percent', 5, 2)->default(0);
             $table->unsignedBigInteger('tax_amount')->nullable();
+            $table->unsignedBigInteger('grand_total')->default(0);
             $table->unsignedBigInteger('paid_amount')->default(0);
             $table->string('status');
+            $table->text('notes')->nullable();
             $table->foreignId('created_by')->nullable()->constrained('users')->nullOnDelete();
             $table->foreignId('updated_by')->nullable()->constrained('users')->nullOnDelete();
             $table->timestamps();
@@ -32,7 +37,9 @@ return new class extends Migration
             $table->integer('quantity');
             $table->unsignedBigInteger('unit_price');
             $table->unsignedBigInteger('discount_amount')->nullable();
+            $table->decimal('tax_percent', 5, 2)->default(0);
             $table->unsignedBigInteger('tax_amount')->nullable();
+            $table->unsignedBigInteger('subtotal')->default(0);
             $table->unsignedBigInteger('amount');
             $table->json('product_snapshot');
         });
