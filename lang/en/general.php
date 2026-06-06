@@ -173,7 +173,7 @@ return [
     'items'                           => 'Items',
     'add_item'                        => 'Add Item',
     'product'                         => 'Product',
-    'unit_price'                      => 'Unit Price',
+    'unit_price'                      => 'Selling Unit Price',
     'cancel_invoice'                  => 'Cancel Invoice',
     'confirm_cancel_invoice'          => 'Are you sure you want to cancel this invoice? This action cannot be undone.',
     'select_customer_placeholder'     => 'Select customer...',

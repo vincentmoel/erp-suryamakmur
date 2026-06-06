@@ -15,6 +15,7 @@ use App\Models\Inventory;
 use App\Models\Product;
 use App\Models\Unit;
 use App\Services\InventoryService;
+use App\Services\ProductService;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\DB;
 
@@ -118,6 +119,7 @@ class ProductController extends BaseController
         return response()->json([
             'unit'          => $product->unit?->name,
             'selling_price' => $product->selling_price,
+            'stock'         => ProductService::getStock($product->id),
         ]);
     }
 
@@ -154,17 +156,10 @@ class ProductController extends BaseController
             return Response::build(404, 'Product not found');
         }
 
-        $batches = Inventory::without('user_created_by', 'user_updated_by')
-            ->select('inventories.unit_cost', DB::raw('SUM(invd.quantity) as qty'))
-            ->join('inventory_details as invd', 'inventories.id', '=', 'invd.inventory_id')
-            ->where('inventories.product_id', $id)
-            ->groupBy('inventories.unit_cost')
-            ->orderBy('inventories.unit_cost')
-            ->having('qty', '>', 0)
-            ->get()
+        $batches = ProductService::getStockByUnitCost($id)
             ->map(fn($row) => [
                 'unit_cost'      => $row->unit_cost,
-                'total_quantity' => (int) $row->qty,
+                'total_quantity' => (int) $row->quantity,
             ]);
 
         return Response::build(200, 'OK', [

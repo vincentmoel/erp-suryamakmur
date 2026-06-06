@@ -125,15 +125,24 @@
                             <input type="number" name="details[__INDEX__][quantity]" class="input row-qty text-right" min="1" value="1" required>
                         </td>
                         <td class="px-4 py-3">
-                            <input type="text" class="input row-price-display text-right" placeholder="0" autocomplete="off">
+                            <div data-slot="input-group" class="group/input-group relative flex w-full items-center rounded-md border border-input shadow-xs h-9 min-w-0 has-[[data-slot=input-group-control]:focus-visible]:border-ring has-[[data-slot=input-group-control]:focus-visible]:ring-[3px] has-[[data-slot=input-group-control]:focus-visible]:ring-ring/50">
+                                <span data-slot="input-group-addon" class="order-first pl-3 flex h-auto items-center text-sm font-medium text-muted-foreground select-none">Rp</span>
+                                <input data-slot="input-group-control" type="text" class="row-price-display flex-1 rounded-none border-0 bg-transparent shadow-none focus-visible:ring-0 h-full px-2 text-sm outline-none text-right" placeholder="0" autocomplete="off">
+                            </div>
                             <input type="hidden" name="details[__INDEX__][unit_price]" class="row-price" value="">
                         </td>
                         <td class="px-4 py-3">
-                            <input type="text" class="input row-discount-display text-right" placeholder="0" autocomplete="off">
+                            <div data-slot="input-group" class="group/input-group relative flex w-full items-center rounded-md border border-input shadow-xs h-9 min-w-0 has-[[data-slot=input-group-control]:focus-visible]:border-ring has-[[data-slot=input-group-control]:focus-visible]:ring-[3px] has-[[data-slot=input-group-control]:focus-visible]:ring-ring/50">
+                                <span data-slot="input-group-addon" class="order-first pl-3 flex h-auto items-center text-sm font-medium text-muted-foreground select-none">Rp</span>
+                                <input data-slot="input-group-control" type="text" class="row-discount-display flex-1 rounded-none border-0 bg-transparent shadow-none focus-visible:ring-0 h-full px-2 text-sm outline-none text-right" placeholder="0" autocomplete="off">
+                            </div>
                             <input type="hidden" name="details[__INDEX__][discount_amount]" class="row-discount" value="">
                         </td>
                         <td class="px-4 py-3">
-                            <input type="text" class="input row-tax-display text-right" placeholder="0" autocomplete="off">
+                            <div data-slot="input-group" class="group/input-group relative flex w-full items-center rounded-md border border-input shadow-xs h-9 min-w-0 has-[[data-slot=input-group-control]:focus-visible]:border-ring has-[[data-slot=input-group-control]:focus-visible]:ring-[3px] has-[[data-slot=input-group-control]:focus-visible]:ring-ring/50">
+                                <span data-slot="input-group-addon" class="order-first pl-3 flex h-auto items-center text-sm font-medium text-muted-foreground select-none">Rp</span>
+                                <input data-slot="input-group-control" type="text" class="row-tax-display flex-1 rounded-none border-0 bg-transparent shadow-none focus-visible:ring-0 h-full px-2 text-sm outline-none text-right" placeholder="0" autocomplete="off">
+                            </div>
                             <input type="hidden" name="details[__INDEX__][tax_amount]" class="row-tax" value="">
                         </td>
                         <td class="px-4 py-3 text-right">
@@ -385,7 +394,16 @@
             if (!pid) { unitInfo.textContent = ''; return; }
             fetch(productAjaxUrl.replace('__ID__', pid))
                 .then(function (r) { return r.ok ? r.json() : null; })
-                .then(function (res) { unitInfo.textContent = res && res.unit ? res.unit : ''; });
+                .then(function (res) {
+                    if (!res) { unitInfo.textContent = ''; return; }
+                    unitInfo.textContent = res.stock != null ? '{{ __('general.stock') }}: ' + res.stock + (res.unit ? ' ' + res.unit : '') : '';
+                    var price = parseInt(res.selling_price) || 0;
+                    var priceHidden  = tr.querySelector('.row-price');
+                    var priceDisplay = tr.querySelector('.row-price-display');
+                    priceHidden.value  = price;
+                    priceDisplay.value = price ? price.toLocaleString('id-ID') : '';
+                    calcRow(tr); calcTotals();
+                });
         });
 
         bindRowMoney(tr.querySelector('.row-price-display'), tr.querySelector('.row-price'), d.unit_price, tr);

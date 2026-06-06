@@ -173,7 +173,7 @@ return [
     'items'                          => 'Item',
     'add_item'                       => 'Tambah Item',
     'product'                        => 'Produk',
-    'unit_price'                     => 'Harga Satuan',
+    'unit_price'                     => 'Harga Jual Satuan',
     'cancel_invoice'                 => 'Batalkan Invoice',
     'confirm_cancel_invoice'         => 'Apakah Anda yakin ingin membatalkan invoice ini? Tindakan ini tidak dapat dibatalkan.',
     'select_customer_placeholder'    => 'Pilih pelanggan...',
