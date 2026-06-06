@@ -132,10 +132,11 @@
                             <input type="hidden" name="details[__INDEX__][unit_price]" class="row-price" value="">
                         </td>
                         <td class="px-4 py-3">
-                            <div data-slot="input-group" class="group/input-group relative flex w-full items-center rounded-md border border-input shadow-xs h-9 min-w-0 has-[[data-slot=input-group-control]:focus-visible]:border-ring has-[[data-slot=input-group-control]:focus-visible]:ring-[3px] has-[[data-slot=input-group-control]:focus-visible]:ring-ring/50">
-                                <span data-slot="input-group-addon" class="order-first pl-3 flex h-auto items-center text-sm font-medium text-muted-foreground select-none">Rp</span>
+                            <div data-slot="input-group" class="group/input-group relative flex w-full items-center rounded-md border border-input shadow-xs h-9 min-w-0 has-[[data-slot=input-group-control]:focus-visible]:border-ring has-[[data-slot=input-group-control]:focus-visible]:ring-[3px] has-[[data-slot=input-group-control]:focus-visible]:ring-ring/50 overflow-hidden">
                                 <input data-slot="input-group-control" type="text" class="row-discount-display flex-1 rounded-none border-0 bg-transparent shadow-none focus-visible:ring-0 h-full px-2 text-sm outline-none text-right" placeholder="0" autocomplete="off">
+                                <button type="button" data-mode="amount" class="row-discount-mode-btn shrink-0 w-10 h-full flex items-center justify-center text-xs font-bold bg-muted text-foreground hover:bg-muted/70 border-l border-input transition-colors select-none" tabindex="-1">Rp</button>
                             </div>
+                            <input type="hidden" name="details[__INDEX__][discount_percent]" class="row-discount-pct" value="">
                             <input type="hidden" name="details[__INDEX__][discount_amount]" class="row-discount" value="">
                         </td>
                         <td class="px-4 py-3">
@@ -177,12 +178,18 @@
 
                     <div class="flex items-center gap-4 text-sm w-full justify-end mt-2">
                         <label for="inv-discount-display" class="text-muted-foreground w-24 text-right shrink-0 cursor-pointer">@lang('general.discount')</label>
-                        <div class="w-44">
-                            <input type="text"
-                                   id="inv-discount-display"
-                                   placeholder="0"
-                                   autocomplete="off"
-                                   class="input input-sm text-right w-full {{ $errors->has('discount_amount') ? 'border-destructive' : '' }}">
+                        <div class="w-44 shrink-0">
+                            <div data-slot="input-group" class="group/input-group relative flex items-center rounded-md border shadow-xs h-9 overflow-hidden has-[[data-slot=input-group-control]:focus-visible]:border-ring has-[[data-slot=input-group-control]:focus-visible]:ring-[3px] has-[[data-slot=input-group-control]:focus-visible]:ring-ring/50 {{ $errors->has('discount_amount') ? 'border-destructive' : 'border-input' }}">
+                                <input data-slot="input-group-control" type="text"
+                                       id="inv-discount-display"
+                                       placeholder="0"
+                                       autocomplete="off"
+                                       class="flex-1 min-w-0 rounded-none border-0 bg-transparent shadow-none focus-visible:ring-0 h-full px-2 text-sm outline-none text-right">
+                                <button type="button" id="inv-discount-mode-btn" data-mode="amount"
+                                        class="shrink-0 w-10 h-full flex items-center justify-center text-xs font-bold bg-muted text-foreground hover:bg-muted/70 border-l border-input transition-colors select-none"
+                                        tabindex="-1">Rp</button>
+                            </div>
+                            <input type="hidden" name="discount_percent" id="inv-discount-pct" value="{{ old('discount_percent') }}">
                             <input type="hidden" name="discount_amount" id="inv-discount" value="{{ old('discount_amount') }}">
                         </div>
                     </div>
@@ -321,15 +328,27 @@
     function calcRow(row) {
         var qty      = parseInt(row.querySelector('.row-qty').value) || 0;
         var price    = parseInt(row.querySelector('.row-price').value) || 0;
-        var discount = parseInt(row.querySelector('.row-discount').value) || 0;
         var subtotal = qty * price;
 
-        var modeBtn  = row.querySelector('.row-tax-mode-btn');
-        var taxMode  = modeBtn ? modeBtn.dataset.mode : 'amount';
+        var discModeBtn = row.querySelector('.row-discount-mode-btn');
+        var discMode    = discModeBtn ? discModeBtn.dataset.mode : 'amount';
+        var discAmount;
+        if (discMode === 'percent') {
+            var discPct = parseFloat(row.querySelector('.row-discount-display').value) || 0;
+            discAmount  = Math.round(subtotal * discPct / 100);
+            row.querySelector('.row-discount').value     = discAmount;
+            row.querySelector('.row-discount-pct').value = discPct || '';
+        } else {
+            discAmount = parseInt(row.querySelector('.row-discount').value) || 0;
+            row.querySelector('.row-discount-pct').value = '';
+        }
+
+        var taxModeBtn = row.querySelector('.row-tax-mode-btn');
+        var taxMode    = taxModeBtn ? taxModeBtn.dataset.mode : 'amount';
         var taxAmount;
         if (taxMode === 'percent') {
             var pct   = parseFloat(row.querySelector('.row-tax-display').value) || 0;
-            taxAmount = Math.round((subtotal - discount) * pct / 100);
+            taxAmount = Math.round((subtotal - discAmount) * pct / 100);
             row.querySelector('.row-tax').value     = taxAmount;
             row.querySelector('.row-tax-pct').value = pct || '';
         } else {
@@ -337,7 +356,7 @@
             row.querySelector('.row-tax-pct').value = '';
         }
 
-        var amount = subtotal - discount + taxAmount;
+        var amount = subtotal - discAmount + taxAmount;
         row.querySelector('.row-subtotal-hidden').value = subtotal;
         row.querySelector('.row-amount-hidden').value   = amount;
         row.querySelector('.row-amount-display').textContent = formatRupiah(amount);
@@ -348,14 +367,26 @@
         tbody.querySelectorAll('tr').forEach(function (row) {
             subtotal += parseInt(row.querySelector('.row-amount-hidden').value) || 0;
         });
-        var discount = parseInt(invDisc.value) || 0;
+
+        var discModeBtn = document.getElementById('inv-discount-mode-btn');
+        var discMode    = discModeBtn ? discModeBtn.dataset.mode : 'amount';
+        var discAmount;
+        if (discMode === 'percent') {
+            var discPct = parseFloat(document.getElementById('inv-discount-display').value) || 0;
+            discAmount  = Math.round(subtotal * discPct / 100);
+            invDisc.value = discAmount;
+            document.getElementById('inv-discount-pct').value = discPct || '';
+        } else {
+            discAmount = parseInt(invDisc.value) || 0;
+            document.getElementById('inv-discount-pct').value = '';
+        }
 
         var invTaxModeBtn = document.getElementById('inv-tax-mode-btn');
         var taxMode = invTaxModeBtn ? invTaxModeBtn.dataset.mode : 'amount';
         var taxAmount;
         if (taxMode === 'percent') {
             var pct   = parseFloat(document.getElementById('inv-tax-display').value) || 0;
-            taxAmount = Math.round((subtotal - discount) * pct / 100);
+            taxAmount = Math.round((subtotal - discAmount) * pct / 100);
             invTax.value = taxAmount;
             document.getElementById('inv-tax-pct').value = pct || '';
         } else {
@@ -363,7 +394,7 @@
             document.getElementById('inv-tax-pct').value = '';
         }
 
-        var total = subtotal - discount + taxAmount;
+        var total = subtotal - discAmount + taxAmount;
         document.getElementById('summary-subtotal').textContent = formatRupiah(subtotal);
         document.getElementById('summary-total').textContent    = formatRupiah(total);
     }
@@ -438,7 +469,7 @@
         });
 
         bindRowMoney(tr.querySelector('.row-price-display'), tr.querySelector('.row-price'), d.unit_price, tr);
-        bindRowMoney(tr.querySelector('.row-discount-display'), tr.querySelector('.row-discount'), d.discount_amount, tr);
+        bindRowTax(tr.querySelector('.row-discount-display'), tr.querySelector('.row-discount-pct'), tr.querySelector('.row-discount'), tr.querySelector('.row-discount-mode-btn'), tr, d.discount_percent, d.discount_amount);
         bindRowTax(tr.querySelector('.row-tax-display'), tr.querySelector('.row-tax-pct'), tr.querySelector('.row-tax'), tr.querySelector('.row-tax-mode-btn'), tr, d.tax_percent, d.tax_amount);
 
         tr.querySelector('.row-qty').addEventListener('input', function () { calcRow(tr); calcTotals(); });
@@ -531,8 +562,56 @@
 
     addBtn.addEventListener('click', function () { addRow(); });
 
-    // Bind invoice-level money inputs
-    bindMoneyInput(document.getElementById('inv-discount-display'), invDisc, calcTotals);
+    // Bind invoice-level discount with % / Rp toggle
+    (function () {
+        var displayEl = document.getElementById('inv-discount-display');
+        var hiddenPct = document.getElementById('inv-discount-pct');
+        var modeBtn   = document.getElementById('inv-discount-mode-btn');
+        var initPct   = hiddenPct.value;
+        var initAmt   = invDisc.value;
+
+        if (initPct) {
+            modeBtn.dataset.mode = 'percent';
+            modeBtn.textContent  = '%';
+            displayEl.value      = initPct;
+        } else if (initAmt) {
+            var n = parseInt(initAmt, 10);
+            if (n) displayEl.value = n.toLocaleString('id-ID');
+        }
+
+        modeBtn.addEventListener('click', function () {
+            var newMode = this.dataset.mode === 'amount' ? 'percent' : 'amount';
+            this.dataset.mode = newMode;
+            this.textContent  = newMode === 'percent' ? '%' : 'Rp';
+            displayEl.value   = '';
+            invDisc.value     = '';
+            hiddenPct.value   = '';
+            calcTotals();
+        });
+
+        displayEl.addEventListener('input', function () {
+            var mode = modeBtn.dataset.mode;
+            if (mode === 'percent') {
+                var val = this.value.replace(/[^0-9.]/g, '');
+                var dots = val.match(/\./g);
+                if (dots && dots.length > 1) val = val.substring(0, val.lastIndexOf('.'));
+                if (parseFloat(val) > 100) val = '100';
+                this.value      = val;
+                hiddenPct.value = val;
+                invDisc.value   = '';
+            } else {
+                var raw  = parseMoney(this.value);
+                var cur  = this.selectionStart;
+                var prev = this.value.length;
+                this.value = raw ? raw.toLocaleString('id-ID') : '';
+                var diff = this.value.length - prev;
+                try { this.setSelectionRange(cur + diff, cur + diff); } catch(e) {}
+                invDisc.value   = raw || '';
+                hiddenPct.value = '';
+            }
+            calcTotals();
+        });
+    })();
 
     // Bind invoice-level tax with % / Rp toggle
     (function () {
@@ -589,14 +668,15 @@
     @if(old('details'))
         @foreach(old('details', []) as $detail)
             addRow({
-                product_id:      {{ $detail['product_id'] ?? 'null' }},
-                quantity:        {{ $detail['quantity'] ?? 1 }},
-                unit_price:      {{ $detail['unit_price'] ?? 0 }},
-                discount_amount: {{ $detail['discount_amount'] ?? 0 }},
-                tax_percent:     {{ isset($detail['tax_percent']) && $detail['tax_percent'] !== '' ? $detail['tax_percent'] : 'null' }},
-                tax_amount:      {{ $detail['tax_amount'] ?? 0 }},
-                subtotal_amount: {{ $detail['subtotal_amount'] ?? 0 }},
-                amount:          {{ $detail['amount'] ?? 0 }},
+                product_id:       {{ $detail['product_id'] ?? 'null' }},
+                quantity:         {{ $detail['quantity'] ?? 1 }},
+                unit_price:       {{ $detail['unit_price'] ?? 0 }},
+                discount_percent: {{ isset($detail['discount_percent']) && $detail['discount_percent'] !== '' ? $detail['discount_percent'] : 'null' }},
+                discount_amount:  {{ $detail['discount_amount'] ?? 0 }},
+                tax_percent:      {{ isset($detail['tax_percent']) && $detail['tax_percent'] !== '' ? $detail['tax_percent'] : 'null' }},
+                tax_amount:       {{ $detail['tax_amount'] ?? 0 }},
+                subtotal_amount:  {{ $detail['subtotal_amount'] ?? 0 }},
+                amount:           {{ $detail['amount'] ?? 0 }},
             });
         @endforeach
         calcTotals();

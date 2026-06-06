@@ -72,10 +72,12 @@ class InvoiceController extends BaseController
                 'salesperson_id'  => $data['salesperson_id'],
                 'invoice_date'    => $data['invoice_date'],
                 'due_date'        => $data['due_date'] ?? null,
-                'discount_amount' => $data['discount_amount'] ?? null,
-                'tax_amount'      => $data['tax_amount'] ?? null,
-                'paid_amount'     => 0,
-                'status'          => $data['status'],
+                'discount_percent' => $data['discount_percent'] ?? null,
+                'discount_amount'  => $data['discount_amount'] ?? null,
+                'tax_percent'      => $data['tax_percent'] ?? null,
+                'tax_amount'       => $data['tax_amount'] ?? null,
+                'paid_amount'      => 0,
+                'status'           => $data['status'],
             ]);
 
             $deductStock = InvoiceStatus::from($data['status']) !== InvoiceStatus::DRAFT;
@@ -87,8 +89,9 @@ class InvoiceController extends BaseController
                     'product_id'      => $detail['product_id'],
                     'quantity'        => $detail['quantity'],
                     'unit_price'      => $detail['unit_price'],
-                    'discount_amount' => $detail['discount_amount'] ?? null,
-                    'tax_amount'      => $detail['tax_amount'] ?? null,
+                    'discount_percent' => $detail['discount_percent'] ?? null,
+                    'discount_amount'  => $detail['discount_amount'] ?? null,
+                    'tax_amount'       => $detail['tax_amount'] ?? null,
                     'amount'          => $detail['amount'],
                     'product_snapshot' => [
                         'id'       => $product->id,
@@ -186,9 +189,11 @@ class InvoiceController extends BaseController
                 'salesperson_id'  => $data['salesperson_id'],
                 'invoice_date'    => $data['invoice_date'],
                 'due_date'        => $data['due_date'] ?? null,
-                'discount_amount' => $data['discount_amount'] ?? null,
-                'tax_amount'      => $data['tax_amount'] ?? null,
-                'status'          => $data['status'],
+                'discount_percent' => $data['discount_percent'] ?? null,
+                'discount_amount'  => $data['discount_amount'] ?? null,
+                'tax_percent'      => $data['tax_percent'] ?? null,
+                'tax_amount'       => $data['tax_amount'] ?? null,
+                'status'           => $data['status'],
             ]);
 
             // Cascades to invoice_detail_batches via DB constraint
@@ -203,8 +208,9 @@ class InvoiceController extends BaseController
                     'product_id'      => $detail['product_id'],
                     'quantity'        => $detail['quantity'],
                     'unit_price'      => $detail['unit_price'],
-                    'discount_amount' => $detail['discount_amount'] ?? null,
-                    'tax_amount'      => $detail['tax_amount'] ?? null,
+                    'discount_percent' => $detail['discount_percent'] ?? null,
+                    'discount_amount'  => $detail['discount_amount'] ?? null,
+                    'tax_amount'       => $detail['tax_amount'] ?? null,
                     'amount'          => $detail['amount'],
                     'product_snapshot' => [
                         'id'       => $product->id,

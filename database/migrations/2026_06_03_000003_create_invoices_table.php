@@ -17,8 +17,9 @@ return new class extends Migration
             $table->date('invoice_date');
             $table->date('due_date')->nullable();
             $table->unsignedBigInteger('subtotal')->default(0);
+            $table->decimal('discount_percent', 5, 2)->nullable();
             $table->unsignedBigInteger('discount_amount')->nullable();
-            $table->decimal('tax_percent', 5, 2)->default(0);
+            $table->decimal('tax_percent', 5, 2)->nullable();
             $table->unsignedBigInteger('tax_amount')->nullable();
             $table->unsignedBigInteger('grand_total')->default(0);
             $table->unsignedBigInteger('paid_amount')->default(0);
@@ -36,8 +37,9 @@ return new class extends Migration
             $table->foreignId('product_id')->nullable()->constrained('products')->nullOnDelete();
             $table->integer('quantity');
             $table->unsignedBigInteger('unit_price');
+            $table->decimal('discount_percent', 5, 2)->nullable();
             $table->unsignedBigInteger('discount_amount')->nullable();
-            $table->decimal('tax_percent', 5, 2)->default(0);
+            $table->decimal('tax_percent', 5, 2)->nullable();
             $table->unsignedBigInteger('tax_amount')->nullable();
             $table->unsignedBigInteger('subtotal')->default(0);
             $table->unsignedBigInteger('amount');
