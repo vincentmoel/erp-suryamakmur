@@ -30,7 +30,7 @@ class InvoiceDataTable extends BaseDataTable
         return parent::dataTable($query)
             ->editColumn('customer_id', fn($row) => $row->customer->name ?? '-')
             ->editColumn('salesperson_id', fn($row) => $row->salesperson->name ?? '-')
-            ->editColumn('status', fn($row) => '<span class="badge ' . $row->status->badgeClass() . '">' . $row->status->label() . '</span>')
+            ->editColumn('status', fn($row) => '<span class="badge ' . $row->status->badgeClass() . '">' . $row->status->icon() . $row->status->label() . '</span>')
             ->editColumn('amount', fn($row) => 'Rp ' . number_format($row->amount, 0, ',', '.'))
             ->editColumn('invoice_date', fn($row) => $row->invoice_date->translatedFormat('d M Y'))
             ->rawColumns(['action', 'status']);
