@@ -1,11 +1,11 @@
-@extends('layouts.main', ['title' => "Add $title"])
+@extends('layouts.main', ['title' => __('general.add_vendor')])
 
 @section('content')
     <div class="page-content">
 
         <div class="page-header">
-            <h1>Add Vendor</h1>
-            <p>Create a new vendor.</p>
+            <h1>@lang('general.add_vendor')</h1>
+            <p>@lang('general.add_vendor_desc')</p>
         </div>
 
         <form action="{{ route("$route.store") }}" method="POST">
@@ -16,11 +16,11 @@
                 {{-- Identity --}}
                 <div class="rounded-lg border bg-card text-card-foreground shadow-xs">
                     <div class="flex items-center gap-3 border-b px-6 py-4">
-                        <h3 class="text-sm font-semibold">Identity</h3>
+                        <h3 class="text-sm font-semibold">@lang('general.identity')</h3>
                     </div>
                     <div class="flex flex-col gap-6 p-6">
                         <div class="grid grid-cols-1 gap-6 sm:grid-cols-2">
-                            <x-form.field name="code" label="Code">
+                            <x-form.field name="code" :label="__('general.code')">
                                 <input id="code"
                                        type="text"
                                        name="code"
@@ -29,25 +29,25 @@
                                        class="input {{ $errors->has('code') ? 'border-destructive' : '' }}">
                             </x-form.field>
 
-                            <x-form.field name="type" label="Type" :required="true">
+                            <x-form.field name="type" :label="__('general.type')" :required="true">
                                 <x-form.single-select
                                     name="type"
-                                    placeholder="Select type..."
+                                    :placeholder="__('general.vendor_type_placeholder')"
                                     :options="collect($vendorTypes)->map(fn($t) => ['value' => $t->value, 'label' => $t->label()])->toArray()" />
                             </x-form.field>
                         </div>
 
                         <div class="grid grid-cols-1 gap-6 sm:grid-cols-2">
-                            <x-form.field name="name" label="Name" :required="true">
+                            <x-form.field name="name" :label="__('general.name')" :required="true">
                                 <input id="name"
                                        type="text"
                                        name="name"
                                        value="{{ old('name') }}"
-                                       placeholder="Vendor name"
+                                       placeholder="{{ __('general.vendor_name_placeholder') }}"
                                        class="input {{ $errors->has('name') ? 'border-destructive' : '' }}">
                             </x-form.field>
 
-                            <x-form.field name="tax_number" label="Tax Number">
+                            <x-form.field name="tax_number" :label="__('general.tax_number')">
                                 <input id="tax_number"
                                        type="text"
                                        name="tax_number"
@@ -62,30 +62,30 @@
                 {{-- Contact --}}
                 <div class="rounded-lg border bg-card text-card-foreground shadow-xs">
                     <div class="flex items-center gap-3 border-b px-6 py-4">
-                        <h3 class="text-sm font-semibold">Contact</h3>
+                        <h3 class="text-sm font-semibold">@lang('general.contact')</h3>
                     </div>
                     <div class="flex flex-col gap-6 p-6">
                         <div class="grid grid-cols-1 gap-6 sm:grid-cols-2">
-                            <x-form.field name="contact_person" label="Contact Person">
+                            <x-form.field name="contact_person" :label="__('general.contact_person')">
                                 <input id="contact_person"
                                        type="text"
                                        name="contact_person"
                                        value="{{ old('contact_person') }}"
-                                       placeholder="PIC name"
+                                       placeholder="{{ __('general.contact_person_placeholder') }}"
                                        class="input {{ $errors->has('contact_person') ? 'border-destructive' : '' }}">
                             </x-form.field>
 
-                            <x-form.field name="phone" label="Phone">
+                            <x-form.field name="phone" :label="__('general.phone')">
                                 <input id="phone"
                                        type="text"
                                        name="phone"
                                        value="{{ old('phone') }}"
-                                       placeholder="Phone number"
+                                       placeholder="{{ __('general.phone_placeholder') }}"
                                        class="input {{ $errors->has('phone') ? 'border-destructive' : '' }}">
                             </x-form.field>
                         </div>
 
-                        <x-form.field name="email" label="Email">
+                        <x-form.field name="email" :label="__('general.email')">
                             <input id="email"
                                    type="email"
                                    name="email"
@@ -99,38 +99,38 @@
                 {{-- Address --}}
                 <div class="rounded-lg border bg-card text-card-foreground shadow-xs">
                     <div class="flex items-center gap-3 border-b px-6 py-4">
-                        <h3 class="text-sm font-semibold">Address</h3>
+                        <h3 class="text-sm font-semibold">@lang('general.address')</h3>
                     </div>
                     <div class="flex flex-col gap-6 p-6">
-                        <x-form.field name="address" label="Street Address">
+                        <x-form.field name="address" :label="__('general.street_address')">
                             <textarea id="address"
                                       name="address"
                                       rows="3"
-                                      placeholder="Full street address"
+                                      placeholder="{{ __('general.street_address_placeholder') }}"
                                       style="height: auto; padding-top: 0.5rem; padding-bottom: 0.5rem;"
                                       class="input {{ $errors->has('address') ? 'border-destructive' : '' }}">{{ old('address') }}</textarea>
                         </x-form.field>
 
                         <div class="grid grid-cols-1 gap-6 sm:grid-cols-3">
-                            <x-form.field name="city" label="City">
+                            <x-form.field name="city" :label="__('general.city')">
                                 <input id="city"
                                        type="text"
                                        name="city"
                                        value="{{ old('city') }}"
-                                       placeholder="City"
+                                       placeholder="{{ __('general.city') }}"
                                        class="input {{ $errors->has('city') ? 'border-destructive' : '' }}">
                             </x-form.field>
 
-                            <x-form.field name="province" label="Province">
+                            <x-form.field name="province" :label="__('general.province')">
                                 <input id="province"
                                        type="text"
                                        name="province"
                                        value="{{ old('province') }}"
-                                       placeholder="Province"
+                                       placeholder="{{ __('general.province') }}"
                                        class="input {{ $errors->has('province') ? 'border-destructive' : '' }}">
                             </x-form.field>
 
-                            <x-form.field name="postal_code" label="Postal Code">
+                            <x-form.field name="postal_code" :label="__('general.postal_code')">
                                 <input id="postal_code"
                                        type="text"
                                        name="postal_code"
@@ -145,11 +145,11 @@
                 {{-- Bank --}}
                 <div class="rounded-lg border bg-card text-card-foreground shadow-xs">
                     <div class="flex items-center gap-3 border-b px-6 py-4">
-                        <h3 class="text-sm font-semibold">Bank Information</h3>
+                        <h3 class="text-sm font-semibold">@lang('general.bank_information')</h3>
                     </div>
                     <div class="flex flex-col gap-6 p-6">
                         <div class="grid grid-cols-1 gap-6 sm:grid-cols-3">
-                            <x-form.field name="bank_name" label="Bank Name">
+                            <x-form.field name="bank_name" :label="__('general.bank_name')">
                                 <input id="bank_name"
                                        type="text"
                                        name="bank_name"
@@ -158,21 +158,21 @@
                                        class="input {{ $errors->has('bank_name') ? 'border-destructive' : '' }}">
                             </x-form.field>
 
-                            <x-form.field name="bank_account_number" label="Account Number">
+                            <x-form.field name="bank_account_number" :label="__('general.account_number')">
                                 <input id="bank_account_number"
                                        type="text"
                                        name="bank_account_number"
                                        value="{{ old('bank_account_number') }}"
-                                       placeholder="Account number"
+                                       placeholder="{{ __('general.account_number') }}"
                                        class="input {{ $errors->has('bank_account_number') ? 'border-destructive' : '' }}">
                             </x-form.field>
 
-                            <x-form.field name="bank_account_name" label="Account Holder Name">
+                            <x-form.field name="bank_account_name" :label="__('general.account_holder_name')">
                                 <input id="bank_account_name"
                                        type="text"
                                        name="bank_account_name"
                                        value="{{ old('bank_account_name') }}"
-                                       placeholder="Account holder name"
+                                       placeholder="{{ __('general.account_holder_name') }}"
                                        class="input {{ $errors->has('bank_account_name') ? 'border-destructive' : '' }}">
                             </x-form.field>
                         </div>
@@ -182,11 +182,11 @@
                 {{-- Notes & Status --}}
                 <div class="rounded-lg border bg-card text-card-foreground shadow-xs">
                     <div class="flex flex-col gap-6 p-6">
-                        <x-form.field name="notes" label="Notes">
+                        <x-form.field name="notes" :label="__('general.notes')">
                             <textarea id="notes"
                                       name="notes"
                                       rows="4"
-                                      placeholder="Additional notes"
+                                      placeholder="{{ __('general.notes_placeholder') }}"
                                       style="height: auto; padding-top: 0.5rem; padding-bottom: 0.5rem;"
                                       class="input {{ $errors->has('notes') ? 'border-destructive' : '' }}">{{ old('notes') }}</textarea>
                         </x-form.field>
@@ -201,7 +201,7 @@
                                       class="pointer-events-none block rounded-full bg-background ring-0 transition-transform group-data-[size=default]/switch:size-4 data-[state=checked]:translate-x-[calc(100%-2px)] data-[state=unchecked]:translate-x-0">
                                 </span>
                             </button>
-                            <span class="text-sm font-medium">Active</span>
+                            <span class="text-sm font-medium">@lang('general.active')</span>
                         </div>
                     </div>
 

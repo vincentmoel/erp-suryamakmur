@@ -1,11 +1,11 @@
-@extends('layouts.main', ['title' => "Add $title"])
+@extends('layouts.main', ['title' => __('general.add_purchase')])
 
 @section('content')
     <div class="page-content">
 
         <div class="page-header">
-            <h1>Add Purchase</h1>
-            <p>Create a new purchase order from a vendor.</p>
+            <h1>@lang('general.add_purchase')</h1>
+            <p>@lang('general.add_purchase_desc')</p>
         </div>
 
         <form action="{{ route('purchases.store') }}" method="POST" id="purchase-form">
@@ -17,21 +17,21 @@
                     <div class="flex size-8 items-center justify-center rounded-md bg-primary/10">
                         <x-icon name="receipt" class="size-4 text-primary" />
                     </div>
-                    <h3 class="text-sm font-semibold">Purchase Information</h3>
+                    <h3 class="text-sm font-semibold">@lang('general.purchase_information')</h3>
                 </div>
 
                 <div class="flex flex-col gap-6 p-6">
 
                     <div class="grid grid-cols-1 gap-6 sm:grid-cols-2">
-                        <x-form.field name="vendor_id" label="Vendor" :required="true">
+                        <x-form.field name="vendor_id" :label="__('general.vendor')" :required="true">
                             <x-form.single-select
                                 name="vendor_id"
-                                placeholder="Select vendor..."
+                                :placeholder="__('general.select_vendor_placeholder')"
                                 :options="$vendorOptions"
                                 :selected="old('vendor_id')" />
                         </x-form.field>
 
-                        <x-form.field name="invoice_number" label="Vendor Invoice No.">
+                        <x-form.field name="invoice_number" :label="__('general.vendor_invoice_no')">
                             <input type="text"
                                    name="invoice_number"
                                    value="{{ old('invoice_number') }}"
@@ -41,17 +41,17 @@
                     </div>
 
                     <div class="grid grid-cols-1 gap-6 sm:grid-cols-2">
-                        <x-form.field name="purchase_date" label="Purchase Date" :required="true">
+                        <x-form.field name="purchase_date" :label="__('general.purchase_date')" :required="true">
                             <input type="date"
                                    name="purchase_date"
                                    value="{{ old('purchase_date', now()->format('Y-m-d')) }}"
                                    class="input {{ $errors->has('purchase_date') ? 'border-destructive' : '' }}">
                         </x-form.field>
 
-                        <x-form.field name="notes" label="Notes">
+                        <x-form.field name="notes" :label="__('general.notes')">
                             <textarea name="notes"
                                       rows="1"
-                                      placeholder="Optional notes..."
+                                      placeholder="{{ __('general.optional_notes_placeholder') }}"
                                       style="height: auto; padding-top: 0.5rem; padding-bottom: 0.5rem;"
                                       class="input {{ $errors->has('notes') ? 'border-destructive' : '' }}">{{ old('notes') }}</textarea>
                         </x-form.field>
@@ -68,11 +68,11 @@
                         <div class="flex size-8 items-center justify-center rounded-md bg-primary/10">
                             <x-icon name="box" class="size-4 text-primary" />
                         </div>
-                        <h3 class="text-sm font-semibold">Items</h3>
+                        <h3 class="text-sm font-semibold">@lang('general.items')</h3>
                     </div>
                     <button type="button" id="add-row" class="btn btn-outline btn-sm">
                         <x-icon name="plus" class="size-3.5" />
-                        Add Item
+                        @lang('general.add_item')
                     </button>
                 </div>
 
@@ -80,11 +80,11 @@
                     <table class="w-full text-sm">
                         <thead>
                             <tr class="border-b bg-muted/30">
-                                <th class="px-4 py-3 text-left font-medium text-muted-foreground min-w-52">Product</th>
-                                <th class="px-4 py-3 text-right font-medium text-muted-foreground w-24">Qty</th>
-                                <th class="px-4 py-3 text-right font-medium text-muted-foreground w-40">Unit Price (Modal)</th>
-                                <th class="px-4 py-3 text-right font-medium text-muted-foreground w-36">Discount</th>
-                                <th class="px-4 py-3 text-right font-medium text-muted-foreground w-40">Subtotal</th>
+                                <th class="px-4 py-3 text-left font-medium text-muted-foreground min-w-52">@lang('general.product')</th>
+                                <th class="px-4 py-3 text-right font-medium text-muted-foreground w-24">@lang('general.qty')</th>
+                                <th class="px-4 py-3 text-right font-medium text-muted-foreground w-40">@lang('general.unit_price_modal')</th>
+                                <th class="px-4 py-3 text-right font-medium text-muted-foreground w-36">@lang('general.discount')</th>
+                                <th class="px-4 py-3 text-right font-medium text-muted-foreground w-40">@lang('general.subtotal')</th>
                                 <th class="px-4 py-3 w-10"></th>
                             </tr>
                             <style>#items-tbody td { vertical-align: top; }</style>
@@ -101,12 +101,12 @@
                 <div class="flex flex-col items-end gap-2 border-t px-6 py-4">
 
                     <div class="flex items-center gap-4 text-sm w-full justify-end">
-                        <span class="text-muted-foreground w-28 text-right shrink-0">Subtotal</span>
+                        <span class="text-muted-foreground w-28 text-right shrink-0">@lang('general.subtotal')</span>
                         <span class="font-medium w-44 text-right tabular-nums" id="summary-subtotal">Rp 0</span>
                     </div>
 
                     <div class="flex items-center gap-4 text-sm w-full justify-end mt-2">
-                        <label for="pur-discount-display" class="text-muted-foreground w-28 text-right shrink-0 cursor-pointer">Discount</label>
+                        <label for="pur-discount-display" class="text-muted-foreground w-28 text-right shrink-0 cursor-pointer">@lang('general.discount')</label>
                         <div class="w-44">
                             <input type="text"
                                    id="pur-discount-display"
@@ -118,7 +118,7 @@
                     </div>
 
                     <div class="flex items-center gap-4 text-sm w-full justify-end">
-                        <label for="pur-tax-display" class="text-muted-foreground w-28 text-right shrink-0 cursor-pointer">Tax (%)</label>
+                        <label for="pur-tax-display" class="text-muted-foreground w-28 text-right shrink-0 cursor-pointer">@lang('general.tax_percent')</label>
                         <div class="w-44">
                             <input type="number"
                                    id="pur-tax-display"
@@ -134,12 +134,12 @@
                     </div>
 
                     <div class="flex items-center gap-4 text-sm w-full justify-end">
-                        <span class="text-muted-foreground w-28 text-right shrink-0">Tax Amount</span>
+                        <span class="text-muted-foreground w-28 text-right shrink-0">@lang('general.tax_amount')</span>
                         <span class="font-medium w-44 text-right tabular-nums" id="summary-tax">Rp 0</span>
                     </div>
 
                     <div class="flex items-center gap-4 w-full justify-end border-t pt-3 mt-1">
-                        <span class="font-semibold w-28 text-right shrink-0">Grand Total</span>
+                        <span class="font-semibold w-28 text-right shrink-0">@lang('general.grand_total')</span>
                         <span class="font-semibold text-base w-44 text-right tabular-nums" id="summary-total">Rp 0</span>
                     </div>
 
@@ -152,11 +152,11 @@
                 <div class="flex items-center justify-end gap-2 px-6 py-4">
                     <button type="submit" name="status" value="draft" class="btn btn-outline">
                         <x-icon name="save" class="size-3.5" />
-                        Save as Draft
+                        @lang('general.save_as_draft')
                     </button>
                     <button type="submit" name="status" value="ordered" class="btn btn-primary">
                         <x-icon name="check" class="size-3.5" />
-                        Save as Ordered
+                        @lang('general.save_as_ordered')
                     </button>
                 </div>
             </div>
@@ -196,13 +196,13 @@
             '</button>' +
             '<div data-cb-content role="listbox" class="select-content hidden max-h-60 overflow-auto">' +
                 '<div class="px-1 pb-1 sticky top-0 bg-popover">' +
-                    '<input type="text" data-cb-search placeholder="Search..." autocomplete="off" class="input h-8 text-sm">' +
+                    '<input type="text" data-cb-search placeholder="{{ __('general.search') }}..." autocomplete="off" class="input h-8 text-sm">' +
                 '</div>' +
                 '<div data-cb-list>' +
                     '<div role="option" data-cb-item data-value="" data-label="' + escAttr(placeholder) + '" class="select-item cursor-pointer text-muted-foreground">' + escHtml(placeholder) + '</div>' +
                     itemsHtml +
                 '</div>' +
-                '<p data-cb-empty class="hidden px-2 py-4 text-center text-sm text-muted-foreground">No results found.</p>' +
+                '<p data-cb-empty class="hidden px-2 py-4 text-center text-sm text-muted-foreground">{{ __('general.no_results') }}</p>' +
             '</div>' +
             '<input type="hidden" name="' + name + '" data-cb-input value="' + escAttr(selectedValue || '') + '">';
 
@@ -290,8 +290,9 @@
     var purDisc    = document.getElementById('pur-discount');
     var taxPercent = document.getElementById('pur-tax-display');
 
-    var productOptions = @json($productOptions);
-    var productAjaxUrl = '{{ route('ajax.products.info', ['id' => '__ID__']) }}';
+    var productOptions  = @json($productOptions);
+    var productAjaxUrl  = '{{ route('ajax.products.info', ['id' => '__ID__']) }}';
+    var productPlaceholder = '{{ __('general.select_product_placeholder') }}';
     var rowIndex = 0;
 
     function calcRow(row) {
@@ -330,7 +331,7 @@
         // Product
         var tdProduct = document.createElement('td');
         tdProduct.className = 'px-4 py-3';
-        var combobox = buildCombobox('details[' + i + '][product_id]', productOptions, d.product_id || null, 'Select product...');
+        var combobox = buildCombobox('details[' + i + '][product_id]', productOptions, d.product_id || null, productPlaceholder);
         var unitInfo = document.createElement('div');
         unitInfo.className = 'mt-1 text-xs text-muted-foreground';
         tdProduct.appendChild(combobox);

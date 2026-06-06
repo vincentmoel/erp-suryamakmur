@@ -4,7 +4,7 @@
     <div class="page-content">
 
         <div class="page-header">
-            <h1>Purchase Detail</h1>
+            <h1>@lang('general.purchase_detail')</h1>
             <p>{{ $data->code }}</p>
         </div>
 
@@ -16,36 +16,36 @@
                     <div class="flex size-8 items-center justify-center rounded-md bg-primary/10">
                         <x-icon name="receipt" class="size-4 text-primary" />
                     </div>
-                    <h3 class="text-sm font-semibold">Purchase Information</h3>
+                    <h3 class="text-sm font-semibold">@lang('general.purchase_information')</h3>
                 </div>
                 <span class="badge {{ $data->status->badgeClass() }}">{{ $data->status->label() }}</span>
             </div>
 
             <div class="grid grid-cols-1 gap-0 divide-y sm:grid-cols-2 sm:divide-y-0 sm:divide-x">
                 <div class="flex flex-col gap-1 px-6 py-4">
-                    <span class="text-xs font-medium text-muted-foreground uppercase tracking-wide">Purchase Code</span>
+                    <span class="text-xs font-medium text-muted-foreground uppercase tracking-wide">@lang('general.purchase_code')</span>
                     <span class="text-sm font-medium font-mono">{{ $data->code }}</span>
                 </div>
                 <div class="flex flex-col gap-1 px-6 py-4">
-                    <span class="text-xs font-medium text-muted-foreground uppercase tracking-wide">Vendor</span>
+                    <span class="text-xs font-medium text-muted-foreground uppercase tracking-wide">@lang('general.vendor')</span>
                     <span class="text-sm font-medium">{{ $data->vendor->name ?? '-' }}</span>
                 </div>
             </div>
 
             <div class="grid grid-cols-1 gap-0 divide-y border-t sm:grid-cols-2 sm:divide-y-0 sm:divide-x">
                 <div class="flex flex-col gap-1 px-6 py-4">
-                    <span class="text-xs font-medium text-muted-foreground uppercase tracking-wide">Purchase Date</span>
+                    <span class="text-xs font-medium text-muted-foreground uppercase tracking-wide">@lang('general.purchase_date')</span>
                     <span class="text-sm font-medium">{{ $data->purchase_date->translatedFormat('d F Y') }}</span>
                 </div>
                 <div class="flex flex-col gap-1 px-6 py-4">
-                    <span class="text-xs font-medium text-muted-foreground uppercase tracking-wide">Vendor Invoice No.</span>
+                    <span class="text-xs font-medium text-muted-foreground uppercase tracking-wide">@lang('general.vendor_invoice_no')</span>
                     <span class="text-sm font-medium">{{ $data->invoice_number ?: '-' }}</span>
                 </div>
             </div>
 
             @if($data->notes)
                 <div class="border-t px-6 py-4">
-                    <span class="text-xs font-medium text-muted-foreground uppercase tracking-wide">Notes</span>
+                    <span class="text-xs font-medium text-muted-foreground uppercase tracking-wide">@lang('general.notes')</span>
                     <p class="text-sm mt-1">{{ $data->notes }}</p>
                 </div>
             @endif
@@ -58,7 +58,7 @@
                 <div class="flex size-8 items-center justify-center rounded-md bg-primary/10">
                     <x-icon name="box" class="size-4 text-primary" />
                 </div>
-                <h3 class="text-sm font-semibold">Items</h3>
+                <h3 class="text-sm font-semibold">@lang('general.items')</h3>
             </div>
 
             <div class="overflow-x-auto">
@@ -66,12 +66,12 @@
                     <thead>
                         <tr class="border-b bg-muted/30">
                             <th class="px-4 py-3 text-left font-medium text-muted-foreground">#</th>
-                            <th class="px-4 py-3 text-left font-medium text-muted-foreground">Product</th>
-                            <th class="px-4 py-3 text-left font-medium text-muted-foreground">SKU</th>
-                            <th class="px-4 py-3 text-right font-medium text-muted-foreground">Qty</th>
-                            <th class="px-4 py-3 text-right font-medium text-muted-foreground">Unit Price (Modal)</th>
-                            <th class="px-4 py-3 text-right font-medium text-muted-foreground">Discount</th>
-                            <th class="px-4 py-3 text-right font-medium text-muted-foreground">Subtotal</th>
+                            <th class="px-4 py-3 text-left font-medium text-muted-foreground">@lang('general.product')</th>
+                            <th class="px-4 py-3 text-left font-medium text-muted-foreground">@lang('general.sku')</th>
+                            <th class="px-4 py-3 text-right font-medium text-muted-foreground">@lang('general.qty')</th>
+                            <th class="px-4 py-3 text-right font-medium text-muted-foreground">@lang('general.unit_price_modal')</th>
+                            <th class="px-4 py-3 text-right font-medium text-muted-foreground">@lang('general.discount')</th>
+                            <th class="px-4 py-3 text-right font-medium text-muted-foreground">@lang('general.subtotal')</th>
                         </tr>
                     </thead>
                     <tbody>
@@ -95,23 +95,23 @@
             {{-- Totals --}}
             <div class="flex flex-col items-end gap-2 border-t px-6 py-4">
                 <div class="flex items-center gap-8 text-sm">
-                    <span class="text-muted-foreground">Subtotal</span>
+                    <span class="text-muted-foreground">@lang('general.subtotal')</span>
                     <span class="font-medium w-44 text-right">Rp {{ number_format($data->subtotal, 0, ',', '.') }}</span>
                 </div>
                 @if($data->discount_amount)
                     <div class="flex items-center gap-8 text-sm">
-                        <span class="text-muted-foreground">Discount</span>
+                        <span class="text-muted-foreground">@lang('general.discount')</span>
                         <span class="font-medium w-44 text-right">Rp {{ number_format($data->discount_amount, 0, ',', '.') }}</span>
                     </div>
                 @endif
                 @if($data->tax_percent)
                     <div class="flex items-center gap-8 text-sm">
-                        <span class="text-muted-foreground">Tax ({{ number_format($data->tax_percent, 2) }}%)</span>
+                        <span class="text-muted-foreground">@lang('general.tax') ({{ number_format($data->tax_percent, 2) }}%)</span>
                         <span class="font-medium w-44 text-right">Rp {{ number_format($data->tax_amount, 0, ',', '.') }}</span>
                     </div>
                 @endif
                 <div class="flex items-center gap-8 text-base font-semibold border-t pt-2 mt-1">
-                    <span>Grand Total</span>
+                    <span>@lang('general.grand_total')</span>
                     <span class="w-44 text-right">Rp {{ number_format($data->grand_total, 0, ',', '.') }}</span>
                 </div>
             </div>
@@ -121,11 +121,11 @@
         <div class="rounded-lg border bg-card text-card-foreground shadow-xs mb-4">
             <div class="grid grid-cols-1 gap-0 divide-y sm:grid-cols-2 sm:divide-y-0 sm:divide-x">
                 <div class="flex flex-col gap-1 px-6 py-4">
-                    <span class="text-xs font-medium text-muted-foreground uppercase tracking-wide">Created At</span>
+                    <span class="text-xs font-medium text-muted-foreground uppercase tracking-wide">@lang('general.created_at')</span>
                     <span class="text-sm font-medium">{{ \Carbon\Carbon::parse($data->created_at)->translatedFormat('d F Y | H:i') }}</span>
                 </div>
                 <div class="flex flex-col gap-1 px-6 py-4">
-                    <span class="text-xs font-medium text-muted-foreground uppercase tracking-wide">Created By</span>
+                    <span class="text-xs font-medium text-muted-foreground uppercase tracking-wide">@lang('general.created_by')</span>
                     <span class="text-sm font-medium">{{ $data->user_created_by->name ?? '-' }}</span>
                 </div>
             </div>
@@ -138,7 +138,7 @@
                 @if($data->status->canEdit())
                     <a href="{{ route('purchases.edit', ['encryptedId' => $encryptedId]) }}" class="btn btn-ghost btn-sm">
                         <x-icon name="edit" class="size-3.5" />
-                        Edit
+                        @lang('general.edit')
                     </a>
                 @endif
 
@@ -152,7 +152,7 @@
                                 onclick="confirmReceive()"
                                 class="btn btn-ghost btn-sm text-success hover:bg-success/10">
                             <x-icon name="check-circle" class="size-3.5" />
-                            Receive Goods
+                            @lang('general.receive_goods')
                         </button>
                     </form>
                 @endif
@@ -167,7 +167,7 @@
                                 onclick="confirmCancel()"
                                 class="btn btn-ghost btn-sm text-destructive hover:bg-destructive/10">
                             <x-icon name="x-circle" class="size-3.5" />
-                            Cancel Purchase
+                            @lang('general.cancel_purchase')
                         </button>
                     </form>
                 @endif
@@ -175,7 +175,7 @@
                 @if($data->status === \App\Enums\PurchaseStatus::RECEIVED)
                     <span class="flex items-center gap-1.5 text-sm text-success px-3">
                         <x-icon name="check-circle" class="size-4" />
-                        Goods received — inventory updated
+                        @lang('general.goods_received_message')
                     </span>
                 @endif
 
@@ -188,12 +188,12 @@
 @push('scripts')
 <script>
 function confirmReceive() {
-    if (confirm('Receive this purchase? This will add all items to inventory and cannot be undone.')) {
+    if (confirm('{{ __('general.confirm_receive_goods') }}')) {
         document.getElementById('receive-form').submit();
     }
 }
 function confirmCancel() {
-    if (confirm('Are you sure you want to cancel this purchase order? This action cannot be undone.')) {
+    if (confirm('{{ __('general.confirm_cancel_purchase') }}')) {
         document.getElementById('cancel-form').submit();
     }
 }

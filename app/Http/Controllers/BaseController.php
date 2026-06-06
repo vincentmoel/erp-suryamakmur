@@ -58,7 +58,7 @@ class BaseController extends Controller
 
         $this->model::create($validatedData);
 
-        $flash = ['success' => ["title" => "Success Add", "message" => "Your data has been saved."]];
+        $flash = ['success' => ["title" => __('general.success_add'), "message" => __('general.success_add_message')]];
 
         if ($request->input('_action') === 'save_and_create') {
             return redirect()->route("{$this->route}.create")->with($flash);
@@ -103,7 +103,7 @@ class BaseController extends Controller
         $data->update($validatedData);
 
         return redirect()->back()->with([
-            'success' => ["title" => "Success Update", "message" => "Your data has been updated."]
+            'success' => ["title" => __('general.success_update'), "message" => __('general.success_update_message')]
         ]);
     }
 
@@ -116,8 +116,8 @@ class BaseController extends Controller
             200,
             "Success",
             [
-                "title" => "Success Delete",
-                "message" => "Your data has been deleted."
+                "title" => __('general.success_delete'),
+                "message" => __('general.success_delete_message')
             ]
         );
     }
@@ -139,7 +139,7 @@ class BaseController extends Controller
         $data->restore();
 
         return redirect()->back()->with([
-            'success' => ["title" => "Success Restore", "message" => "Your data has been restored."]
+            'success' => ["title" => __('general.success_restore'), "message" => __('general.success_restore_message')]
         ]);
     }
 }

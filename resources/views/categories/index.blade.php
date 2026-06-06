@@ -1,4 +1,4 @@
-@extends('layouts.main', ['title' => 'Categories'])
+@extends('layouts.main', ['title' => __('general.categories')])
 
 @push('styles')
     <link rel="stylesheet" href="https://cdn.datatables.net/2.1.8/css/dataTables.dataTables.min.css">
@@ -8,22 +8,22 @@
     <div class="page-content">
 
         <div class="page-header">
-            <h1>Categories</h1>
-            <p>Manage item categories.</p>
+            <h1>@lang('general.categories')</h1>
+            <p>@lang('general.categories_desc')</p>
         </div>
 
-        <x-datatable id="categories-table" search-placeholder="Search">
+        <x-datatable id="categories-table" :search-placeholder="__('general.search')">
 
             <x-slot name="actions">
                 <a href="{{ route('categories.create') }}" class="btn btn-primary btn-sm">
-                    <x-icon name="plus" /> Add Category
+                    <x-icon name="plus" /> @lang('general.add_category')
                 </a>
             </x-slot>
 
             <x-slot name="head">
                 <th>#</th>
-                <th>Name</th>
-                <th>Created At</th>
+                <th>@lang('general.name')</th>
+                <th>@lang('general.created_at')</th>
                 <th></th>
             </x-slot>
 

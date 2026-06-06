@@ -57,7 +57,7 @@
             }
         }
 
-        $fallbackTitle = $menuTitle ?? ucfirst($resource);
+        $fallbackTitle = $menuTitle ? __($menuTitle) : ucfirst($resource);
 
         $items = [$homeLink];
 
@@ -68,15 +68,15 @@
             $items[] = $separator;
             $items[] = $linkItem($fallbackTitle, $indexRoute);
             $items[] = $separator;
-            $items[] = $activeItem('Add ' . $fallbackTitle);
+            $items[] = $activeItem(__('general.breadcrumb_add') . ' ' . $fallbackTitle);
         } elseif ($action === 'edit') {
             $items[] = $separator;
             $items[] = $linkItem($fallbackTitle, $indexRoute);
             $items[] = $separator;
-            $items[] = $activeItem('Edit ' . $fallbackTitle);
+            $items[] = $activeItem(__('general.breadcrumb_edit') . ' ' . $fallbackTitle);
         } else {
             // show / view / or any other action
-            $pageTitle = $title ?? ('View ' . $fallbackTitle);
+            $pageTitle = $title ?? (__('general.breadcrumb_view') . ' ' . $fallbackTitle);
             $items[] = $separator;
             $items[] = $linkItem($fallbackTitle, $indexRoute);
             $items[] = $separator;

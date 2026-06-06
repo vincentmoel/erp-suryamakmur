@@ -1,4 +1,4 @@
-@extends('layouts.main', ['title' => 'Vendors'])
+@extends('layouts.main', ['title' => __('general.vendors')])
 
 @push('styles')
     <link rel="stylesheet" href="https://cdn.datatables.net/2.1.8/css/dataTables.dataTables.min.css">
@@ -8,27 +8,27 @@
     <div class="page-content">
 
         <div class="page-header">
-            <h1>Vendors</h1>
-            <p>Manage vendor data.</p>
+            <h1>@lang('general.vendors')</h1>
+            <p>@lang('general.vendors_desc')</p>
         </div>
 
-        <x-datatable id="vendors-table" search-placeholder="Search">
+        <x-datatable id="vendors-table" :search-placeholder="__('general.search')">
 
             <x-slot name="actions">
                 <a href="{{ route('vendors.create') }}" class="btn btn-primary btn-sm">
-                    <x-icon name="plus" /> Add Vendor
+                    <x-icon name="plus" /> @lang('general.add_vendor')
                 </a>
             </x-slot>
 
             <x-slot name="head">
                 <th>#</th>
-                <th>Code</th>
-                <th>Name</th>
-                <th>Type</th>
-                <th>Phone</th>
-                <th>Email</th>
-                <th>Status</th>
-                <th>Created At</th>
+                <th>@lang('general.code')</th>
+                <th>@lang('general.name')</th>
+                <th>@lang('general.type')</th>
+                <th>@lang('general.phone')</th>
+                <th>@lang('general.email')</th>
+                <th>@lang('general.status')</th>
+                <th>@lang('general.created_at')</th>
                 <th></th>
             </x-slot>
 
@@ -54,7 +54,7 @@
                     const state = res.data.is_active ? 'checked' : 'unchecked';
                     btn.attr('data-state', state);
                     thumb.attr('data-state', state);
-                    label.text(res.data.is_active ? 'Active' : 'Inactive');
+                    label.text(res.data.is_active ? '{{ __('general.active') }}' : '{{ __('general.inactive') }}');
                 },
             });
         });

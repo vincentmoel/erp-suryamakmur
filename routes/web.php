@@ -1,6 +1,7 @@
 <?php
 
 use App\Http\Controllers\AuthController;
+use App\Http\Controllers\LanguageController;
 use App\Http\Controllers\CategoryController;
 use App\Http\Controllers\ConfigController;
 use App\Http\Controllers\CustomerController;
@@ -184,6 +185,8 @@ Route::group(['middleware' => ['revalidate']], function () {
             Route::get('/{encryptedId}/edit', 'edit')->name('edit')->middleware("check.permission:$module,update");
             Route::delete('/{encryptedId}/destroy', 'destroy')->name('destroy')->middleware("check.permission:$module,delete");
         });
+
+        Route::patch('/language/{lang}', [LanguageController::class, 'update'])->name('language.update')->whereIn('lang', ['id', 'en']);
 
         Route::post('logout', [AuthController::class, 'logout'])->name('logout');
     });

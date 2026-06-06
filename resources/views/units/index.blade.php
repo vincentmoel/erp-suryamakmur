@@ -1,4 +1,4 @@
-@extends('layouts.main', ['title' => 'Units'])
+@extends('layouts.main', ['title' => __('general.units')])
 
 @push('styles')
     <link rel="stylesheet" href="https://cdn.datatables.net/2.1.8/css/dataTables.dataTables.min.css">
@@ -8,23 +8,23 @@
     <div class="page-content">
 
         <div class="page-header">
-            <h1>Units</h1>
-            <p>Manage units of measurement.</p>
+            <h1>@lang('general.units')</h1>
+            <p>@lang('general.units_desc')</p>
         </div>
 
-        <x-datatable id="units-table" search-placeholder="Search">
+        <x-datatable id="units-table" :search-placeholder="__('general.search')">
 
             <x-slot name="actions">
                 <a href="{{ route('units.create') }}" class="btn btn-primary btn-sm">
-                    <x-icon name="plus" /> Add Unit
+                    <x-icon name="plus" /> @lang('general.add_unit')
                 </a>
             </x-slot>
 
             <x-slot name="head">
                 <th>#</th>
-                <th>Name</th>
-                <th>Abbreviation</th>
-                <th>Created At</th>
+                <th>@lang('general.name')</th>
+                <th>@lang('general.abbreviation')</th>
+                <th>@lang('general.created_at')</th>
                 <th></th>
             </x-slot>
 

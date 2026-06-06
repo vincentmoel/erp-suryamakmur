@@ -5,49 +5,49 @@ return [
     [
         'children' => [
             [
-                'title' => 'Dashboard',
-                'icon' => 'chart-no-axes-combined',
+                'title' => 'general.nav_dashboard',
+                'icon'  => 'chart-no-axes-combined',
                 'route' => 'dashboard',
             ],
             [
-                'title' => 'Users',
-                'icon' => 'users',
+                'title' => 'general.nav_users',
+                'icon'  => 'users',
                 'route' => 'users.index',
             ],
         ],
     ],
 
     [
-        'group' => 'Master Data',
+        'group'    => 'general.group_master_data',
         'children' => [
             [
-                'title' => 'Categories',
-                'icon' => 'tag',
+                'title' => 'general.nav_categories',
+                'icon'  => 'tag',
                 'route' => 'categories.index',
             ],
             [
-                'title' => 'Units',
-                'icon' => 'ruler',
+                'title' => 'general.nav_units',
+                'icon'  => 'ruler',
                 'route' => 'units.index',
             ],
             [
-                'title' => 'Customers',
-                'icon' => 'contact',
+                'title' => 'general.nav_customers',
+                'icon'  => 'contact',
                 'route' => 'customers.index',
             ],
             [
-                'title' => 'Products',
-                'icon' => 'box',
+                'title' => 'general.nav_products',
+                'icon'  => 'box',
                 'route' => 'products.index',
             ],
         ],
     ],
 
     [
-        'group' => 'Sales',
+        'group'    => 'general.group_sales',
         'children' => [
             [
-                'title' => 'Invoices',
+                'title' => 'general.nav_invoices',
                 'icon'  => 'invoice',
                 'route' => 'invoices.index',
             ],
@@ -55,45 +55,19 @@ return [
     ],
 
     [
-        'group' => 'Purchase',
+        'group'    => 'general.group_purchase',
         'children' => [
             [
-                'title' => 'Purchases',
+                'title' => 'general.nav_purchases',
                 'icon'  => 'receipt',
                 'route' => 'purchases.index',
             ],
             [
-                'title' => 'Vendors',
+                'title' => 'general.nav_vendors',
                 'icon'  => 'building',
                 'route' => 'vendors.index',
             ],
         ],
     ],
-
-    // [
-    //     'group' => 'E-Commerce',
-    //     'children' => [
-    //         'title' => 'E-Commerce',
-    //         'icon' => 'shopping-cart',
-    //         'children' => [
-    //             [
-    //                 'title' => 'Dashboard',
-    //                 'url' => './pages/ecommerce/dashboard.html',
-    //             ],
-    //             [
-    //                 'title' => 'Products',
-    //                 'url' => './pages/ecommerce/products.html',
-    //             ],
-    //             [
-    //                 'title' => 'Orders',
-    //                 'url' => './pages/ecommerce/orders.html',
-    //             ],
-    //             [
-    //                 'title' => 'Customers',
-    //                 'url' => './pages/ecommerce/customers.html',
-    //             ],
-    //         ],
-    //     ]
-    // ],
 
 ];

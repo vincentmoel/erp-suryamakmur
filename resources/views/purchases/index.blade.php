@@ -1,4 +1,4 @@
-@extends('layouts.main', ['title' => 'Purchases'])
+@extends('layouts.main', ['title' => __('general.purchases')])
 
 @push('styles')
     <link rel="stylesheet" href="https://cdn.datatables.net/2.1.8/css/dataTables.dataTables.min.css">
@@ -8,26 +8,26 @@
     <div class="page-content">
 
         <div class="page-header">
-            <h1>Purchases</h1>
-            <p>Manage purchase orders from vendors.</p>
+            <h1>@lang('general.purchases')</h1>
+            <p>@lang('general.purchases_desc')</p>
         </div>
 
-        <x-datatable id="purchases-table" search-placeholder="Search purchase...">
+        <x-datatable id="purchases-table" :search-placeholder="__('general.search')">
 
             <x-slot name="actions">
                 <a href="{{ route('purchases.create') }}" class="btn btn-primary btn-sm">
-                    <x-icon name="plus" /> Add Purchase
+                    <x-icon name="plus" /> @lang('general.add_purchase')
                 </a>
             </x-slot>
 
             <x-slot name="head">
                 <th>#</th>
-                <th>Code</th>
-                <th>Vendor</th>
-                <th>Date</th>
-                <th>Grand Total</th>
-                <th>Status</th>
-                <th>Created At</th>
+                <th>@lang('general.code')</th>
+                <th>@lang('general.vendor')</th>
+                <th>@lang('general.purchase_date')</th>
+                <th>@lang('general.grand_total')</th>
+                <th>@lang('general.status')</th>
+                <th>@lang('general.created_at')</th>
                 <th></th>
             </x-slot>
 

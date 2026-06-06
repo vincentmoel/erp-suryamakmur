@@ -19,6 +19,7 @@ return new class extends Migration
             $table->string('photo')->nullable();
             $table->foreignId('created_by')->constrained('users');
             $table->foreignId('updated_by')->constrained('users');
+            $table->string('language', 2)->default('id');
             $table->timestamp('last_seen')->nullable();
             $table->timestamps();
             $table->softDeletes();

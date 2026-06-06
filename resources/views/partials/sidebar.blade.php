@@ -16,7 +16,7 @@
                     @if (!empty($item['group']))
                         <div data-sidebar="group-label"
                             class="sidebar-label flex h-8 shrink-0 items-center rounded-md px-2 text-xs font-medium text-sidebar-foreground/70">
-                            {{ $item['group'] }}
+                            {{ __($item['group']) }}
                         </div>
                     @endif
 
@@ -36,7 +36,7 @@
                                         <a class="nav-link {{ $isActive ? 'active' : '' }}"
                                             href="{{ !empty($flatItem['route']) ? route($flatItem['route']) : ($flatItem['url'] ?? '#') }}">
                                             <x-icon :name="$flatItem['icon']" class="size-4" />
-                                            <span class="sidebar-text">{{ $flatItem['title'] }}</span>
+                                            <span class="sidebar-text">{{ __($flatItem['title']) }}</span>
                                         </a>
                                     </li>
                                 @endforeach
@@ -49,7 +49,7 @@
                                 <li data-nav-parent data-sidebar="menu-item" class="group/menu-item relative">
                                     <button data-nav-toggle aria-expanded="false" class="nav-link" type="button">
                                         <x-icon :name="$dropdownIcon" class="size-4" />
-                                        <span class="sidebar-text">{{ $dropdownTitle }}</span>
+                                        <span class="sidebar-text">{{ __($dropdownTitle) }}</span>
                                         <x-icon name="chevron-right" class="nav-chevron" />
                                     </button>
                                     <ul data-nav-sub data-sidebar="menu-sub" class="nav-sub hidden">
@@ -57,7 +57,7 @@
                                             <li data-sidebar="menu-sub-item" class="group/menu-sub-item relative">
                                                 <a class="nav-sub-link"
                                                     href="{{ !empty($child['route']) ? route($child['route']) : ($child['url'] ?? '#') }}">
-                                                    <span>{{ $child['title'] }}</span>
+                                                    <span>{{ __($child['title']) }}</span>
                                                 </a>
                                             </li>
                                         @endforeach
@@ -68,7 +68,7 @@
                                     <a class="nav-link {{ request()->routeIs($item['route'] ?? '') ? 'active' : '' }}"
                                         href="{{ !empty($item['route']) ? route($item['route']) : ($item['url'] ?? '#') }}">
                                         <x-icon :name="$item['icon']" class="size-4" />
-                                        <span class="sidebar-text">{{ $item['title'] }}</span>
+                                        <span class="sidebar-text">{{ __($item['title']) }}</span>
                                     </a>
                                 </li>
                             @endif
@@ -94,14 +94,14 @@
                     <div class="my-1 h-px bg-border"></div>
                     <a href="#" class="flex items-center gap-2 rounded-sm px-2 py-2 text-sm hover:bg-accent transition-colors">
                         <x-icon name="profile" class="size-4 opacity-70" />
-                        <span>Profile</span>
+                        <span>@lang('general.profile')</span>
                     </a>
                     <div class="my-1 h-px bg-border"></div>
                     <form method="POST" action="{{ route('logout') }}">
                         @csrf
                         <button type="submit" class="flex w-full items-center gap-2 rounded-sm px-2 py-2 text-sm text-destructive hover:bg-accent transition-colors cursor-pointer">
                             <x-icon name="logout" class="size-4" />
-                            <span>Logout</span>
+                            <span>@lang('general.logout')</span>
                         </button>
                     </form>
                 </div>

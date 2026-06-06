@@ -1,11 +1,11 @@
-@extends('layouts.main', ['title' => "Edit $title"])
+@extends('layouts.main', ['title' => __('general.edit_unit')])
 
 @section('content')
     <div class="page-content">
 
         <div class="page-header">
-            <h1>Edit Unit</h1>
-            <p>Update unit information.</p>
+            <h1>@lang('general.edit_unit')</h1>
+            <p>@lang('general.edit_unit_desc')</p>
         </div>
 
         <form action="{{ route("$route.update", ['encryptedId' => $encryptedId]) }}" method="POST">
@@ -18,21 +18,21 @@
 
                     <div class="grid grid-cols-1 gap-6 sm:grid-cols-2">
 
-                        <x-form.field name="name" label="Name" :required="true">
+                        <x-form.field name="name" :label="__('general.name')" :required="true">
                             <input id="name"
                                    type="text"
                                    name="name"
                                    value="{{ old('name', $data->name) }}"
-                                   placeholder="e.g. Kilogram"
+                                   placeholder="{{ __('general.unit_name_placeholder') }}"
                                    class="input {{ $errors->has('name') ? 'border-destructive' : '' }}">
                         </x-form.field>
 
-                        <x-form.field name="abbreviation" label="Abbreviation" :required="true">
+                        <x-form.field name="abbreviation" :label="__('general.abbreviation')" :required="true">
                             <input id="abbreviation"
                                    type="text"
                                    name="abbreviation"
                                    value="{{ old('abbreviation', $data->abbreviation) }}"
-                                   placeholder="e.g. Kg"
+                                   placeholder="{{ __('general.unit_abbreviation_placeholder') }}"
                                    class="input {{ $errors->has('abbreviation') ? 'border-destructive' : '' }}">
                         </x-form.field>
 

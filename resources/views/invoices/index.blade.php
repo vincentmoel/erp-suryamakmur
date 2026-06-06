@@ -1,4 +1,4 @@
-@extends('layouts.main', ['title' => 'Invoices'])
+@extends('layouts.main', ['title' => __('general.invoices')])
 
 @push('styles')
     <link rel="stylesheet" href="https://cdn.datatables.net/2.1.8/css/dataTables.dataTables.min.css">
@@ -8,27 +8,27 @@
     <div class="page-content">
 
         <div class="page-header">
-            <h1>Invoices</h1>
-            <p>Manage sales invoices.</p>
+            <h1>@lang('general.invoices')</h1>
+            <p>@lang('general.invoices_desc')</p>
         </div>
 
-        <x-datatable id="invoices-table" search-placeholder="Search invoice...">
+        <x-datatable id="invoices-table" :search-placeholder="__('general.search')">
 
             <x-slot name="actions">
                 <a href="{{ route('invoices.create') }}" class="btn btn-primary btn-sm">
-                    <x-icon name="plus" /> Add Invoice
+                    <x-icon name="plus" /> @lang('general.add_invoice')
                 </a>
             </x-slot>
 
             <x-slot name="head">
                 <th>#</th>
-                <th>Code</th>
-                <th>Customer</th>
-                <th>Salesperson</th>
-                <th>Date</th>
-                <th>Total</th>
-                <th>Status</th>
-                <th>Created At</th>
+                <th>@lang('general.code')</th>
+                <th>@lang('general.customer')</th>
+                <th>@lang('general.salesperson')</th>
+                <th>@lang('general.invoice_date')</th>
+                <th>@lang('general.total')</th>
+                <th>@lang('general.status')</th>
+                <th>@lang('general.created_at')</th>
                 <th></th>
             </x-slot>
 

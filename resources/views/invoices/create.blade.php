@@ -1,11 +1,11 @@
-@extends('layouts.main', ['title' => "Add $title"])
+@extends('layouts.main', ['title' => __('general.add_invoice')])
 
 @section('content')
     <div class="page-content">
 
         <div class="page-header">
-            <h1>Add Invoice</h1>
-            <p>Create a new sales invoice.</p>
+            <h1>@lang('general.add_invoice')</h1>
+            <p>@lang('general.add_invoice_desc')</p>
         </div>
 
         <form action="{{ route('invoices.store') }}" method="POST" id="invoice-form">
@@ -17,16 +17,16 @@
                     <div class="flex size-8 items-center justify-center rounded-md bg-primary/10">
                         <x-icon name="invoice" class="size-4 text-primary" />
                     </div>
-                    <h3 class="text-sm font-semibold">Invoice Information</h3>
+                    <h3 class="text-sm font-semibold">@lang('general.invoice_information')</h3>
                 </div>
 
                 <div class="flex flex-col gap-6 p-6">
 
                     <div class="grid grid-cols-1 gap-6 sm:grid-cols-2">
-                        <x-form.field name="customer_id" label="Customer" :required="true">
+                        <x-form.field name="customer_id" :label="__('general.customer')" :required="true">
                             <x-form.single-select
                                 name="customer_id"
-                                placeholder="Select customer..."
+                                :placeholder="__('general.select_customer_placeholder')"
                                 :options="$customers->map(fn($c) => ['value' => $c->id, 'label' => $c->name])->toArray()"
                                 :selected="old('customer_id')" />
 
@@ -47,24 +47,24 @@
                             </div>
                         </x-form.field>
 
-                        <x-form.field name="salesperson_id" label="Salesperson" :required="true">
+                        <x-form.field name="salesperson_id" :label="__('general.salesperson')" :required="true">
                             <x-form.single-select
                                 name="salesperson_id"
-                                placeholder="Select salesperson..."
+                                :placeholder="__('general.select_salesperson_placeholder')"
                                 :options="$salespersons->map(fn($u) => ['value' => $u->id, 'label' => $u->name])->toArray()"
                                 :selected="old('salesperson_id', auth()->id())" />
                         </x-form.field>
                     </div>
 
                     <div class="grid grid-cols-1 gap-6 sm:grid-cols-2">
-                        <x-form.field name="invoice_date" label="Invoice Date" :required="true">
+                        <x-form.field name="invoice_date" :label="__('general.invoice_date')" :required="true">
                             <input type="date"
                                    name="invoice_date"
                                    value="{{ old('invoice_date', now()->format('Y-m-d')) }}"
                                    class="input {{ $errors->has('invoice_date') ? 'border-destructive' : '' }}">
                         </x-form.field>
 
-                        <x-form.field name="due_date" label="Due Date">
+                        <x-form.field name="due_date" :label="__('general.due_date')">
                             <input type="date"
                                    name="due_date"
                                    value="{{ old('due_date') }}"
@@ -83,11 +83,11 @@
                         <div class="flex size-8 items-center justify-center rounded-md bg-primary/10">
                             <x-icon name="box" class="size-4 text-primary" />
                         </div>
-                        <h3 class="text-sm font-semibold">Items</h3>
+                        <h3 class="text-sm font-semibold">@lang('general.items')</h3>
                     </div>
                     <button type="button" id="add-row" class="btn btn-outline btn-sm">
                         <x-icon name="plus" class="size-3.5" />
-                        Add Item
+                        @lang('general.add_item')
                     </button>
                 </div>
 
@@ -95,12 +95,12 @@
                     <table class="w-full text-sm">
                         <thead>
                             <tr class="border-b bg-muted/30">
-                                <th class="px-4 py-3 text-left font-medium text-muted-foreground min-w-52">Product</th>
-                                <th class="px-4 py-3 text-right font-medium text-muted-foreground w-24">Qty</th>
-                                <th class="px-4 py-3 text-right font-medium text-muted-foreground w-40">Unit Price</th>
-                                <th class="px-4 py-3 text-right font-medium text-muted-foreground w-36">Discount</th>
-                                <th class="px-4 py-3 text-right font-medium text-muted-foreground w-36">Tax</th>
-                                <th class="px-4 py-3 text-right font-medium text-muted-foreground w-40">Amount</th>
+                                <th class="px-4 py-3 text-left font-medium text-muted-foreground min-w-52">@lang('general.product')</th>
+                                <th class="px-4 py-3 text-right font-medium text-muted-foreground w-24">@lang('general.qty')</th>
+                                <th class="px-4 py-3 text-right font-medium text-muted-foreground w-40">@lang('general.unit_price')</th>
+                                <th class="px-4 py-3 text-right font-medium text-muted-foreground w-36">@lang('general.discount')</th>
+                                <th class="px-4 py-3 text-right font-medium text-muted-foreground w-36">@lang('general.tax')</th>
+                                <th class="px-4 py-3 text-right font-medium text-muted-foreground w-40">@lang('general.amount')</th>
                                 <th class="px-4 py-3 w-10"></th>
                             </tr>
                             <style>
@@ -119,12 +119,12 @@
                 <div class="flex flex-col items-end gap-2 border-t px-6 py-4">
 
                     <div class="flex items-center gap-4 text-sm w-full justify-end">
-                        <span class="text-muted-foreground w-24 text-right shrink-0">Subtotal</span>
+                        <span class="text-muted-foreground w-24 text-right shrink-0">@lang('general.subtotal')</span>
                         <span class="font-medium w-44 text-right tabular-nums" id="summary-subtotal">Rp 0</span>
                     </div>
 
                     <div class="flex items-center gap-4 text-sm w-full justify-end mt-2">
-                        <label for="inv-discount-display" class="text-muted-foreground w-24 text-right shrink-0 cursor-pointer">Discount</label>
+                        <label for="inv-discount-display" class="text-muted-foreground w-24 text-right shrink-0 cursor-pointer">@lang('general.discount')</label>
                         <div class="w-44">
                             <input type="text"
                                    id="inv-discount-display"
@@ -136,7 +136,7 @@
                     </div>
 
                     <div class="flex items-center gap-4 text-sm w-full justify-end">
-                        <label for="inv-tax-display" class="text-muted-foreground w-24 text-right shrink-0 cursor-pointer">Tax</label>
+                        <label for="inv-tax-display" class="text-muted-foreground w-24 text-right shrink-0 cursor-pointer">@lang('general.tax')</label>
                         <div class="w-44">
                             <input type="text"
                                    id="inv-tax-display"
@@ -148,7 +148,7 @@
                     </div>
 
                     <div class="flex items-center gap-4 w-full justify-end border-t pt-3 mt-1">
-                        <span class="font-semibold w-24 text-right shrink-0">Total</span>
+                        <span class="font-semibold w-24 text-right shrink-0">@lang('general.total')</span>
                         <span class="font-semibold text-base w-44 text-right tabular-nums" id="summary-total">Rp 0</span>
                     </div>
 
@@ -161,11 +161,11 @@
                 <div class="flex items-center justify-end gap-2 px-6 py-4">
                     <button type="submit" name="status" value="draft" class="btn btn-outline">
                         <x-icon name="save" class="size-3.5" />
-                        Save as Draft
+                        @lang('general.save_as_draft')
                     </button>
                     <button type="submit" name="status" value="waiting_for_payment" class="btn btn-primary">
                         <x-icon name="check" class="size-3.5" />
-                        Save
+                        @lang('general.save')
                     </button>
                 </div>
             </div>
@@ -278,13 +278,13 @@
             '</button>' +
             '<div data-cb-content role="listbox" class="select-content hidden max-h-60 overflow-auto">' +
                 '<div class="px-1 pb-1 sticky top-0 bg-popover">' +
-                    '<input type="text" data-cb-search placeholder="Search..." autocomplete="off" class="input h-8 text-sm">' +
+                    '<input type="text" data-cb-search placeholder="{{ __('general.search') }}..." autocomplete="off" class="input h-8 text-sm">' +
                 '</div>' +
                 '<div data-cb-list>' +
                     '<div role="option" data-cb-item data-value="" data-label="' + escAttr(placeholder) + '" class="select-item cursor-pointer text-muted-foreground">' + escHtml(placeholder) + '</div>' +
                     itemsHtml +
                 '</div>' +
-                '<p data-cb-empty class="hidden px-2 py-4 text-center text-sm text-muted-foreground">No results found.</p>' +
+                '<p data-cb-empty class="hidden px-2 py-4 text-center text-sm text-muted-foreground">{{ __('general.no_results') }}</p>' +
             '</div>' +
             '<input type="hidden" name="' + name + '" data-cb-input value="' + escAttr(selectedValue || '') + '">';
 
@@ -374,6 +374,7 @@
 
     var productOptions  = @json($productOptions);
     var productAjaxUrl  = '{{ route('ajax.products.info', ['id' => '__ID__']) }}';
+    var productPlaceholder = '{{ __('general.select_product_placeholder') }}';
     var rowIndex = 0;
 
     function calcRow(row) {
@@ -417,7 +418,7 @@
             'details[' + i + '][product_id]',
             productOptions,
             d.product_id || null,
-            'Select product...'
+            productPlaceholder
         );
         var unitInfo = document.createElement('div');
         unitInfo.className = 'mt-1 text-xs text-muted-foreground';

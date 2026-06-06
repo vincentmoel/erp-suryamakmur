@@ -1,4 +1,4 @@
-@extends('layouts.main', ['title' => 'Customers'])
+@extends('layouts.main', ['title' => __('general.customers')])
 
 @push('styles')
     <link rel="stylesheet" href="https://cdn.datatables.net/2.1.8/css/dataTables.dataTables.min.css">
@@ -8,27 +8,27 @@
     <div class="page-content">
 
         <div class="page-header">
-            <h1>Customers</h1>
-            <p>Manage customer data.</p>
+            <h1>@lang('general.customers')</h1>
+            <p>@lang('general.customers_desc')</p>
         </div>
 
-        <x-datatable id="customers-table" search-placeholder="Search">
+        <x-datatable id="customers-table" :search-placeholder="__('general.search')">
 
             <x-slot name="actions">
                 <a href="{{ route('customers.create') }}" class="btn btn-primary btn-sm">
-                    <x-icon name="plus" /> Add Customer
+                    <x-icon name="plus" /> @lang('general.add_customer')
                 </a>
             </x-slot>
 
             <x-slot name="head">
                 <th>#</th>
-                <th>Name</th>
-                <th>Type</th>
-                <th>Email</th>
-                <th>Phone</th>
-                <th>Mobile</th>
-                <th>Status</th>
-                <th>Created At</th>
+                <th>@lang('general.name')</th>
+                <th>@lang('general.type')</th>
+                <th>@lang('general.email')</th>
+                <th>@lang('general.phone')</th>
+                <th>@lang('general.mobile')</th>
+                <th>@lang('general.status')</th>
+                <th>@lang('general.created_at')</th>
                 <th></th>
             </x-slot>
 
@@ -54,7 +54,7 @@
                     const state = res.data.is_active ? 'checked' : 'unchecked';
                     btn.attr('data-state', state);
                     thumb.attr('data-state', state);
-                    label.text(res.data.is_active ? 'Active' : 'Inactive');
+                    label.text(res.data.is_active ? '{{ __('general.active') }}' : '{{ __('general.inactive') }}');
                 },
             });
         });

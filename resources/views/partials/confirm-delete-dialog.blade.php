@@ -10,15 +10,15 @@
      class="fixed inset-0 z-50 hidden bg-black/50 flex items-center justify-center p-4">
     <div class="dialog-panel">
         <div class="dialog-header">
-            <h2 class="dialog-title">Are you absolutely sure?</h2>
-            <p class="dialog-description">This action cannot be undone. This data will be permanently deleted.</p>
+            <h2 class="dialog-title">@lang('general.confirm_delete_title')</h2>
+            <p class="dialog-description">@lang('general.confirm_delete_message')</p>
         </div>
         <div class="dialog-footer">
             <button type="button" data-dialog-close class="btn btn-outline btn-sm">
-                Cancel
+                @lang('general.cancel')
             </button>
             <button type="button" id="confirm-delete-btn" class="btn btn-destructive btn-sm">
-                Delete
+                @lang('general.delete')
             </button>
         </div>
     </div>

@@ -1,11 +1,11 @@
-@extends('layouts.main', ['title' => "Add $title"])
+@extends('layouts.main', ['title' => __('general.add_unit')])
 
 @section('content')
     <div class="page-content">
 
         <div class="page-header">
-            <h1>Add Unit</h1>
-            <p>Create a new unit of measurement.</p>
+            <h1>@lang('general.add_unit')</h1>
+            <p>@lang('general.add_unit_desc')</p>
         </div>
 
         <form action="{{ route("$route.store") }}" method="POST">
@@ -17,21 +17,21 @@
 
                     <div class="grid grid-cols-1 gap-6 sm:grid-cols-2">
 
-                        <x-form.field name="name" label="Name" :required="true">
+                        <x-form.field name="name" :label="__('general.name')" :required="true">
                             <input id="name"
                                    type="text"
                                    name="name"
                                    value="{{ old('name') }}"
-                                   placeholder="e.g. Kilogram"
+                                   placeholder="{{ __('general.unit_name_placeholder') }}"
                                    class="input {{ $errors->has('name') ? 'border-destructive' : '' }}">
                         </x-form.field>
 
-                        <x-form.field name="abbreviation" label="Abbreviation" :required="true">
+                        <x-form.field name="abbreviation" :label="__('general.abbreviation')" :required="true">
                             <input id="abbreviation"
                                    type="text"
                                    name="abbreviation"
                                    value="{{ old('abbreviation') }}"
-                                   placeholder="e.g. Kg"
+                                   placeholder="{{ __('general.unit_abbreviation_placeholder') }}"
                                    class="input {{ $errors->has('abbreviation') ? 'border-destructive' : '' }}">
                         </x-form.field>
 
