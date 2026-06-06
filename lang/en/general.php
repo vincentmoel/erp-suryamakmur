@@ -286,4 +286,8 @@ return [
     // Language
     'language_changed' => 'Language changed successfully.',
 
+    // Filter
+    'filter' => 'Filter',
+    'reset'  => 'Reset',
+
 ];

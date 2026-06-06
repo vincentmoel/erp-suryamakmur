@@ -33,6 +33,20 @@ class InvoiceController extends BaseController
         );
     }
 
+    public function index()
+    {
+        $dataTable = new InvoiceDataTable(false);
+
+        return $dataTable->render('invoices.index', [
+            'title'        => $this->title,
+            'route'        => $this->route,
+            'module'       => $this->module,
+            'customers'    => Customer::orderBy('name')->get(['id', 'name']),
+            'salespersons' => User::orderBy('name')->get(['id', 'name']),
+            'statuses'     => InvoiceStatus::cases(),
+        ]);
+    }
+
     private function productOptions(): array
     {
         return Product::orderBy('name')->get(['id', 'name', 'sku'])

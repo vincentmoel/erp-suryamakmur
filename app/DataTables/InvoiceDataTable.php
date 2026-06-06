@@ -22,7 +22,29 @@ class InvoiceDataTable extends BaseDataTable
 
     public function query(): QueryBuilder
     {
-        return Invoice::with('customer', 'salesperson')->withSum('details', 'amount')->latest()->newQuery();
+        $query = Invoice::with('customer', 'salesperson')->withSum('details', 'amount')->latest();
+
+        if ($customerId = request('filter_customer')) {
+            $query->where('customer_id', $customerId);
+        }
+
+        if ($salespersonId = request('filter_salesperson')) {
+            $query->where('salesperson_id', $salespersonId);
+        }
+
+        if ($dateFrom = request('filter_date_from')) {
+            $query->whereDate('invoice_date', '>=', $dateFrom);
+        }
+
+        if ($dateTo = request('filter_date_to')) {
+            $query->whereDate('invoice_date', '<=', $dateTo);
+        }
+
+        if ($status = request('filter_status')) {
+            $query->where('status', $status);
+        }
+
+        return $query->newQuery();
     }
 
     public function dataTable(QueryBuilder $query): EloquentDataTable
