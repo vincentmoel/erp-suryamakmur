@@ -51,7 +51,6 @@ class BaseController extends Controller
     public function store(Request $request)
     {
         $formRequest = $this->validationRequest::createFrom($request);
-        $formRequest = app()->make($this->validationRequest);
         $formRequest->setContainer(app())->setRedirector(app()->make('redirect'));
         $formRequest->validateResolved();
         $validatedData = $formRequest->validated();
@@ -94,7 +93,6 @@ class BaseController extends Controller
     public function update(Request $request, $encryptedId)
     {
         $formRequest = $this->validationRequest::createFrom($request);
-        $formRequest = app()->make($this->validationRequest);
         $formRequest->setContainer(app())->setRedirector(app()->make('redirect'));
         $formRequest->validateResolved();
         $validatedData = $formRequest->validated();

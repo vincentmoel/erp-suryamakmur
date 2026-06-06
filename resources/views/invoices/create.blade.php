@@ -7,7 +7,7 @@
             <h1>@lang('general.add_invoice')</h1>
             <p>@lang('general.add_invoice_desc')</p>
         </div>
-
+        
         <form action="{{ route('invoices.store') }}" method="POST" id="invoice-form">
             @csrf
 
@@ -71,6 +71,14 @@
                                    class="input {{ $errors->has('due_date') ? 'border-destructive' : '' }}">
                         </x-form.field>
                     </div>
+
+                    <x-form.field name="notes" :label="__('general.notes')">
+                        <textarea name="notes"
+                                  rows="3"
+                                  class="input {{ $errors->has('notes') ? 'border-destructive' : '' }}"
+                                  style="height: auto; padding-top: 0.5rem; padding-bottom: 0.5rem;"
+                                  placeholder="{{ __('general.notes_placeholder') }}">{{ old('notes') }}</textarea>
+                    </x-form.field>
 
                 </div>
             </div>
@@ -451,22 +459,30 @@
 
         // Wire product change → AJAX (unit info)
         var unitInfo = tr.querySelector('.row-unit-info');
-        tr.querySelector('[data-ss-input]').addEventListener('change', function () {
-            var pid = this.value;
+        var ssInput  = tr.querySelector('[data-ss-input]');
+
+        function fetchProductInfo(pid, skipPrice) {
             if (!pid) { unitInfo.textContent = ''; return; }
             fetch(productAjaxUrl.replace('__ID__', pid))
                 .then(function (r) { return r.ok ? r.json() : null; })
                 .then(function (res) {
                     if (!res) { unitInfo.textContent = ''; return; }
                     unitInfo.textContent = res.stock != null ? '{{ __('general.stock') }}: ' + res.stock + (res.unit ? ' ' + res.unit : '') : '';
-                    var price = parseInt(res.selling_price) || 0;
-                    var priceHidden  = tr.querySelector('.row-price');
-                    var priceDisplay = tr.querySelector('.row-price-display');
-                    priceHidden.value  = price;
-                    priceDisplay.value = price ? price.toLocaleString('id-ID') : '';
-                    calcRow(tr); calcTotals();
+                    if (!skipPrice) {
+                        var price = parseInt(res.selling_price) || 0;
+                        var priceHidden  = tr.querySelector('.row-price');
+                        var priceDisplay = tr.querySelector('.row-price-display');
+                        priceHidden.value  = price;
+                        priceDisplay.value = price ? price.toLocaleString('id-ID') : '';
+                        calcRow(tr); calcTotals();
+                    }
                 });
-        });
+        }
+
+        ssInput.addEventListener('change', function () { fetchProductInfo(this.value, false); });
+
+        // Re-fetch unit info when restoring from old() — price already restored, only need unit label
+        if (d.product_id) fetchProductInfo(d.product_id, true);
 
         bindRowMoney(tr.querySelector('.row-price-display'), tr.querySelector('.row-price'), d.unit_price, tr);
         bindRowTax(tr.querySelector('.row-discount-display'), tr.querySelector('.row-discount-pct'), tr.querySelector('.row-discount'), tr.querySelector('.row-discount-mode-btn'), tr, d.discount_percent, d.discount_amount);
@@ -545,7 +561,7 @@
     function bindRowMoney(displayEl, hiddenEl, initVal, row) {
         if (initVal) {
             var n = parseInt(initVal, 10);
-            if (n) displayEl.value = n.toLocaleString('id-ID');
+            if (n) { displayEl.value = n.toLocaleString('id-ID'); hiddenEl.value = n; }
         }
         displayEl.addEventListener('input', function () {
             var raw  = parseMoney(this.value);
@@ -561,6 +577,13 @@
     }
 
     addBtn.addEventListener('click', function () { addRow(); });
+
+    document.getElementById('invoice-form').addEventListener('submit', function () {
+        tbody.querySelectorAll('tr').forEach(function (row) {
+            var pid = row.querySelector('[data-ss-input]');
+            if (pid && !pid.value) row.remove();
+        });
+    });
 
     // Bind invoice-level discount with % / Rp toggle
     (function () {

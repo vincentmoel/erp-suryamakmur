@@ -25,6 +25,30 @@ class InvoiceRequest extends FormRequest
         };
     }
 
+    public function attributes(): array
+    {
+        return [
+            'customer_id'                => __('general.customer'),
+            'salesperson_id'             => __('general.salesperson'),
+            'invoice_date'               => __('general.invoice_date'),
+            'due_date'                   => __('general.due_date'),
+            'discount_percent'           => __('general.discount'),
+            'discount_amount'            => __('general.discount'),
+            'tax_percent'                => __('general.tax'),
+            'tax_amount'                 => __('general.tax'),
+            'notes'                      => __('general.notes'),
+            'details'                    => __('general.items'),
+            'details.*.product_id'       => __('general.product'),
+            'details.*.quantity'         => __('general.qty'),
+            'details.*.unit_price'       => __('general.unit_price'),
+            'details.*.discount_percent' => __('general.discount'),
+            'details.*.discount_amount'  => __('general.discount'),
+            'details.*.tax_percent'      => __('general.tax'),
+            'details.*.tax_amount'       => __('general.tax'),
+            'details.*.amount'           => __('general.amount'),
+        ];
+    }
+
     public function store(): array
     {
         return [
@@ -43,8 +67,11 @@ class InvoiceRequest extends FormRequest
             'details.*.unit_price'         => ['required', 'integer', 'min:0'],
             'details.*.discount_percent'   => ['nullable', 'numeric', 'min:0', 'max:100'],
             'details.*.discount_amount'    => ['nullable', 'integer', 'min:0'],
+            'details.*.tax_percent'        => ['nullable', 'numeric', 'min:0', 'max:100'],
             'details.*.tax_amount'         => ['nullable', 'integer', 'min:0'],
+            'details.*.subtotal_amount'    => ['nullable', 'integer', 'min:0'],
             'details.*.amount'             => ['required', 'integer', 'min:0'],
+            'notes'                        => ['nullable', 'string', 'max:2000'],
         ];
     }
 

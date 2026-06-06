@@ -66,17 +66,37 @@ class InvoiceController extends BaseController
         $data = $formRequest->validated();
 
         DB::transaction(function () use ($data) {
+            $customer      = Customer::find($data['customer_id']);
+            $subtotal      = collect($data['details'])->sum('amount');
+            $discountAmount = (int) ($data['discount_amount'] ?? 0);
+            $taxAmount      = (int) ($data['tax_amount'] ?? 0);
+            $grandTotal    = $subtotal - $discountAmount + $taxAmount;
+
             $invoice = Invoice::create([
-                'code'            => CodeGenerator::invoice(),
-                'customer_id'     => $data['customer_id'],
-                'salesperson_id'  => $data['salesperson_id'],
-                'invoice_date'    => $data['invoice_date'],
-                'due_date'        => $data['due_date'] ?? null,
+                'code'             => CodeGenerator::invoice(),
+                'customer_id'      => $data['customer_id'],
+                'customer_snapshot' => [
+                    'id'           => $customer->id,
+                    'name'         => $customer->name,
+                    'type'         => $customer->type->value,
+                    'company_name' => $customer->company_name,
+                    'tax_number'   => $customer->tax_number,
+                    'email'        => $customer->email,
+                    'phone'        => $customer->phone,
+                    'mobile'       => $customer->mobile,
+                    'address'      => $customer->address ?? null,
+                ],
+                'salesperson_id'   => $data['salesperson_id'],
+                'invoice_date'     => $data['invoice_date'],
+                'due_date'         => $data['due_date'] ?? null,
                 'discount_percent' => $data['discount_percent'] ?? null,
-                'discount_amount'  => $data['discount_amount'] ?? null,
+                'discount_amount'  => $discountAmount ?: null,
                 'tax_percent'      => $data['tax_percent'] ?? null,
-                'tax_amount'       => $data['tax_amount'] ?? null,
+                'tax_amount'       => $taxAmount ?: null,
+                'subtotal'         => $subtotal,
+                'grand_total'      => $grandTotal,
                 'paid_amount'      => 0,
+                'notes'            => $data['notes'] ?? null,
                 'status'           => $data['status'],
             ]);
 
@@ -91,8 +111,10 @@ class InvoiceController extends BaseController
                     'unit_price'      => $detail['unit_price'],
                     'discount_percent' => $detail['discount_percent'] ?? null,
                     'discount_amount'  => $detail['discount_amount'] ?? null,
+                    'tax_percent'      => $detail['tax_percent'] ?? null,
                     'tax_amount'       => $detail['tax_amount'] ?? null,
-                    'amount'          => $detail['amount'],
+                    'subtotal'         => $detail['subtotal_amount'] ?? ($detail['quantity'] * $detail['unit_price']),
+                    'amount'           => $detail['amount'],
                     'product_snapshot' => [
                         'id'       => $product->id,
                         'name'     => $product->name,
@@ -184,15 +206,35 @@ class InvoiceController extends BaseController
                 );
             }
 
+            $customer       = Customer::find($data['customer_id']);
+            $subtotal       = collect($data['details'])->sum('amount');
+            $discountAmount = (int) ($data['discount_amount'] ?? 0);
+            $taxAmount      = (int) ($data['tax_amount'] ?? 0);
+            $grandTotal     = $subtotal - $discountAmount + $taxAmount;
+
             $invoice->update([
-                'customer_id'     => $data['customer_id'],
-                'salesperson_id'  => $data['salesperson_id'],
-                'invoice_date'    => $data['invoice_date'],
-                'due_date'        => $data['due_date'] ?? null,
+                'customer_id'      => $data['customer_id'],
+                'customer_snapshot' => [
+                    'id'           => $customer->id,
+                    'name'         => $customer->name,
+                    'type'         => $customer->type->value,
+                    'company_name' => $customer->company_name,
+                    'tax_number'   => $customer->tax_number,
+                    'email'        => $customer->email,
+                    'phone'        => $customer->phone,
+                    'mobile'       => $customer->mobile,
+                    'address'      => $customer->address ?? null,
+                ],
+                'salesperson_id'   => $data['salesperson_id'],
+                'invoice_date'     => $data['invoice_date'],
+                'due_date'         => $data['due_date'] ?? null,
                 'discount_percent' => $data['discount_percent'] ?? null,
-                'discount_amount'  => $data['discount_amount'] ?? null,
+                'discount_amount'  => $discountAmount ?: null,
                 'tax_percent'      => $data['tax_percent'] ?? null,
-                'tax_amount'       => $data['tax_amount'] ?? null,
+                'tax_amount'       => $taxAmount ?: null,
+                'subtotal'         => $subtotal,
+                'grand_total'      => $grandTotal,
+                'notes'            => $data['notes'] ?? null,
                 'status'           => $data['status'],
             ]);
 
@@ -210,8 +252,10 @@ class InvoiceController extends BaseController
                     'unit_price'      => $detail['unit_price'],
                     'discount_percent' => $detail['discount_percent'] ?? null,
                     'discount_amount'  => $detail['discount_amount'] ?? null,
+                    'tax_percent'      => $detail['tax_percent'] ?? null,
                     'tax_amount'       => $detail['tax_amount'] ?? null,
-                    'amount'          => $detail['amount'],
+                    'subtotal'         => $detail['subtotal_amount'] ?? ($detail['quantity'] * $detail['unit_price']),
+                    'amount'           => $detail['amount'],
                     'product_snapshot' => [
                         'id'       => $product->id,
                         'name'     => $product->name,

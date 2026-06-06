@@ -29,7 +29,7 @@ class DatabaseSeeder extends Seeder
             CategorySeeder::class,
             UnitSeeder::class,
             CustomerSeeder::class,
-            // ProductSeeder::class,
+            ProductSeeder::class,
             VendorSeeder::class,
             // PurchaseSeeder::class,   // adds inventory for RECEIVED purchases
             // InvoiceSeeder::class,    // creates invoices + FIFO deductions
