@@ -2,7 +2,6 @@
 
 @push('styles')
     <link rel="stylesheet" href="https://cdn.datatables.net/2.1.8/css/dataTables.dataTables.min.css">
-    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/flatpickr/dist/flatpickr.min.css">
 @endpush
 
 @section('content')
@@ -40,21 +39,10 @@
                 {{-- Invoice Date Range --}}
                 <div class="flex flex-col gap-3">
                     <label class="text-sm font-medium leading-none">@lang('general.invoice_date')</label>
-                    <div class="relative">
-                        <input id="filter-daterange"
-                               type="text"
-                               readonly
-                               placeholder="All Dates"
-                               class="input w-full cursor-pointer pr-8">
-                        <span id="filter-daterange-clear"
-                              class="hidden absolute right-2 top-1/2 -translate-y-1/2 flex items-center justify-center rounded text-muted-foreground hover:text-destructive opacity-60 hover:opacity-100 transition-opacity cursor-pointer"
-                              title="Clear">
-                            <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor"
-                                 stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round" class="size-3.5">
-                                <path d="M18 6 6 18M6 6l12 12"/>
-                            </svg>
-                        </span>
-                    </div>
+                    <x-form.daterange
+                        name-from="filter_date_from"
+                        name-to="filter_date_to"
+                        placeholder="All Dates" />
                 </div>
 
                 {{-- Status --}}
@@ -98,11 +86,7 @@
 @push('scripts')
     <script src="https://cdn.datatables.net/2.1.8/js/dataTables.min.js"></script>
     <script src="{{ asset('src/js/datatable.js') }}"></script>
-    <script src="https://cdn.jsdelivr.net/npm/flatpickr"></script>
     <script>
-        var filterDateFrom = '';
-        var filterDateTo   = '';
-
         const dt = initDataTable({
             tableId: 'invoices-table',
             ajaxUrl: '{{ route('invoices.index') }}',
@@ -119,48 +103,15 @@
             ],
         });
 
-        // Inject filter params into every DataTable AJAX call
         dt.settings()[0].ajax.data = function (d) {
             d.filter_customer    = document.querySelector('[name="filter_customer"]').value;
             d.filter_salesperson = document.querySelector('[name="filter_salesperson"]').value;
-            d.filter_date_from   = filterDateFrom;
-            d.filter_date_to     = filterDateTo;
+            d.filter_date_from   = document.querySelector('[name="filter_date_from"]').value;
+            d.filter_date_to     = document.querySelector('[name="filter_date_to"]').value;
             d.filter_status      = document.querySelector('[name="filter_status"]').value;
         };
 
-        // Auto-reload on single-select change
-        document.querySelectorAll('[name="filter_customer"], [name="filter_salesperson"], [name="filter_status"]')
-            .forEach(function (input) {
-                input.addEventListener('change', function () { dt.ajax.reload(); });
-            });
-
-        // Flatpickr date range
-        const fpClear = document.getElementById('filter-daterange-clear');
-
-        const fp = flatpickr('#filter-daterange', {
-            mode: 'range',
-            dateFormat: 'd M Y',
-            locale: { rangeSeparator: ' – ' },
-            onClose: function (selectedDates) {
-                if (selectedDates.length === 2) {
-                    filterDateFrom = selectedDates[0].toISOString().slice(0, 10);
-                    filterDateTo   = selectedDates[1].toISOString().slice(0, 10);
-                    fpClear.classList.remove('hidden');
-                } else if (selectedDates.length === 0) {
-                    filterDateFrom = '';
-                    filterDateTo   = '';
-                    fpClear.classList.add('hidden');
-                }
-                dt.ajax.reload();
-            },
-        });
-
-        fpClear.addEventListener('click', function () {
-            fp.clear();
-            filterDateFrom = '';
-            filterDateTo   = '';
-            fpClear.classList.add('hidden');
-            dt.ajax.reload();
-        });
+        document.querySelectorAll('[name="filter_customer"], [name="filter_salesperson"], [name="filter_status"], [name="filter_date_from"]')
+            .forEach(function (el) { el.addEventListener('change', function () { dt.ajax.reload(); }); });
     </script>
 @endpush
