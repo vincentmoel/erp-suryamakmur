@@ -41,14 +41,24 @@
     color: var(--foreground);
     cursor: pointer;
     transition: background-color 150ms;
+    flex-shrink: 0;
 }
 .dr-nav-btn:hover { background-color: var(--accent); color: var(--accent-foreground); }
 
-.dr-month-label {
+.dr-header-label {
     font-size: 0.875rem;
     font-weight: 600;
     color: var(--foreground);
+    cursor: pointer;
+    padding: 0.25rem 0.5rem;
+    border-radius: calc(var(--radius) - 4px);
+    border: none;
+    background: transparent;
+    transition: background-color 150ms;
+    flex: 1;
+    text-align: center;
 }
+.dr-header-label:hover { background-color: var(--accent); color: var(--accent-foreground); }
 
 .dr-weekdays {
     display: grid;
@@ -83,15 +93,39 @@
     transition: background-color 150ms, color 150ms;
     outline: none;
 }
-.dr-day:hover { background-color: var(--accent); color: var(--accent-foreground); }
-.dr-day.dr-today { font-weight: 600; text-decoration: underline; text-underline-offset: 3px; }
-.dr-day.dr-selected { background-color: var(--primary); color: var(--primary-foreground); font-weight: 600; }
-.dr-day.dr-in-range { background-color: var(--accent); color: var(--accent-foreground); border-radius: 0; }
-.dr-day.dr-range-start { background-color: var(--primary); color: var(--primary-foreground); font-weight: 600; border-radius: calc(var(--radius) - 4px) 0 0 calc(var(--radius) - 4px); }
-.dr-day.dr-range-end   { background-color: var(--primary); color: var(--primary-foreground); font-weight: 600; border-radius: 0 calc(var(--radius) - 4px) calc(var(--radius) - 4px) 0; }
-.dr-day.dr-range-single { background-color: var(--primary); color: var(--primary-foreground); font-weight: 600; border-radius: calc(var(--radius) - 4px); }
-.dr-day.dr-hover-range { background-color: color-mix(in oklab, var(--accent) 60%, transparent); color: var(--accent-foreground); border-radius: 0; }
-.dr-day.dr-hover-end   { background-color: var(--primary); color: var(--primary-foreground); opacity: 0.7; font-weight: 600; border-radius: 0 calc(var(--radius) - 4px) calc(var(--radius) - 4px) 0; }
+.dr-day:hover                { background-color: var(--accent); color: var(--accent-foreground); }
+.dr-day.dr-today             { font-weight: 600; text-decoration: underline; text-underline-offset: 3px; }
+.dr-day.dr-range-single      { background-color: var(--primary); color: var(--primary-foreground); font-weight: 600; border-radius: calc(var(--radius) - 4px); }
+.dr-day.dr-range-start       { background-color: var(--primary); color: var(--primary-foreground); font-weight: 600; border-radius: calc(var(--radius) - 4px) 0 0 calc(var(--radius) - 4px); }
+.dr-day.dr-range-end         { background-color: var(--primary); color: var(--primary-foreground); font-weight: 600; border-radius: 0 calc(var(--radius) - 4px) calc(var(--radius) - 4px) 0; }
+.dr-day.dr-in-range          { background-color: var(--accent); color: var(--accent-foreground); border-radius: 0; }
+.dr-day.dr-hover-range       { background-color: color-mix(in oklab, var(--accent) 60%, transparent); color: var(--accent-foreground); border-radius: 0; }
+.dr-day.dr-hover-end         { background-color: var(--primary); color: var(--primary-foreground); opacity: 0.7; font-weight: 600; border-radius: 0 calc(var(--radius) - 4px) calc(var(--radius) - 4px) 0; }
+
+/* Month picker grid */
+.dr-month-grid {
+    display: grid;
+    grid-template-columns: repeat(3, 1fr);
+    gap: 4px;
+    margin-top: 0.25rem;
+}
+.dr-month-btn {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    height: 2.5rem;
+    border-radius: calc(var(--radius) - 4px);
+    border: none;
+    background: transparent;
+    color: var(--foreground);
+    font-size: 0.875rem;
+    cursor: pointer;
+    transition: background-color 150ms, color 150ms;
+    outline: none;
+}
+.dr-month-btn:hover    { background-color: var(--accent); color: var(--accent-foreground); }
+.dr-month-btn.dr-cur   { font-weight: 600; text-decoration: underline; text-underline-offset: 3px; }
+.dr-month-btn.dr-sel   { background-color: var(--primary); color: var(--primary-foreground); font-weight: 600; }
 </style>
 
 <div data-daterange="{{ $uid }}" class="relative">
@@ -126,16 +160,16 @@
     {{-- Dropdown --}}
     <div data-dr-dropdown class="dr-dropdown hidden">
 
-        {{-- Month Navigation --}}
+        {{-- Navigation Header --}}
         <div class="dr-nav">
-            <button type="button" data-dr-prev class="dr-nav-btn" title="Previous month">
+            <button type="button" data-dr-prev class="dr-nav-btn">
                 <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor"
                      stroke-width="2" stroke-linecap="round" stroke-linejoin="round" style="width:1rem;height:1rem;">
                     <path d="m15 18-6-6 6-6"/>
                 </svg>
             </button>
-            <span data-dr-month-label class="dr-month-label"></span>
-            <button type="button" data-dr-next class="dr-nav-btn" title="Next month">
+            <button type="button" data-dr-year-btn class="dr-header-label"></button>
+            <button type="button" data-dr-next class="dr-nav-btn">
                 <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor"
                      stroke-width="2" stroke-linecap="round" stroke-linejoin="round" style="width:1rem;height:1rem;">
                     <path d="m9 18 6-6-6-6"/>
@@ -143,14 +177,14 @@
             </button>
         </div>
 
-        {{-- Weekday Headers --}}
-        <div class="dr-weekdays">
+        {{-- Weekday Headers (hidden in year view) --}}
+        <div data-dr-weekdays class="dr-weekdays">
             @foreach(['Su','Mo','Tu','We','Th','Fr','Sa'] as $d)
                 <div class="dr-weekday">{{ $d }}</div>
             @endforeach
         </div>
 
-        {{-- Day Grid --}}
+        {{-- Day / Year Grid --}}
         <div data-dr-grid class="dr-grid"></div>
 
     </div>
@@ -163,28 +197,29 @@
 
 <script>
 (function () {
-    var root       = document.querySelector('[data-daterange="{{ $uid }}"]');
-    var trigger    = root.querySelector('button[aria-haspopup="dialog"]');
-    var dropdown   = root.querySelector('[data-dr-dropdown]');
-    var labelEl    = root.querySelector('[data-dr-label]');
-    var clearBtn   = root.querySelector('[data-dr-clear]');
-    var chevron    = root.querySelector('[data-dr-chevron]');
-    var prevBtn    = root.querySelector('[data-dr-prev]');
-    var nextBtn    = root.querySelector('[data-dr-next]');
-    var monthLabel = root.querySelector('[data-dr-month-label]');
-    var grid       = root.querySelector('[data-dr-grid]');
-    var inputFrom  = root.querySelector('[data-dr-input-from]');
-    var inputTo    = root.querySelector('[data-dr-input-to]');
-    var placeholder = {{ Js::from($placeholder) }};
+    var root         = document.querySelector('[data-daterange="{{ $uid }}"]');
+    var trigger      = root.querySelector('button[aria-haspopup="dialog"]');
+    var dropdown     = root.querySelector('[data-dr-dropdown]');
+    var labelEl      = root.querySelector('[data-dr-label]');
+    var clearBtn     = root.querySelector('[data-dr-clear]');
+    var chevron      = root.querySelector('[data-dr-chevron]');
+    var prevBtn      = root.querySelector('[data-dr-prev]');
+    var nextBtn      = root.querySelector('[data-dr-next]');
+    var yearBtn      = root.querySelector('[data-dr-year-btn]');
+    var weekdays     = root.querySelector('[data-dr-weekdays]');
+    var grid         = root.querySelector('[data-dr-grid]');
+    var inputFrom    = root.querySelector('[data-dr-input-from]');
+    var inputTo      = root.querySelector('[data-dr-input-to]');
+    var placeholder  = {{ Js::from($placeholder) }};
 
     var MONTHS = ['January','February','March','April','May','June',
                   'July','August','September','October','November','December'];
-    var SHORT_MONTHS = ['Jan','Feb','Mar','Apr','May','Jun','Jul','Aug','Sep','Oct','Nov','Dec'];
 
     var fromVal  = inputFrom.value || null;
     var toVal    = inputTo.value   || null;
     var hoverVal = null;
     var selecting = !!(fromVal && !toVal);
+    var viewMode  = 'day'; // 'day' | 'month'
 
     var now   = new Date();
     var today = fmt(now);
@@ -193,18 +228,17 @@
 
     if (fromVal) { var d0 = parse(fromVal); viewY = d0.getFullYear(); viewM = d0.getMonth(); }
 
-    function fmt(d) {
-        return d.getFullYear() + '-' + pad(d.getMonth()+1) + '-' + pad(d.getDate());
-    }
-    function pad(n) { return String(n).padStart(2,'0'); }
+    // ── Helpers ──────────────────────────────────────────────────
+
+    function fmt(d) { return d.getFullYear() + '-' + pad(d.getMonth()+1) + '-' + pad(d.getDate()); }
+    function pad(n) { return String(n).padStart(2, '0'); }
     function parse(s) { var p = s.split('-'); return new Date(+p[0], +p[1]-1, +p[2]); }
     function display(s) { var d = parse(s); return d.getDate() + ' ' + MONTHS[d.getMonth()] + ' ' + d.getFullYear(); }
 
     function updateLabel() {
         var text = null;
-        if (fromVal && toVal)   text = display(fromVal) + ' – ' + display(toVal);
-        else if (fromVal)       text = display(fromVal) + ' – ...';
-
+        if (fromVal && toVal)  text = display(fromVal) + ' – ' + display(toVal);
+        else if (fromVal)      text = display(fromVal) + ' – ...';
         if (text) {
             labelEl.textContent = text;
             labelEl.classList.remove('text-muted-foreground');
@@ -216,26 +250,26 @@
         }
     }
 
-    function renderCalendar() {
-        monthLabel.textContent = MONTHS[viewM] + ' ' + viewY;
-        grid.innerHTML = '';
+    // ── Day View ─────────────────────────────────────────────────
 
-        var firstDay     = new Date(viewY, viewM, 1).getDay();
-        var daysInMonth  = new Date(viewY, viewM + 1, 0).getDate();
+    function renderDayView() {
+        viewMode = 'day';
+        yearBtn.textContent = MONTHS[viewM] + ' ' + viewY;
+        weekdays.style.display   = '';
+        grid.className           = 'dr-grid';
+        grid.innerHTML           = '';
 
-        // Empty leading cells
-        for (var i = 0; i < firstDay; i++) {
-            var empty = document.createElement('div');
-            grid.appendChild(empty);
-        }
+        var firstDay    = new Date(viewY, viewM, 1).getDay();
+        var daysInMonth = new Date(viewY, viewM + 1, 0).getDate();
+
+        for (var i = 0; i < firstDay; i++) grid.appendChild(document.createElement('div'));
 
         for (var d = 1; d <= daysInMonth; d++) {
             var dateStr = viewY + '-' + pad(viewM+1) + '-' + pad(d);
             var btn = document.createElement('button');
             btn.type = 'button';
             btn.dataset.date = dateStr;
-            btn.textContent = d;
-            btn.className = 'dr-day';
+            btn.textContent  = d;
             styleDay(btn, dateStr);
             grid.appendChild(btn);
         }
@@ -244,20 +278,12 @@
     function styleDay(btn, dateStr) {
         btn.className = 'dr-day';
         if (dateStr === today) btn.classList.add('dr-today');
-
-        var isFrom = dateStr === fromVal;
-        var isTo   = dateStr === toVal;
-
+        var isFrom = dateStr === fromVal, isTo = dateStr === toVal;
         if (fromVal && toVal) {
-            if (isFrom && isTo) {
-                btn.classList.add('dr-range-single');
-            } else if (isFrom) {
-                btn.classList.add('dr-range-start');
-            } else if (isTo) {
-                btn.classList.add('dr-range-end');
-            } else if (dateStr > fromVal && dateStr < toVal) {
-                btn.classList.add('dr-in-range');
-            }
+            if (isFrom && isTo)                            btn.classList.add('dr-range-single');
+            else if (isFrom)                               btn.classList.add('dr-range-start');
+            else if (isTo)                                 btn.classList.add('dr-range-end');
+            else if (dateStr > fromVal && dateStr < toVal) btn.classList.add('dr-in-range');
         } else if (fromVal && !toVal) {
             if (isFrom) {
                 btn.classList.add('dr-range-single');
@@ -272,10 +298,113 @@
     }
 
     function rerender() {
-        grid.querySelectorAll('[data-date]').forEach(function (btn) {
-            styleDay(btn, btn.dataset.date);
+        grid.querySelectorAll('[data-date]').forEach(function (btn) { styleDay(btn, btn.dataset.date); });
+    }
+
+    // ── Month View ───────────────────────────────────────────────
+
+    function renderMonthView() {
+        viewMode = 'month';
+        yearBtn.textContent = viewY;
+        weekdays.style.display   = 'none';
+        grid.className           = 'dr-month-grid';
+        grid.innerHTML           = '';
+
+        var curM  = now.getMonth(), curY = now.getFullYear();
+        var selM  = fromVal ? parse(fromVal).getMonth()    : -1;
+        var selY  = fromVal ? parse(fromVal).getFullYear() : -1;
+
+        MONTHS.forEach(function (name, idx) {
+            var btn = document.createElement('button');
+            btn.type = 'button';
+            btn.dataset.month = idx;
+            btn.textContent   = name;
+            btn.className     = 'dr-month-btn';
+            if (idx === curM && viewY === curY) btn.classList.add('dr-cur');
+            if (idx === selM && viewY === selY) btn.classList.add('dr-sel');
+            grid.appendChild(btn);
         });
     }
+
+    // ── Prev / Next ──────────────────────────────────────────────
+
+    prevBtn.addEventListener('click', function (e) {
+        e.stopPropagation();
+        if (viewMode === 'day') {
+            if (--viewM < 0) { viewM = 11; viewY--; }
+            renderDayView();
+        } else {
+            viewY--;
+            renderMonthView();
+        }
+    });
+
+    nextBtn.addEventListener('click', function (e) {
+        e.stopPropagation();
+        if (viewMode === 'day') {
+            if (++viewM > 11) { viewM = 0; viewY++; }
+            renderDayView();
+        } else {
+            viewY++;
+            renderMonthView();
+        }
+    });
+
+    // ── Year button → Month view ─────────────────────────────────
+
+    yearBtn.addEventListener('click', function (e) {
+        e.stopPropagation();
+        viewMode === 'day' ? renderMonthView() : renderDayView();
+    });
+
+    // ── Grid click ───────────────────────────────────────────────
+
+    grid.addEventListener('click', function (e) {
+        e.stopPropagation();
+
+        if (viewMode === 'month') {
+            var btn = e.target.closest('[data-month]');
+            if (!btn) return;
+            viewM = +btn.dataset.month;
+            renderDayView();
+            return;
+        }
+
+        var btn = e.target.closest('[data-date]');
+        if (!btn) return;
+        var dateStr = btn.dataset.date;
+
+        if (!fromVal || (fromVal && toVal)) {
+            fromVal = dateStr; toVal = null; selecting = true;
+        } else {
+            if (dateStr <= fromVal) { toVal = fromVal; fromVal = dateStr; }
+            else                    { toVal = dateStr; }
+            selecting = false;
+            setTimeout(closeDropdown, 120);
+        }
+
+        inputFrom.value = fromVal || '';
+        inputTo.value   = toVal   || '';
+        updateLabel();
+        rerender();
+        inputFrom.dispatchEvent(new Event('change'));
+    });
+
+    // ── Hover Preview ────────────────────────────────────────────
+
+    grid.addEventListener('mouseover', function (e) {
+        if (!selecting || viewMode !== 'day') return;
+        var btn = e.target.closest('[data-date]');
+        if (!btn) return;
+        hoverVal = btn.dataset.date;
+        rerender();
+    });
+
+    grid.addEventListener('mouseleave', function () {
+        if (!selecting || viewMode !== 'day') return;
+        hoverVal = null;
+        rerender();
+    });
 
     // ── Open / Close ─────────────────────────────────────────────
 
@@ -288,7 +417,7 @@
         dropdown.classList.remove('hidden');
         trigger.setAttribute('aria-expanded', 'true');
         chevron.style.transform = 'rotate(180deg)';
-        renderCalendar();
+        renderDayView();
     }
 
     function closeDropdown() {
@@ -317,59 +446,6 @@
 
     document.addEventListener('dr:close-all', function (e) {
         if (e.detail.except !== root) closeDropdown();
-    });
-
-    // ── Day Click ────────────────────────────────────────────────
-
-    grid.addEventListener('click', function (e) {
-        var btn = e.target.closest('[data-date]');
-        if (!btn) return;
-        var dateStr = btn.dataset.date;
-
-        if (!fromVal || (fromVal && toVal)) {
-            fromVal = dateStr; toVal = null; selecting = true;
-        } else {
-            if (dateStr <= fromVal) { toVal = fromVal; fromVal = dateStr; }
-            else                    { toVal = dateStr; }
-            selecting = false;
-            setTimeout(closeDropdown, 120);
-        }
-
-        inputFrom.value = fromVal || '';
-        inputTo.value   = toVal   || '';
-        updateLabel();
-        rerender();
-        inputFrom.dispatchEvent(new Event('change'));
-    });
-
-    // ── Hover Preview ────────────────────────────────────────────
-
-    grid.addEventListener('mouseover', function (e) {
-        if (!selecting) return;
-        var btn = e.target.closest('[data-date]');
-        if (!btn) return;
-        hoverVal = btn.dataset.date;
-        rerender();
-    });
-
-    grid.addEventListener('mouseleave', function () {
-        if (!selecting) return;
-        hoverVal = null;
-        rerender();
-    });
-
-    // ── Month Nav ────────────────────────────────────────────────
-
-    prevBtn.addEventListener('click', function (e) {
-        e.stopPropagation();
-        if (--viewM < 0) { viewM = 11; viewY--; }
-        renderCalendar();
-    });
-
-    nextBtn.addEventListener('click', function (e) {
-        e.stopPropagation();
-        if (++viewM > 11) { viewM = 0; viewY++; }
-        renderCalendar();
     });
 
     // ── Clear ────────────────────────────────────────────────────
