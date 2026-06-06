@@ -14,10 +14,8 @@
 
             {{-- Header --}}
             <div class="rounded-lg border bg-card text-card-foreground shadow-xs mb-4">
-                <div class="flex items-center gap-3 border-b px-6 py-4">
-                    <div class="flex size-8 items-center justify-center rounded-md bg-primary/10">
-                        <x-icon name="invoice" class="size-4 text-primary" />
-                    </div>
+                <div class="flex items-center gap-3 border-b px-6 py-5">
+                    <x-icon name="invoice" class="size-5 text-primary" />
                     <h3 class="text-sm font-semibold">@lang('general.invoice_information')</h3>
                 </div>
 
@@ -87,11 +85,9 @@
             {{-- Line Items + Totals --}}
             <div class="rounded-lg border bg-card text-card-foreground shadow-xs mb-4">
 
-                <div class="flex items-center justify-between gap-3 border-b px-6 py-4">
+                <div class="flex items-center justify-between gap-3 border-b px-6 py-5">
                     <div class="flex items-center gap-3">
-                        <div class="flex size-8 items-center justify-center rounded-md bg-primary/10">
-                            <x-icon name="box" class="size-4 text-primary" />
-                        </div>
+                        <x-icon name="box" class="size-5 text-primary" />
                         <h3 class="text-sm font-semibold">@lang('general.items')</h3>
                     </div>
                     <button type="button" id="add-row" class="btn btn-outline btn-sm">
