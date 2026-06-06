@@ -8,6 +8,7 @@ use App\Http\Controllers\CustomerController;
 use App\Http\Controllers\InvoiceController;
 use App\Http\Controllers\ReceiptController;
 use App\Http\Controllers\PurchaseController;
+use App\Http\Controllers\SalesReturnController;
 use App\Http\Controllers\VendorController;
 use App\Http\Controllers\ProductController;
 use App\Http\Controllers\DashboardController;
@@ -199,6 +200,19 @@ Route::group(['middleware' => ['revalidate']], function () {
             Route::get('/{encryptedId}', 'show')->name('show')->middleware("check.permission:$module,read");
             Route::patch('/{encryptedId}', 'update')->name('update')->middleware("check.permission:$module,update");
             Route::get('/{encryptedId}/edit', 'edit')->name('edit')->middleware("check.permission:$module,update");
+            Route::delete('/{encryptedId}/destroy', 'destroy')->name('destroy')->middleware("check.permission:$module,delete");
+        });
+
+        // =============== SALES RETURN =============== \\
+        $module = "SalesReturn";
+        Route::group(['prefix' => 'sales-returns', 'as' => 'sales-returns.', 'controller' => SalesReturnController::class], function () use ($module) {
+            Route::get('/trashed', 'trashed')->name('trashed')->middleware("check.permission:$module,restore");
+            Route::patch('/{encryptedId}/restore', 'restore')->name('restore')->middleware("check.permission:$module,restore");
+
+            Route::get('/', 'index')->name('index')->middleware("check.permission:$module,read");
+            Route::get('/create', 'create')->name('create')->middleware("check.permission:$module,create");
+            Route::post('/', 'store')->name('store')->middleware("check.permission:$module,create");
+            Route::get('/{encryptedId}', 'show')->name('show')->middleware("check.permission:$module,read");
             Route::delete('/{encryptedId}/destroy', 'destroy')->name('destroy')->middleware("check.permission:$module,delete");
         });
 

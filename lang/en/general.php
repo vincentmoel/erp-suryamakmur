@@ -67,8 +67,9 @@ return [
     'nav_products'  => 'Products',
     'nav_invoices'  => 'Invoices',
     'nav_receipts'  => 'Receipts',
-    'nav_purchases' => 'Purchases',
-    'nav_vendors'   => 'Vendors',
+    'nav_purchases'     => 'Purchases',
+    'nav_vendors'       => 'Vendors',
+    'nav_sales_returns' => 'Sales Returns',
 
     // Sidebar groups
     'group_master_data' => 'Master Data',
@@ -252,6 +253,23 @@ return [
     'save_as_ordered'                => 'Save as Ordered',
     'select_vendor_placeholder'      => 'Select vendor...',
     'optional_notes_placeholder'     => 'Optional notes...',
+
+    // Sales Returns
+    'sales_returns'              => 'Sales Returns',
+    'sales_returns_desc'         => 'Manage customer sales returns.',
+    'add_sales_return'           => 'Add Sales Return',
+    'add_sales_return_desc'      => 'Create a new sales return linked to an invoice.',
+    'sales_return_detail'        => 'Sales Return Detail',
+    'return_information'         => 'Return Information',
+    'return_date'                => 'Return Date',
+    'returnable_batches'         => 'Returnable Batches',
+    'no_returnable_batches'      => 'No returnable batches found for this invoice.',
+    'unit_cost'                  => 'Unit Cost',
+    'original_qty'               => 'Original Qty',
+    'already_returned'           => 'Already Returned',
+    'returnable_qty'             => 'Returnable',
+    'return_qty'                 => 'Return Qty',
+    'select_invoice_placeholder' => 'Select invoice...',
 
     // Flash messages
     'success_add'             => 'Success Add',

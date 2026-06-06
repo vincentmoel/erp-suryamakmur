@@ -56,6 +56,11 @@ return [
                 'icon'  => 'money',
                 'route' => 'receipts.index',
             ],
+            [
+                'title' => 'general.nav_sales_returns',
+                'icon'  => 'return',
+                'route' => 'sales-returns.index',
+            ],
         ],
     ],
 

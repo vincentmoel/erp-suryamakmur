@@ -67,8 +67,9 @@ return [
     'nav_products'   => 'Produk',
     'nav_invoices'   => 'Invoice',
     'nav_receipts'   => 'Penerimaan Kas',
-    'nav_purchases'  => 'Pembelian',
-    'nav_vendors'    => 'Vendor',
+    'nav_purchases'      => 'Pembelian',
+    'nav_vendors'        => 'Vendor',
+    'nav_sales_returns'  => 'Retur Penjualan',
 
     // Sidebar groups
     'group_master_data' => 'Master Data',
@@ -252,6 +253,23 @@ return [
     'save_as_ordered'                => 'Simpan sebagai Ordered',
     'select_vendor_placeholder'      => 'Pilih vendor...',
     'optional_notes_placeholder'     => 'Catatan opsional...',
+
+    // Retur Penjualan
+    'sales_returns'              => 'Retur Penjualan',
+    'sales_returns_desc'         => 'Kelola retur penjualan dari pelanggan.',
+    'add_sales_return'           => 'Tambah Retur',
+    'add_sales_return_desc'      => 'Buat retur penjualan baru yang terhubung ke invoice.',
+    'sales_return_detail'        => 'Detail Retur Penjualan',
+    'return_information'         => 'Informasi Retur',
+    'return_date'                => 'Tanggal Retur',
+    'returnable_batches'         => 'Batch yang Dapat Diretur',
+    'no_returnable_batches'      => 'Tidak ada batch yang dapat diretur untuk invoice ini.',
+    'unit_cost'                  => 'Harga Modal',
+    'original_qty'               => 'Qty Asal',
+    'already_returned'           => 'Sudah Diretur',
+    'returnable_qty'             => 'Dapat Diretur',
+    'return_qty'                 => 'Qty Retur',
+    'select_invoice_placeholder' => 'Pilih invoice...',
 
     // Flash messages
     'success_add'             => 'Berhasil Ditambahkan',

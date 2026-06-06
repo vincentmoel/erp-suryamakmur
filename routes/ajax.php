@@ -16,4 +16,5 @@ use Illuminate\Support\Facades\Route;
 Route::group(['middleware' => ['auth', 'refresh.permission'], 'prefix' => 'ajax', 'as' => 'ajax.'], function () {
     Route::get('/products/{id}', [\App\Http\Controllers\ProductController::class, 'ajaxInfo'])->name('products.info');
     Route::get('/customers/{id}/invoices', [\App\Http\Controllers\ReceiptController::class, 'ajaxCustomerInvoices'])->name('customers.invoices');
+    Route::get('/invoices/{encryptedId}/returnable-batches', [\App\Http\Controllers\SalesReturnController::class, 'ajaxReturnableBatches'])->name('invoices.returnable-batches');
 });
