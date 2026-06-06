@@ -141,6 +141,7 @@ return [
     'select_unit_placeholder'     => 'Pilih satuan...',
     'pricing_and_inventory'       => 'Harga & Inventori',
     'selling_price'               => 'Harga Jual',
+    'stock'                       => 'Stok',
     'stock_minimum'               => 'Stok Minimum',
     'stock_minimum_placeholder'   => 'Stok minimum sebelum peringatan pemesanan',
     'media_and_notes'             => 'Media & Catatan',

@@ -9,7 +9,9 @@ use App\Helpers\Encryption;
 use App\Http\Controllers\Traits\IsActive;
 use App\Helpers\FileManager;
 use App\Http\Requests\ProductRequest;
+use App\Helpers\Response;
 use App\Models\Category;
+use App\Models\Inventory;
 use App\Models\Product;
 use App\Models\Unit;
 use App\Services\InventoryService;
@@ -141,6 +143,34 @@ class ProductController extends BaseController
 
         return redirect()->back()->with([
             'success' => ["title" => "Success Update", "message" => "Your data has been updated."]
+        ]);
+    }
+
+    public function ajaxStock(int $id)
+    {
+        $product = Product::with('unit')->find($id);
+
+        if (! $product) {
+            return Response::build(404, 'Product not found');
+        }
+
+        $batches = Inventory::without('user_created_by', 'user_updated_by')
+            ->select('inventories.unit_cost', DB::raw('SUM(invd.quantity) as qty'))
+            ->join('inventory_details as invd', 'inventories.id', '=', 'invd.inventory_id')
+            ->where('inventories.product_id', $id)
+            ->groupBy('inventories.unit_cost')
+            ->orderBy('inventories.unit_cost')
+            ->having('qty', '>', 0)
+            ->get()
+            ->map(fn($row) => [
+                'unit_cost'      => $row->unit_cost,
+                'total_quantity' => (int) $row->qty,
+            ]);
+
+        return Response::build(200, 'OK', [
+            'product_name' => $product->name,
+            'unit'         => $product->unit?->name,
+            'batches'      => $batches,
         ]);
     }
 }

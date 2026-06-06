@@ -141,6 +141,7 @@ return [
     'select_unit_placeholder'       => 'Select unit...',
     'pricing_and_inventory'         => 'Pricing & Inventory',
     'selling_price'                 => 'Selling Price',
+    'stock'                         => 'Stock',
     'stock_minimum'                 => 'Stock Minimum',
     'stock_minimum_placeholder'     => 'Minimum stock before reorder alert',
     'media_and_notes'               => 'Media & Notes',

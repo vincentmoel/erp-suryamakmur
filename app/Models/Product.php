@@ -3,6 +3,7 @@
 namespace App\Models;
 
 use Illuminate\Database\Eloquent\Relations\BelongsTo;
+use Illuminate\Database\Eloquent\Relations\HasManyThrough;
 use Illuminate\Database\Eloquent\SoftDeletes;
 
 class Product extends BaseModel
@@ -26,5 +27,10 @@ class Product extends BaseModel
     public function inventory(): \Illuminate\Database\Eloquent\Relations\HasOne
     {
         return $this->hasOne(Inventory::class);
+    }
+
+    public function inventoryDetails(): HasManyThrough
+    {
+        return $this->hasManyThrough(InventoryDetail::class, Inventory::class);
     }
 }
