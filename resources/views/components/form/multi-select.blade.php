@@ -26,9 +26,9 @@
             class="select-trigger min-h-9 h-auto flex-wrap gap-1 py-1.5 {{ $errors->has($name) ? 'border-destructive' : '' }}">
         <span data-ms-placeholder class="text-muted-foreground text-sm {{ count($oldValues) ? 'hidden' : '' }}">{{ $placeholder }}</span>
         <span data-ms-badges class="flex flex-wrap gap-1 {{ count($oldValues) ? '' : 'hidden' }}"></span>
-        <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"
-             stroke-linecap="round" stroke-linejoin="round" class="size-4 shrink-0 ms-auto opacity-50">
-            <path d="m7 15 5 5 5-5"/><path d="m7 9 5-5 5 5"/>
+        <svg data-ms-chevron xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor"
+             stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="size-4 shrink-0 ms-auto opacity-50 transition-transform duration-150">
+            <path d="m6 9 6 6 6-6"/>
         </svg>
     </button>
 
@@ -39,7 +39,7 @@
          class="select-content hidden max-h-60 overflow-auto">
 
         @if($searchable)
-            <div class="px-1 pb-1 sticky top-0 bg-popover">
+            <div class="px-1 pb-2 sticky top-0 bg-popover">
                 <input id="{{ $searchId }}"
                        type="text"
                        placeholder="Search..."
@@ -90,6 +90,12 @@
     var placeholderEl = root.querySelector('[data-ms-placeholder]');
     var hiddenWrap  = root.querySelector('[data-ms-hidden-inputs]');
     var emptyEl     = root.querySelector('[data-ms-empty]');
+    var chevron     = root.querySelector('[data-ms-chevron]');
+
+    // ── Chevron rotate ────────────────────────────────────────
+    function setChevron(open) {
+        if (chevron) chevron.style.transform = open ? 'rotate(180deg)' : '';
+    }
 
     // ── Position & Open/Close ─────────────────────────────────
     function openDropdown() {
@@ -99,6 +105,7 @@
         content.style.width = r.width + 'px';
         content.classList.remove('hidden');
         trigger.setAttribute('aria-expanded', 'true');
+        setChevron(true);
         if (searchInput) {
             searchInput.value = '';
             filterItems('');
@@ -109,6 +116,7 @@
     function closeDropdown() {
         content.classList.add('hidden');
         trigger.setAttribute('aria-expanded', 'false');
+        setChevron(false);
     }
 
     trigger.addEventListener('click', function (e) {
