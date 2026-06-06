@@ -142,6 +142,7 @@ return [
     'pricing_and_inventory'       => 'Harga & Inventori',
     'selling_price'               => 'Harga Jual',
     'stock'                       => 'Stok',
+    'no_stock_available'          => 'Stok tidak tersedia.',
     'stock_minimum'               => 'Stok Minimum',
     'stock_minimum_placeholder'   => 'Stok minimum sebelum peringatan pemesanan',
     'media_and_notes'             => 'Media & Catatan',

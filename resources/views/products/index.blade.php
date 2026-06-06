@@ -37,50 +37,7 @@
     </div>
 
     {{-- Stock Detail Modal --}}
-    <style>
-        #stock-modal {
-            position: fixed;
-            inset: 0;
-            margin: auto;
-            height: fit-content;
-            background-color: var(--card);
-            color: var(--foreground);
-            border: 1px solid var(--border);
-            border-radius: 0.75rem;
-            box-shadow: 0 20px 60px rgba(0,0,0,.15);
-            padding: 0;
-            width: 100%;
-            max-width: 28rem;
-        }
-        #stock-modal::backdrop {
-            background: rgba(0,0,0,.45);
-        }
-        #stock-modal .modal-header {
-            display: flex;
-            align-items: center;
-            justify-content: space-between;
-            padding: 1rem 1.5rem;
-            border-bottom: 1px solid var(--border);
-        }
-        #stock-modal .modal-body {
-            padding: 1.25rem 1.5rem;
-        }
-        #stock-modal table { width: 100%; border-collapse: collapse; }
-        #stock-modal th {
-            padding-bottom: 0.5rem;
-            font-size: 0.75rem;
-            font-weight: 500;
-            color: var(--muted-foreground);
-            border-bottom: 1px solid var(--border);
-        }
-        #stock-modal td {
-            padding: 0.5rem 0;
-            font-size: 0.875rem;
-            border-bottom: 1px solid color-mix(in oklab, var(--border) 50%, transparent);
-        }
-        #stock-modal tr:last-child td { border-bottom: none; }
-    </style>
-    <dialog id="stock-modal">
+    <dialog id="stock-modal" class="app-modal">
         <div class="modal-header">
             <h2 style="font-weight:600;font-size:0.9375rem;" id="stock-modal-title">Stock Detail</h2>
             <button type="button" id="stock-modal-close" style="color:var(--muted-foreground);line-height:1;background:none;border:none;cursor:pointer;">
@@ -117,6 +74,12 @@
             });
         });
 
+        const lang = {
+            unitCost: '{{ __('general.unit_cost') }}',
+            stock:    '{{ __('general.stock') }}',
+            noStock:  '{{ __('general.no_stock_available') }}',
+        };
+
         const stockModal      = document.getElementById('stock-modal');
         const stockModalTitle = document.getElementById('stock-modal-title');
         const stockModalBody  = document.getElementById('stock-modal-body');
@@ -126,15 +89,25 @@
 
         $(document).on('click', '.btn-stock-detail', function () {
             const productId = $(this).data('product-id');
-            stockModalTitle.textContent = 'Stock Detail';
-            stockModalBody.innerHTML = '<p class="text-sm text-muted-foreground">Loading...</p>';
+            stockModalTitle.innerHTML = '<span class="skeleton" style="width:140px;height:1rem;"></span>';
+            stockModalBody.innerHTML =
+                `<table>
+                    <thead>
+                        <tr>
+                            <th style="text-align:left;">${lang.unitCost}</th>
+                            <th style="text-align:right;">${lang.stock}</th>
+                        </tr>
+                    </thead>
+                    <tbody>${skeletonRows([80, 50], 3)}</tbody>
+                </table>`;
             stockModal.showModal();
 
             $.get('{{ url('ajax/products') }}/' + productId + '/stock', function (res) {
+                setTimeout(function () {
                 stockModalTitle.textContent = res.data.product_name;
 
                 if (!res.data.batches.length) {
-                    stockModalBody.innerHTML = '<p class="text-sm text-muted-foreground">No stock available.</p>';
+                    stockModalBody.innerHTML = `<p style="font-size:0.875rem;color:var(--muted-foreground);">${lang.noStock}</p>`;
                     return;
                 }
 
@@ -149,12 +122,13 @@
                     `<table>
                         <thead>
                             <tr>
-                                <th style="text-align:left;">Unit Cost</th>
-                                <th style="text-align:right;">Qty</th>
+                                <th style="text-align:left;">${lang.unitCost}</th>
+                                <th style="text-align:right;">${lang.stock}</th>
                             </tr>
                         </thead>
                         <tbody>${rows}</tbody>
                     </table>`;
+                }, 300);
             });
         });
 

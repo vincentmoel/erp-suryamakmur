@@ -67,3 +67,14 @@ document.addEventListener('DOMContentLoaded', function () {
         if (hiddenEl) bindToggle(btn, hiddenEl);
     });
 });
+
+// ── Skeleton helpers ───────────────────────────────────────────────────────────
+
+function skeletonRows(cols, n) {
+    return Array.from({length: n}, () => {
+        const cells = cols.map((w, i) =>
+            `<td${i > 0 ? ' style="text-align:right;"' : ''}><span class="skeleton" style="width:${w}px;height:0.875rem;"></span></td>`
+        ).join('');
+        return `<tr>${cells}</tr>`;
+    }).join('');
+}

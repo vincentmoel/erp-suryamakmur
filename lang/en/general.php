@@ -142,6 +142,7 @@ return [
     'pricing_and_inventory'         => 'Pricing & Inventory',
     'selling_price'                 => 'Selling Price',
     'stock'                         => 'Stock',
+    'no_stock_available'            => 'No stock available.',
     'stock_minimum'                 => 'Stock Minimum',
     'stock_minimum_placeholder'     => 'Minimum stock before reorder alert',
     'media_and_notes'               => 'Media & Notes',

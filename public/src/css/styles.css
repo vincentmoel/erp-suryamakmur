@@ -8040,3 +8040,59 @@ table.dataTable > tbody > tr:last-child > td {
 
 .dt-status--online  { color: #16a34a; }
 .dt-status--offline { color: var(--muted-foreground); }
+
+/* ── SKELETON ─────────────────────────────────────────────── */
+.skeleton {
+    background: linear-gradient(90deg, var(--muted) 25%, color-mix(in oklab, var(--muted) 60%, var(--card)) 50%, var(--muted) 75%);
+    background-size: 200% 100%;
+    animation: skeleton-shimmer 1.4s infinite;
+    border-radius: 0.25rem;
+    display: inline-block;
+}
+@keyframes skeleton-shimmer {
+    0%   { background-position: 200% 0; }
+    100% { background-position: -200% 0; }
+}
+
+/* ── APP MODAL (native <dialog>) ─────────────────────────── */
+.app-modal {
+    position: fixed;
+    inset: 0;
+    margin: auto;
+    height: fit-content;
+    background-color: var(--card);
+    color: var(--foreground);
+    border: 1px solid var(--border);
+    border-radius: 0.75rem;
+    box-shadow: 0 20px 60px rgba(0,0,0,.15);
+    padding: 0;
+    width: 100%;
+    max-width: 28rem;
+}
+.app-modal::backdrop {
+    background: rgba(0,0,0,.45);
+}
+.app-modal .modal-header {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    padding: 1rem 1.5rem;
+    border-bottom: 1px solid var(--border);
+}
+.app-modal .modal-body {
+    padding: 1.25rem 1.5rem;
+}
+.app-modal table { width: 100%; border-collapse: collapse; }
+.app-modal th {
+    padding-bottom: 0.5rem;
+    font-size: 0.75rem;
+    font-weight: 500;
+    color: var(--muted-foreground);
+    border-bottom: 1px solid var(--border);
+}
+.app-modal td {
+    padding: 0.5rem 0;
+    font-size: 0.875rem;
+    border-bottom: 1px solid color-mix(in oklab, var(--border) 50%, transparent);
+}
+.app-modal tr:last-child td { border-bottom: none; }
