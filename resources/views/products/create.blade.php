@@ -85,7 +85,7 @@
                                 <input id="stock_minimum"
                                        type="number"
                                        name="stock_minimum"
-                                       value="{{ old('stock_minimum', 0) }}"
+                                       value="{{ old('stock_minimum') }}"
                                        min="0"
                                        placeholder="{{ __('general.stock_minimum_placeholder') }}"
                                        class="input {{ $errors->has('stock_minimum') ? 'border-destructive' : '' }}">

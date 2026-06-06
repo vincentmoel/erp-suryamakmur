@@ -9,6 +9,11 @@ class InventoryLog extends Model
 {
     protected $guarded = ['id'];
 
+    protected $casts = [
+        'context'       => 'array',
+        'user_snapshot' => 'array',
+    ];
+
     public function inventoryDetail(): BelongsTo
     {
         return $this->belongsTo(InventoryDetail::class);

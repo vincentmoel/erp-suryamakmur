@@ -3,17 +3,16 @@
 namespace App\Http\Controllers;
 
 use App\DataTables\ProductDataTable;
+use App\Enums\InventorySource;
 use App\Enums\Module;
 use App\Helpers\Encryption;
 use App\Http\Controllers\Traits\IsActive;
 use App\Helpers\FileManager;
 use App\Http\Requests\ProductRequest;
 use App\Models\Category;
-use App\Models\Inventory;
-use App\Models\InventoryDetail;
-use App\Models\InventoryLog;
 use App\Models\Product;
 use App\Models\Unit;
+use App\Services\InventoryService;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\DB;
 
@@ -68,33 +67,18 @@ class ProductController extends BaseController
             $product = Product::create($productData);
 
             if ($initialStockEnabled && count($batches) > 0) {
-                $lastBatch = end($batches);
+                $stockBatches = array_map(fn($b) => [
+                    'product_id'  => $product->id,
+                    'unit_cost'   => (int) ($b['unit_cost'] ?? 0),
+                    'quantity'    => (int) ($b['quantity'] ?? 0),
+                    'received_at' => $b['received_at'],
+                ], $batches);
 
-                $inventory = Inventory::create([
-                    'product_id' => $product->id,
-                    'unit_cost'  => $lastBatch['unit_cost'] ?? 0,
-                ]);
-
-                $runningBalance = 0;
-                foreach ($batches as $batch) {
-                    $qty = (int) ($batch['quantity'] ?? 0);
-                    $runningBalance += $qty;
-
-                    $detail = InventoryDetail::create([
-                        'inventory_id' => $inventory->id,
-                        'quantity'     => $qty,
-                        'received_at'  => $batch['received_at'],
-                    ]);
-
-                    InventoryLog::create([
-                        'inventory_detail_id' => $detail->id,
-                        'source'              => 'initiate',
-                        'reference_id'        => $product->id,
-                        'quantity'            => $qty,
-                        'balance_after'       => $runningBalance,
-                        'notes'               => null,
-                    ]);
-                }
+                InventoryService::addStockBulk(
+                    $stockBatches,
+                    source:      InventorySource::INITIATE,
+                    referenceId: $product->id,
+                );
             }
         });
 
@@ -109,11 +93,10 @@ class ProductController extends BaseController
 
     public function edit($encryptedId)
     {
-        $data = Product::with('inventory')->findOrFail(Encryption::decrypt($encryptedId));
+        $data = Product::findOrFail(Encryption::decrypt($encryptedId));
 
         return view('products.edit', [
             'data'        => $data,
-            'inventory'   => $data->inventory,
             'title'       => $this->title,
             'route'       => $this->route,
             'encryptedId' => $encryptedId,
@@ -149,51 +132,12 @@ class ProductController extends BaseController
             unset($validatedData['image']);
         }
 
-        $initialStockEnabled = (bool) ($validatedData['initial_stock_enabled'] ?? false);
-        $batches = $validatedData['initial_stocks'] ?? [];
-
         $productData = collect($validatedData)->except([
             'initial_stock_enabled', 'initial_stocks',
         ])->toArray();
 
-        DB::transaction(function () use ($productData, $batches, $initialStockEnabled, $encryptedId) {
-            $product = Product::findOrFail(Encryption::decrypt($encryptedId));
-            $product->update($productData);
-
-            if ($initialStockEnabled && count($batches) > 0) {
-                $lastBatch = end($batches);
-
-                $inventory = $product->inventory ?? Inventory::create([
-                    'product_id' => $product->id,
-                    'unit_cost'  => $lastBatch['unit_cost'] ?? 0,
-                ]);
-
-                if ($product->inventory) {
-                    $inventory->update(['unit_cost' => $lastBatch['unit_cost'] ?? 0]);
-                }
-
-                $runningBalance = $inventory->total_quantity;
-                foreach ($batches as $batch) {
-                    $qty = (int) ($batch['quantity'] ?? 0);
-                    $runningBalance += $qty;
-
-                    $detail = InventoryDetail::create([
-                        'inventory_id' => $inventory->id,
-                        'quantity'     => $qty,
-                        'received_at'  => $batch['received_at'],
-                    ]);
-
-                    InventoryLog::create([
-                        'inventory_detail_id' => $detail->id,
-                        'source'              => 'initiate',
-                        'reference_id'        => $product->id,
-                        'quantity'            => $qty,
-                        'balance_after'       => $runningBalance,
-                        'notes'               => null,
-                    ]);
-                }
-            }
-        });
+        $product = Product::findOrFail(Encryption::decrypt($encryptedId));
+        $product->update($productData);
 
         return redirect()->back()->with([
             'success' => ["title" => "Success Update", "message" => "Your data has been updated."]

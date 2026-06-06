@@ -12,4 +12,5 @@ enum InventorySource: string
     case SALE         = 'SALE';
     case SALES_RETURN = 'SALES_RETURN';
     case STOCK_OPNAME = 'STOCK_OPNAME';
+    case INITIATE     = 'INITIATE';
 }

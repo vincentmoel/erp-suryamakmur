@@ -31,8 +31,9 @@ return new class extends Migration
             $table->string('source');
             $table->unsignedBigInteger('reference_id');
             $table->integer('quantity');
-            $table->integer('balance_after');
             $table->text('notes')->nullable();
+            $table->json('context')->nullable();
+            $table->json('user_snapshot')->nullable();
             $table->timestamps();
         });
     }
