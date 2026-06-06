@@ -10,13 +10,32 @@
             data-toggle-palette><x-icon name="search" class="size-4" /> Search... <kbd
                 class="ml-auto rounded border px-1 text-[10px]">⌘K</kbd></button>
         @auth
-        <div class="flex items-center rounded-md border p-0.5 gap-0.5">
-            <button type="button" onclick="changeLanguage('id')"
-                class="flex h-7 w-7 items-center justify-center rounded text-base transition-colors {{ app()->getLocale() === 'id' ? 'bg-primary text-primary-foreground' : 'hover:bg-accent' }}"
-                title="Bahasa Indonesia">🇮🇩</button>
-            <button type="button" onclick="changeLanguage('en')"
-                class="flex h-7 w-7 items-center justify-center rounded text-base transition-colors {{ app()->getLocale() === 'en' ? 'bg-primary text-primary-foreground' : 'hover:bg-accent' }}"
-                title="English">🇬🇧</button>
+        <div class="relative" id="lang-switcher">
+            <button type="button" id="lang-btn"
+                class="icon-btn text-xl"
+                title="{{ app()->getLocale() === 'id' ? 'Bahasa Indonesia' : 'English' }}"
+                aria-haspopup="true" aria-expanded="false">
+                {{ app()->getLocale() === 'id' ? '🇮🇩' : '🇺🇸' }}
+            </button>
+            <div id="lang-dropdown"
+                class="absolute right-0 top-full mt-1 hidden w-52 rounded-lg border bg-card shadow-lg z-50 overflow-hidden">
+                <button type="button" onclick="changeLanguage('id')"
+                    class="flex w-full items-center gap-3 px-3 py-2.5 text-sm hover:bg-accent transition-colors {{ app()->getLocale() === 'id' ? 'font-semibold text-primary' : '' }}">
+                    <span class="text-xl leading-none">🇮🇩</span>
+                    <span>Bahasa Indonesia</span>
+                    @if(app()->getLocale() === 'id')
+                        <x-icon name="check" class="ml-auto size-4 text-primary" />
+                    @endif
+                </button>
+                <button type="button" onclick="changeLanguage('en')"
+                    class="flex w-full items-center gap-3 px-3 py-2.5 text-sm hover:bg-accent transition-colors {{ app()->getLocale() === 'en' ? 'font-semibold text-primary' : '' }}">
+                    <span class="text-xl leading-none">🇺🇸</span>
+                    <span>English</span>
+                    @if(app()->getLocale() === 'en')
+                        <x-icon name="check" class="ml-auto size-4 text-primary" />
+                    @endif
+                </button>
+            </div>
         </div>
         @endauth
         <button class="icon-btn" data-toggle-theme title="Toggle theme" aria-label="Toggle theme">
@@ -35,6 +54,28 @@ function changeLanguage(lang) {
         }
     }).then(function() { window.location.reload(); });
 }
+
+(function () {
+    const btn = document.getElementById('lang-btn');
+    const dropdown = document.getElementById('lang-dropdown');
+    if (!btn || !dropdown) return;
+
+    btn.addEventListener('click', function (e) {
+        e.stopPropagation();
+        const open = !dropdown.classList.contains('hidden');
+        dropdown.classList.toggle('hidden', open);
+        btn.setAttribute('aria-expanded', String(!open));
+    });
+
+    document.addEventListener('click', function () {
+        dropdown.classList.add('hidden');
+        btn.setAttribute('aria-expanded', 'false');
+    });
+
+    dropdown.addEventListener('click', function (e) {
+        e.stopPropagation();
+    });
+})();
 </script>
 </header>
 

@@ -50,8 +50,8 @@ class InventoryService
     /**
      * Deduct stock using FIFO order (SALE, STOCK_OPNAME outgoing).
      *
-     * Iterates inventory_details ordered by received_at ASC (oldest first)
-     * and deducts quantity until fulfilled. Throws if insufficient stock.
+     * Returns an array of batch allocations: [inventory_detail_id, quantity, unit_cost].
+     * Throws RuntimeException if stock is insufficient.
      */
     public static function deductStock(
         int $productId,
@@ -59,12 +59,14 @@ class InventoryService
         InventorySource $source,
         int $referenceId,
         ?string $notes = null,
-    ): void {
-        $remaining = $quantity;
+    ): array {
+        $remaining   = $quantity;
+        $allocations = [];
 
         $batches = InventoryDetail::whereHas('inventory', fn($q) => $q->where('product_id', $productId))
             ->where('quantity', '>', 0)
             ->orderBy('received_at')
+            ->with('inventory')
             ->lockForUpdate()
             ->get();
 
@@ -83,12 +85,43 @@ class InventoryService
                 'notes'               => $notes,
             ]);
 
+            $allocations[] = [
+                'inventory_detail_id' => $batch->id,
+                'quantity'            => $deduct,
+                'unit_cost'           => $batch->inventory->unit_cost,
+            ];
+
             $remaining -= $deduct;
         }
 
         if ($remaining > 0) {
             throw new \RuntimeException("Insufficient stock for product ID {$productId}. Short by {$remaining} units.");
         }
+
+        return $allocations;
+    }
+
+    /**
+     * Restore a specific inventory batch (used when reversing a SALE on cancel/re-post).
+     */
+    public static function restoreStockBatch(
+        int $inventoryDetailId,
+        int $quantity,
+        InventorySource $source,
+        int $referenceId,
+        ?string $notes = null,
+    ): void {
+        $batch = InventoryDetail::lockForUpdate()->findOrFail($inventoryDetailId);
+        $batch->increment('quantity', $quantity);
+
+        InventoryLog::create([
+            'inventory_detail_id' => $inventoryDetailId,
+            'source'              => $source->value,
+            'reference_id'        => $referenceId,
+            'quantity'            => $quantity,
+            'balance_after'       => $batch->quantity,
+            'notes'               => $notes,
+        ]);
     }
 
     /**

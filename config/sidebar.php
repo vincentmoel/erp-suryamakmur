@@ -51,6 +51,11 @@ return [
                 'icon'  => 'invoice',
                 'route' => 'invoices.index',
             ],
+            [
+                'title' => 'general.nav_receipts',
+                'icon'  => 'money',
+                'route' => 'receipts.index',
+            ],
         ],
     ],
 

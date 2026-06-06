@@ -35,7 +35,7 @@ class ProductDataTable extends BaseDataTable
             ->editColumn('is_active', function ($row) {
                 $encryptedId = \App\Helpers\Encryption::encrypt($row->id);
                 $url = route('products.toggleActive', $encryptedId);
-                return HtmlBuilder::toggle($row->is_active, url: $url, label: $row->is_active ? 'Active' : 'Inactive');
+                return HtmlBuilder::toggle($row->is_active, url: $url, label: $row->is_active ? __('general.active') : __('general.inactive'));
             })
             ->rawColumns(['action', 'is_active']);
     }

@@ -45,6 +45,7 @@ return [
     'tax'           => 'Tax',
     'total'         => 'Total',
     'qty'           => 'Qty',
+    'image'         => 'Image',
 
     // Sections
     'identity'         => 'Identity',
@@ -65,6 +66,7 @@ return [
     'nav_customers' => 'Customers',
     'nav_products'  => 'Products',
     'nav_invoices'  => 'Invoices',
+    'nav_receipts'  => 'Receipts',
     'nav_purchases' => 'Purchases',
     'nav_vendors'   => 'Vendors',
 
@@ -174,6 +176,30 @@ return [
     'select_customer_placeholder'     => 'Select customer...',
     'select_salesperson_placeholder'  => 'Select salesperson...',
     'select_product_placeholder'      => 'Select product...',
+
+    // Receipt
+    'receipts'                         => 'Receipts',
+    'receipts_desc'                    => 'Manage customer payment receipts.',
+    'add_receipt'                      => 'Add Receipt',
+    'add_receipt_desc'                 => 'Create a new customer payment receipt.',
+    'edit_receipt'                     => 'Edit Receipt',
+    'edit_receipt_desc'                => 'Update receipt information.',
+    'receipt_detail'                   => 'Receipt Detail',
+    'receipt_detail_desc'              => 'View receipt information.',
+    'receipt_information'              => 'Receipt Information',
+    'receipt_code'                     => 'Receipt Code',
+    'receipt_date'                     => 'Receipt Date',
+    'payment_method'                   => 'Payment Method',
+    'reference_number'                 => 'Reference Number',
+    'reference_number_placeholder'     => 'Transfer ref / cheque number...',
+    'payment_allocations'              => 'Payment Allocations',
+    'invoice_remaining'                => 'Remaining',
+    'allocation_amount'                => 'Allocated Amount',
+    'total_allocated'                  => 'Total Allocated',
+    'select_payment_method_placeholder' => 'Select payment method...',
+    'no_open_invoices'                 => 'No open invoices for this customer.',
+    'select_customer_first'            => 'Select a customer to see their open invoices.',
+    'confirm_delete_receipt'           => 'Delete this receipt? Invoice payment statuses will be recalculated.',
 
     // Vendor
     'vendors'                    => 'Vendors',

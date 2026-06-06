@@ -45,6 +45,7 @@ return [
     'tax'           => 'Pajak',
     'total'         => 'Total',
     'qty'           => 'Qty',
+    'image'         => 'Gambar',
 
     // Sections
     'identity'         => 'Identitas',
@@ -65,6 +66,7 @@ return [
     'nav_customers'  => 'Pelanggan',
     'nav_products'   => 'Produk',
     'nav_invoices'   => 'Invoice',
+    'nav_receipts'   => 'Penerimaan Kas',
     'nav_purchases'  => 'Pembelian',
     'nav_vendors'    => 'Vendor',
 
@@ -174,6 +176,30 @@ return [
     'select_customer_placeholder'    => 'Pilih pelanggan...',
     'select_salesperson_placeholder' => 'Pilih salesperson...',
     'select_product_placeholder'     => 'Pilih produk...',
+
+    // Receipt
+    'receipts'                          => 'Penerimaan Kas',
+    'receipts_desc'                     => 'Kelola penerimaan pembayaran dari pelanggan.',
+    'add_receipt'                       => 'Tambah Penerimaan',
+    'add_receipt_desc'                  => 'Buat bukti penerimaan pembayaran baru.',
+    'edit_receipt'                      => 'Edit Penerimaan',
+    'edit_receipt_desc'                 => 'Perbarui informasi penerimaan.',
+    'receipt_detail'                    => 'Detail Penerimaan',
+    'receipt_detail_desc'               => 'Lihat informasi penerimaan.',
+    'receipt_information'               => 'Informasi Penerimaan',
+    'receipt_code'                      => 'Kode Kwitansi',
+    'receipt_date'                      => 'Tanggal Terima',
+    'payment_method'                    => 'Metode Pembayaran',
+    'reference_number'                  => 'Nomor Referensi',
+    'reference_number_placeholder'      => 'Ref transfer / nomor cek...',
+    'payment_allocations'               => 'Alokasi Pembayaran',
+    'invoice_remaining'                 => 'Sisa',
+    'allocation_amount'                 => 'Jumlah Alokasi',
+    'total_allocated'                   => 'Total Dialokasikan',
+    'select_payment_method_placeholder' => 'Pilih metode pembayaran...',
+    'no_open_invoices'                  => 'Tidak ada invoice terbuka untuk pelanggan ini.',
+    'select_customer_first'             => 'Pilih pelanggan untuk melihat invoice terbuka mereka.',
+    'confirm_delete_receipt'            => 'Hapus penerimaan ini? Status pembayaran invoice akan dihitung ulang.',
 
     // Vendor
     'vendors'                    => 'Vendor',

@@ -5,7 +5,8 @@
     <meta charset="utf-8">
     <meta name="viewport" content="width=device-width, initial-scale=1">
     <title>{{ isset($title) ? $title . ' | ' . config('app.name') : config('app.name') }}</title>
-    <link rel="icon" href="./public/favicon.svg">
+    <link rel="icon" href="{{ asset('src/img/logo-mini-dark.png') }}" media="(prefers-color-scheme: light)">
+    <link rel="icon" href="{{ asset('src/img/logo-mini-light.png') }}" media="(prefers-color-scheme: dark)">
     <link rel="stylesheet" href="{{ asset('src/css/styles.css') }}">
     <meta name="csrf-token" content="{{ csrf_token() }}">
     <script>

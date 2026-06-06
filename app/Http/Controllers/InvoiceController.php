@@ -3,6 +3,7 @@
 namespace App\Http\Controllers;
 
 use App\DataTables\InvoiceDataTable;
+use App\Enums\InventorySource;
 use App\Enums\InvoiceStatus;
 use App\Enums\Module;
 use App\Helpers\CodeGenerator;
@@ -13,6 +14,7 @@ use App\Models\Invoice;
 use App\Models\InvoiceDetail;
 use App\Models\Product;
 use App\Models\User;
+use App\Services\InventoryService;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\DB;
 
@@ -76,10 +78,12 @@ class InvoiceController extends BaseController
                 'status'          => $data['status'],
             ]);
 
+            $deductStock = InvoiceStatus::from($data['status']) !== InvoiceStatus::DRAFT;
+
             foreach ($data['details'] as $detail) {
                 $product = Product::with('category', 'unit')->find($detail['product_id']);
 
-                $invoice->details()->create([
+                $invoiceDetail = $invoice->details()->create([
                     'product_id'      => $detail['product_id'],
                     'quantity'        => $detail['quantity'],
                     'unit_price'      => $detail['unit_price'],
@@ -94,6 +98,20 @@ class InvoiceController extends BaseController
                         'category' => $product->category?->name,
                     ],
                 ]);
+
+                if ($deductStock) {
+                    $allocations = InventoryService::deductStock(
+                        productId:   $detail['product_id'],
+                        quantity:    $detail['quantity'],
+                        source:      InventorySource::SALE,
+                        referenceId: $invoice->id,
+                        notes:       'Invoice #' . $invoice->code,
+                    );
+
+                    foreach ($allocations as $allocation) {
+                        $invoiceDetail->batches()->create($allocation);
+                    }
+                }
             }
         });
 
@@ -138,7 +156,7 @@ class InvoiceController extends BaseController
 
     public function update(Request $request, $encryptedId)
     {
-        $invoice = Invoice::with('details')->findOrFail(Encryption::decrypt($encryptedId));
+        $invoice = Invoice::with('invoiceDetailBatches')->findOrFail(Encryption::decrypt($encryptedId));
 
         if (! $invoice->status->canEdit()) {
             return redirect()->route('invoices.show', $encryptedId)->with([
@@ -152,6 +170,17 @@ class InvoiceController extends BaseController
         $data = $formRequest->validated();
 
         DB::transaction(function () use ($invoice, $data) {
+            // Reverse any prior FIFO deductions before rebuilding details
+            foreach ($invoice->invoiceDetailBatches as $batch) {
+                InventoryService::restoreStockBatch(
+                    inventoryDetailId: $batch->inventory_detail_id,
+                    quantity:          $batch->quantity,
+                    source:            InventorySource::SALE,
+                    referenceId:       $invoice->id,
+                    notes:             'Edit reversal Invoice #' . $invoice->code,
+                );
+            }
+
             $invoice->update([
                 'customer_id'     => $data['customer_id'],
                 'salesperson_id'  => $data['salesperson_id'],
@@ -162,12 +191,15 @@ class InvoiceController extends BaseController
                 'status'          => $data['status'],
             ]);
 
+            // Cascades to invoice_detail_batches via DB constraint
             $invoice->details()->delete();
+
+            $deductStock = InvoiceStatus::from($data['status']) !== InvoiceStatus::DRAFT;
 
             foreach ($data['details'] as $detail) {
                 $product = Product::with('category', 'unit')->find($detail['product_id']);
 
-                $invoice->details()->create([
+                $invoiceDetail = $invoice->details()->create([
                     'product_id'      => $detail['product_id'],
                     'quantity'        => $detail['quantity'],
                     'unit_price'      => $detail['unit_price'],
@@ -182,6 +214,20 @@ class InvoiceController extends BaseController
                         'category' => $product->category?->name,
                     ],
                 ]);
+
+                if ($deductStock) {
+                    $allocations = InventoryService::deductStock(
+                        productId:   $detail['product_id'],
+                        quantity:    $detail['quantity'],
+                        source:      InventorySource::SALE,
+                        referenceId: $invoice->id,
+                        notes:       'Invoice #' . $invoice->code,
+                    );
+
+                    foreach ($allocations as $allocation) {
+                        $invoiceDetail->batches()->create($allocation);
+                    }
+                }
             }
         });
 
@@ -192,7 +238,7 @@ class InvoiceController extends BaseController
 
     public function cancel($encryptedId)
     {
-        $invoice = Invoice::findOrFail(Encryption::decrypt($encryptedId));
+        $invoice = Invoice::with('invoiceDetailBatches')->findOrFail(Encryption::decrypt($encryptedId));
 
         if (! $invoice->status->canCancel()) {
             return redirect()->back()->with([
@@ -200,7 +246,19 @@ class InvoiceController extends BaseController
             ]);
         }
 
-        $invoice->update(['status' => InvoiceStatus::CANCELLED]);
+        DB::transaction(function () use ($invoice) {
+            foreach ($invoice->invoiceDetailBatches as $batch) {
+                InventoryService::restoreStockBatch(
+                    inventoryDetailId: $batch->inventory_detail_id,
+                    quantity:          $batch->quantity,
+                    source:            InventorySource::SALE,
+                    referenceId:       $invoice->id,
+                    notes:             'Cancellation Invoice #' . $invoice->code,
+                );
+            }
+
+            $invoice->update(['status' => InvoiceStatus::CANCELLED]);
+        });
 
         return redirect()->back()->with([
             'success' => ['title' => 'Invoice Cancelled', 'message' => 'Invoice has been cancelled.'],

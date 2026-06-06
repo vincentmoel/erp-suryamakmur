@@ -13,21 +13,5 @@ class ConfigSeeder extends Seeder
      */
     public function run(): void
     {
-        Config::create([
-            'name'          => 'Member Discount',
-            'key'           => 'member_discount',
-            'value'         => 50,
-            'created_by'    => 1,
-            'updated_by'    => 1,
-        ]);
-
-        Config::create([
-            'name'          => 'Stock Alert',
-            'key'           => 'stock_alert',
-            'value'         => 10,
-            'created_by'    => 1,
-            'updated_by'    => 1,
-
-        ]);
     }
 }
