@@ -20,6 +20,7 @@ window.initDataTable = function (config) {
         ajaxUrl,
         columns,
         pageLength = 10,
+        order      = undefined,
         language   = {},
     } = config;
 
@@ -30,6 +31,7 @@ window.initDataTable = function (config) {
         ajax       : { url: ajaxUrl, type: 'GET' },
         dom        : 'rt',
         pageLength,
+        order,
         columns,
         language: {
             processing  : '<div class="dt-loading"><span class="dt-loading-spinner"></span><span>Loading...</span></div>',

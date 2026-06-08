@@ -66,11 +66,12 @@
         const dt = initDataTable({
             tableId: 'invoices-table',
             ajaxUrl: '{{ route('invoices.index') }}',
+            order: [{ name: 'created_at', dir: 'desc' }],
             columns: [
                 { data: 'DT_RowIndex', name: 'DT_RowIndex', orderable: false, searchable: false, className: 'dt-cell-index dt-center' },
                 { data: 'code', name: 'code' },
-                { data: 'customer_id', name: 'customer_id' },
-                { data: 'salesperson_id', name: 'salesperson_id', className: 'dt-cell-muted' },
+                { data: 'customer_id', name: 'customer_id', orderable: false },
+                { data: 'salesperson_id', name: 'salesperson_id', orderable: false, className: 'dt-cell-muted' },
                 { data: 'invoice_date', name: 'invoice_date', className: 'dt-cell-muted' },
                 { data: 'amount', name: 'amount' },
                 { data: 'status', name: 'status' },

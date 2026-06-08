@@ -22,7 +22,7 @@ class InvoiceDataTable extends BaseDataTable
 
     public function query(): QueryBuilder
     {
-        $query = Invoice::with('customer', 'salesperson')->withSum('details', 'amount')->latest();
+        $query = Invoice::with('customer', 'salesperson')->withSum('details', 'amount');
 
         if ($customerId = request('filter_customer')) {
             $query->where('customer_id', $customerId);
@@ -54,7 +54,8 @@ class InvoiceDataTable extends BaseDataTable
             ->editColumn('salesperson_id', fn($row) => $row->salesperson->name ?? '-')
             ->editColumn('status', fn($row) => '<span class="badge ' . $row->status->badgeClass() . '">' . $row->status->icon() . $row->status->label() . '</span>')
             ->editColumn('amount', fn($row) => 'Rp ' . number_format($row->amount, 0, ',', '.'))
-            ->editColumn('invoice_date', fn($row) => $row->invoice_date->translatedFormat('d M Y'))
+            ->editColumn('invoice_date', fn($row) => $row->invoice_date->translatedFormat('d F Y'))
+            ->orderColumn('amount', 'grand_total $1')
             ->rawColumns(['action', 'status']);
     }
 }
