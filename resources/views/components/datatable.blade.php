@@ -5,7 +5,7 @@
 
 <div class="dt-card">
 
-    {{-- Toolbar --}}
+    {{-- Toolbar row 1: search + actions --}}
     <div class="dt-toolbar">
         <div class="dt-search-wrapper">
             <x-icon name="search" class="dt-search-icon" />
@@ -21,6 +21,13 @@
             </div>
         @endisset
     </div>
+
+    {{-- Toolbar row 2: filters --}}
+    @isset($filters)
+        <div class="dt-toolbar-filters">
+            {{ $filters }}
+        </div>
+    @endisset
 
     {{-- Table --}}
     <div class="dt-wrapper">

@@ -22,7 +22,7 @@
             aria-expanded="false"
             aria-haspopup="listbox"
             class="select-trigger flex items-center justify-between w-full {{ $errors->has($name) ? 'border-destructive' : '' }}">
-        <span data-ss-label class="text-sm {{ $selectedLabel ? '' : 'text-muted-foreground' }}">
+        <span data-ss-label class="text-sm truncate {{ $selectedLabel ? '' : 'text-muted-foreground' }}">
             {{ $selectedLabel ?? $placeholder }}
         </span>
         <span class="flex items-center gap-1 shrink-0">

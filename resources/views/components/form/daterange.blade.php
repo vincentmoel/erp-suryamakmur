@@ -135,7 +135,7 @@
             aria-expanded="false"
             aria-haspopup="dialog"
             class="select-trigger w-full">
-        <span data-dr-label class="text-sm {{ ($selectedFrom || $selectedTo) ? '' : 'text-muted-foreground' }}">
+        <span data-dr-label class="text-sm truncate {{ ($selectedFrom || $selectedTo) ? '' : 'text-muted-foreground' }}">
             {{ $placeholder }}
         </span>
         <span class="flex items-center gap-1 shrink-0">

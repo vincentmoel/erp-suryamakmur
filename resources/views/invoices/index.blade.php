@@ -12,53 +12,29 @@
             <p>@lang('general.invoices_desc')</p>
         </div>
 
-        {{-- Filter Bar --}}
-        <div class="rounded-lg border bg-card text-card-foreground shadow-xs mb-4">
-            <div class="px-6 py-4 grid grid-cols-1 gap-4 sm:grid-cols-2 lg:grid-cols-4">
-
-                {{-- Customer --}}
-                <div class="flex flex-col gap-3">
-                    <label class="text-sm font-medium leading-none">@lang('general.customer')</label>
-                    <x-form.single-select
-                        name="filter_customer"
-                        placeholder="All Customers"
-                        :searchable="true"
-                        :options="$customers->map(fn($c) => ['value' => $c->id, 'label' => $c->name])->toArray()" />
-                </div>
-
-                {{-- Salesperson --}}
-                <div class="flex flex-col gap-3">
-                    <label class="text-sm font-medium leading-none">@lang('general.salesperson')</label>
-                    <x-form.single-select
-                        name="filter_salesperson"
-                        placeholder="All Salespersons"
-                        :searchable="true"
-                        :options="$salespersons->map(fn($s) => ['value' => $s->id, 'label' => $s->name])->toArray()" />
-                </div>
-
-                {{-- Invoice Date Range --}}
-                <div class="flex flex-col gap-3">
-                    <label class="text-sm font-medium leading-none">@lang('general.invoice_date')</label>
-                    <x-form.daterange
-                        name-from="filter_date_from"
-                        name-to="filter_date_to"
-                        placeholder="All Dates" />
-                </div>
-
-                {{-- Status --}}
-                <div class="flex flex-col gap-3">
-                    <label class="text-sm font-medium leading-none">@lang('general.status')</label>
-                    <x-form.single-select
-                        name="filter_status"
-                        placeholder="All Statuses"
-                        :searchable="false"
-                        :options="collect($statuses)->map(fn($s) => ['value' => $s->value, 'label' => $s->label()])->toArray()" />
-                </div>
-
-            </div>
-        </div>
-
         <x-datatable id="invoices-table" :search-placeholder="__('general.search')">
+
+            <x-slot name="filters">
+                <x-form.single-select
+                    name="filter_customer"
+                    placeholder="All Customers"
+                    :searchable="true"
+                    :options="$customers->map(fn($c) => ['value' => $c->id, 'label' => $c->name])->toArray()" />
+                <x-form.single-select
+                    name="filter_salesperson"
+                    placeholder="All Salespersons"
+                    :searchable="true"
+                    :options="$salespersons->map(fn($s) => ['value' => $s->id, 'label' => $s->name])->toArray()" />
+                <x-form.daterange
+                    name-from="filter_date_from"
+                    name-to="filter_date_to"
+                    placeholder="All Dates" />
+                <x-form.single-select
+                    name="filter_status"
+                    placeholder="All Statuses"
+                    :searchable="false"
+                    :options="collect($statuses)->map(fn($s) => ['value' => $s->value, 'label' => $s->label()])->toArray()" />
+            </x-slot>
 
             <x-slot name="actions">
                 <a href="{{ route('invoices.create') }}" class="btn btn-primary btn-sm">

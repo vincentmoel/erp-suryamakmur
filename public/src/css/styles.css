@@ -7140,6 +7140,19 @@ div.dt-processing > div:last-child { display: none !important; }
   padding: 0.75rem;
 }
 
+.dt-toolbar-filters {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  gap: 0.5rem;
+  padding: 0.625rem 0.75rem;
+  border-bottom: 1px solid var(--border);
+}
+
+.dt-toolbar-filters > * {
+  width: 17rem;
+}
+
 .dt-toolbar-actions {
   margin-left: auto;
   display: flex;
