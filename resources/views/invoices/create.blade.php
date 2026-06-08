@@ -25,7 +25,7 @@
                             <x-form.single-select
                                 name="customer_id"
                                 :placeholder="__('general.select_customer_placeholder')"
-                                :options="$customers->map(fn($c) => ['value' => $c->id, 'label' => $c->name])->toArray()"
+                                :options="$customers->map(fn($c) => ['value' => $c->id, 'label' => $c->company_name ? $c->company_name . ' (' . $c->name . ')' : $c->name])->toArray()"
                                 :selected="old('customer_id')" />
 
                             {{-- Customer info panel --}}
