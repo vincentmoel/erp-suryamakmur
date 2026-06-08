@@ -8,6 +8,7 @@ use App\Enums\InvoiceStatus;
 use App\Enums\Module;
 use App\Helpers\CodeGenerator;
 use App\Helpers\Encryption;
+use App\Helpers\Response;
 use App\Http\Requests\InvoiceRequest;
 use App\Models\Customer;
 use App\Models\Invoice;
@@ -114,8 +115,6 @@ class InvoiceController extends BaseController
                 'status'           => $data['status'],
             ]);
 
-            $deductStock = InvoiceStatus::from($data['status']) !== InvoiceStatus::DRAFT;
-
             foreach ($data['details'] as $detail) {
                 $product = Product::with('category', 'unit')->find($detail['product_id']);
 
@@ -138,18 +137,16 @@ class InvoiceController extends BaseController
                     ],
                 ]);
 
-                if ($deductStock) {
-                    $allocations = InventoryService::deductStock(
-                        productId:   $detail['product_id'],
-                        quantity:    $detail['quantity'],
-                        source:      InventorySource::SALE,
-                        referenceId: $invoice->id,
-                        notes:       'Invoice #' . $invoice->code,
-                    );
+                $allocations = InventoryService::deductStock(
+                    productId:   $detail['product_id'],
+                    quantity:    $detail['quantity'],
+                    source:      InventorySource::SALE,
+                    referenceId: $invoice->id,
+                    notes:       'Invoice #' . $invoice->code,
+                );
 
-                    foreach ($allocations as $allocation) {
-                        $invoiceDetail->batches()->create($allocation);
-                    }
+                foreach ($allocations as $allocation) {
+                    $invoiceDetail->batches()->create($allocation);
                 }
             }
         });
@@ -255,8 +252,6 @@ class InvoiceController extends BaseController
             // Cascades to invoice_detail_batches via DB constraint
             $invoice->details()->delete();
 
-            $deductStock = InvoiceStatus::from($data['status']) !== InvoiceStatus::DRAFT;
-
             foreach ($data['details'] as $detail) {
                 $product = Product::with('category', 'unit')->find($detail['product_id']);
 
@@ -279,24 +274,57 @@ class InvoiceController extends BaseController
                     ],
                 ]);
 
-                if ($deductStock) {
-                    $allocations = InventoryService::deductStock(
-                        productId:   $detail['product_id'],
-                        quantity:    $detail['quantity'],
-                        source:      InventorySource::SALE,
-                        referenceId: $invoice->id,
-                        notes:       'Invoice #' . $invoice->code,
-                    );
+                $allocations = InventoryService::deductStock(
+                    productId:   $detail['product_id'],
+                    quantity:    $detail['quantity'],
+                    source:      InventorySource::SALE,
+                    referenceId: $invoice->id,
+                    notes:       'Invoice #' . $invoice->code,
+                );
 
-                    foreach ($allocations as $allocation) {
-                        $invoiceDetail->batches()->create($allocation);
-                    }
+                foreach ($allocations as $allocation) {
+                    $invoiceDetail->batches()->create($allocation);
                 }
             }
         });
 
         return redirect()->route('invoices.show', $encryptedId)->with([
             'success' => ['title' => 'Invoice Updated', 'message' => 'Invoice has been updated.'],
+        ]);
+    }
+
+    public function destroy($encryptedId)
+    {
+        $invoice = Invoice::with('invoiceDetailBatches')->findOrFail(Encryption::decrypt($encryptedId));
+
+        if (! $invoice->status->canDelete()) {
+            return response()->json([
+                'code'    => 422,
+                'message' => 'Error',
+                'error'   => [
+                    'title'   => 'Cannot Delete',
+                    'message' => 'Invoice with status "' . $invoice->status->label() . '" cannot be deleted.',
+                ],
+            ], 422);
+        }
+
+        DB::transaction(function () use ($invoice) {
+            foreach ($invoice->invoiceDetailBatches as $batch) {
+                InventoryService::restoreStockBatch(
+                    inventoryDetailId: $batch->inventory_detail_id,
+                    quantity:          $batch->quantity,
+                    source:            InventorySource::SALE,
+                    referenceId:       $invoice->id,
+                    notes:             'Delete Invoice #' . $invoice->code,
+                );
+            }
+
+            $invoice->delete();
+        });
+
+        return Response::build(200, 'Success', [
+            'title'   => 'Invoice Deleted',
+            'message' => 'Invoice has been deleted.',
         ]);
     }
 

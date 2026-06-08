@@ -58,4 +58,9 @@ enum InvoiceStatus: string
     {
         return in_array($this, [self::DRAFT, self::WAITING_FOR_PAYMENT, self::PARTIALLY_PAID]);
     }
+
+    public function canDelete(): bool
+    {
+        return in_array($this, [self::DRAFT, self::WAITING_FOR_PAYMENT]);
+    }
 }
