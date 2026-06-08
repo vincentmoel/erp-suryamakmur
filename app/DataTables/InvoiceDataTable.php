@@ -55,6 +55,11 @@ class InvoiceDataTable extends BaseDataTable
             ->editColumn('status', fn($row) => '<span class="badge ' . $row->status->badgeClass() . '">' . $row->status->icon() . $row->status->label() . '</span>')
             ->editColumn('amount', fn($row) => 'Rp ' . number_format($row->amount, 0, ',', '.'))
             ->editColumn('invoice_date', fn($row) => $row->invoice_date->translatedFormat('d F Y'))
+            ->filterColumn('customer_id', fn($q, $k) => $q->whereHas('customer', fn($r) => $r->where('name', 'LIKE', "%{$k}%")))
+            ->filterColumn('salesperson_id', fn($q, $k) => $q->whereHas('salesperson', fn($r) => $r->where('name', 'LIKE', "%{$k}%")))
+            ->filterColumn('invoice_date', fn($q, $k) => $q->whereRaw("DATE_FORMAT(invoice_date, '%d %M %Y') LIKE ?", ["%{$k}%"]))
+            ->filterColumn('amount', fn($q, $k) => $q->where('grand_total', 'LIKE', "%{$k}%"))
+            ->filterColumn('status', fn($q, $k) => $q->where('status', 'LIKE', "%{$k}%"))
             ->orderColumn('amount', 'grand_total $1')
             ->rawColumns(['action', 'status']);
     }

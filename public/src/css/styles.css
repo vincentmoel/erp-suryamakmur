@@ -7164,6 +7164,8 @@ div.dt-processing > div:last-child { display: none !important; }
   position: relative;
   display: inline-flex;
   align-items: center;
+  width: 20rem;
+  max-width: 100%;
 }
 
 .dt-search-icon {
@@ -7180,7 +7182,7 @@ div.dt-processing > div:last-child { display: none !important; }
 
 .dt-search-input {
   height: 2.5rem;
-  max-width: 28rem;
+  width: 100%;
   font-size: 0.875rem;
 }
 
