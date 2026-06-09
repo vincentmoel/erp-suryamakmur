@@ -55,13 +55,21 @@ class DataTablesComponentBuilder
 
     public static function actionButton(array $route, $module, $customButtons = []): string
     {
+        $renderCustom = function (string $position) use ($customButtons): string {
+            $html = '';
+            foreach ($customButtons as $btn) {
+                $btnPosition = $btn['position'] ?? 'after';
+                if ($btnPosition !== $position) continue;
+                if ((Session::get('permissions')[$btn['module']][$btn['modulePermission']] ?? false) && isset($btn['html'])) {
+                    $html .= $btn['html'];
+                }
+            }
+            return $html;
+        };
+
         $html = '<div class="dt-action-cell">';
 
-        foreach ($customButtons as $btn) {
-            if ((Session::get('permissions')[$btn['module']][$btn['modulePermission']] ?? false) && isset($btn['html'])) {
-                $html .= $btn['html'];
-            }
-        }
+        $html .= $renderCustom('before');
 
         if ((Session::get('permissions')[$module]['read'] ?? false) && isset($route['show'])) {
             $html .= '<a href="' . $route['show'] . '" class="dt-action-btn" title="View">' . self::icon('eye') . '</a>';
@@ -82,6 +90,8 @@ class DataTablesComponentBuilder
                 . '<button type="submit" class="dt-action-btn" title="Restore">' . self::icon('refresh') . '</button>'
                 . '</form>';
         }
+
+        $html .= $renderCustom('after');
 
         return $html . '</div>';
     }

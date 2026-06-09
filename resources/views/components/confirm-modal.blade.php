@@ -1,7 +1,8 @@
 @props([
     'id'           => 'confirm-modal',
-    'triggerId'    => 'btn-open-confirm',
+    'triggerId'    => null,
     'formId'       => null,
+    'ajaxMethod'   => null,   {{-- e.g. 'DELETE' — if set, does AJAX instead of form.submit() --}}
     'title'        => '',
     'description'  => '',
     'keyword'      => __('general.confirm_keyword'),
@@ -56,19 +57,23 @@
 @push('scripts')
 <script>
 (function () {
-    var modalId  = {{ Js::from($id) }};
-    var keyword  = {{ Js::from($keyword) }};
-    var formId   = {{ Js::from($formId) }};
-    var triggerId = {{ Js::from($triggerId) }};
+    var modalId    = {{ Js::from($id) }};
+    var keyword    = {{ Js::from($keyword) }};
+    var formId     = {{ Js::from($formId) }};
+    var triggerId  = {{ Js::from($triggerId) }};
+    var ajaxMethod = {{ Js::from($ajaxMethod) }};
 
-    var modal    = document.getElementById(modalId);
-    var input    = document.getElementById(modalId + '-input');
+    var modal     = document.getElementById(modalId);
+    var input     = document.getElementById(modalId + '-input');
     var btnSubmit = modal.querySelector('.confirm-modal-submit');
     var btnCancel = modal.querySelector('.confirm-modal-cancel');
-    var trigger  = document.getElementById(triggerId);
-    var form     = formId ? document.getElementById(formId) : null;
+    var trigger   = triggerId ? document.getElementById(triggerId) : null;
+    var form      = formId ? document.getElementById(formId) : null;
 
-    function open() {
+    var pendingUrl = null;
+
+    function open(url) {
+        pendingUrl = url || null;
         input.value = '';
         btnSubmit.disabled = true;
         modal.classList.remove('hidden');
@@ -81,9 +86,13 @@
         modal.classList.remove('flex');
         input.value = '';
         btnSubmit.disabled = true;
+        pendingUrl = null;
     }
 
-    if (trigger) trigger.addEventListener('click', open);
+    // Expose API so external JS can open this modal with a dynamic URL
+    window['confirmModal_' + modalId] = { open: open, close: close };
+
+    if (trigger) trigger.addEventListener('click', function () { open(); });
     btnCancel.addEventListener('click', close);
 
     modal.addEventListener('click', function (e) {
@@ -100,8 +109,28 @@
 
     btnSubmit.addEventListener('click', function () {
         if (input.value !== keyword) return;
-        close();
-        if (form) form.submit();
+        setBtnLoading(btnSubmit);
+        if (ajaxMethod && pendingUrl) {
+            $.ajax({
+                url: pendingUrl,
+                type: ajaxMethod,
+                data: { _token: '{{ csrf_token() }}' },
+                success: function () {
+                    close();
+                    $(document).trigger('dt:refresh');
+                },
+                error: function (xhr) {
+                    resetBtnLoading(btnSubmit);
+                    close();
+                    var msg = xhr.responseJSON && xhr.responseJSON.message
+                        ? xhr.responseJSON.message
+                        : 'An error occurred.';
+                    alert(msg);
+                },
+            });
+        } else {
+            if (form) form.submit();
+        }
     });
 })();
 </script>

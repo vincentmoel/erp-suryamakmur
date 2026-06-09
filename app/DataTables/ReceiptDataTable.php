@@ -4,8 +4,10 @@ namespace App\DataTables;
 
 use App\Enums\InvoiceStatus;
 use App\Enums\Module;
+use App\Libraries\DataTablesComponentBuilder;
 use App\Models\Receipt;
 use Illuminate\Database\Eloquent\Builder as QueryBuilder;
+use Illuminate\Support\Facades\Blade;
 use Yajra\DataTables\EloquentDataTable;
 
 class ReceiptDataTable extends BaseDataTable
@@ -18,6 +20,7 @@ class ReceiptDataTable extends BaseDataTable
             view: 'receipts',
             route: 'receipts',
             module: Module::Receipt->value,
+            exceptActionButton: ['delete'],
         );
     }
 
@@ -49,6 +52,32 @@ class ReceiptDataTable extends BaseDataTable
                 if ($row->paid_invoices_count)          $parts[] = $row->paid_invoices_count . ' ' . InvoiceStatus::PAID->label();
                 if ($row->partially_paid_invoices_count) $parts[] = $row->partially_paid_invoices_count . ' ' . InvoiceStatus::PARTIALLY_PAID->label();
                 return $parts ? implode(', ', $parts) : '-';
+            })
+            ->addColumn('action', function ($row) {
+                $encryptedId = \App\Helpers\Encryption::encrypt($row->id);
+                $deleteUrl   = route('receipts.destroy', ['encryptedId' => $encryptedId]);
+                $deleteIcon  = Blade::render('<x-icon name="delete" class="size-4" />');
+                $deleteBtn   = "<button type='button'
+                    class='dt-action-btn dt-action-btn--destructive receipt-delete-btn'
+                    data-url='{$deleteUrl}'
+                    data-code='" . e($row->code) . "'
+                    title='Delete'>{$deleteIcon}</button>";
+
+                return DataTablesComponentBuilder::actionButton(
+                    [
+                        'show' => route('receipts.show', ['encryptedId' => $encryptedId]),
+                        'edit' => route('receipts.edit', ['encryptedId' => $encryptedId]),
+                    ],
+                    Module::Receipt->name,
+                    [
+                        [
+                            'module'           => Module::Receipt->value,
+                            'modulePermission' => 'delete',
+                            'html'             => $deleteBtn,
+                            'position'         => 'after',
+                        ],
+                    ]
+                );
             })
             ->rawColumns(['action', 'payment_method']);
     }

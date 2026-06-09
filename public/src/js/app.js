@@ -199,8 +199,8 @@ $(function () {
   $("#confirm-delete-btn").on("click", function () {
     if (!pendingUrl) return;
 
-    const label = $(this).text().trim();
-    const $btn  = $(this).prop("disabled", true).html('<span class="dt-loading-spinner"></span> ' + label);
+    const btn = this;
+    setBtnLoading(btn);
 
     $.ajax({
       url    : pendingUrl,
@@ -215,12 +215,29 @@ $(function () {
       },
       complete: function () {
         $("#confirm-delete-dialog").addClass("hidden");
-        $btn.prop("disabled", false).html("Delete");
+        resetBtnLoading(btn);
         pendingUrl = null;
       },
     });
   });
 });
+
+// ── BUTTON LOADING HELPERS ────────────────────────────────────
+const _btnOriginalHtml = new WeakMap();
+
+function setBtnLoading(btn) {
+  _btnOriginalHtml.set(btn, btn.innerHTML);
+  btn.innerHTML = '<span class="dt-loading-spinner"></span> ' + btn.innerText.trim();
+  btn.disabled = true;
+}
+
+function resetBtnLoading(btn) {
+  if (_btnOriginalHtml.has(btn)) {
+    btn.innerHTML = _btnOriginalHtml.get(btn);
+    _btnOriginalHtml.delete(btn);
+  }
+  btn.disabled = false;
+}
 
 // ── FORM SUBMIT LOADING ───────────────────────────────────────
 (function () {

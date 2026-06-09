@@ -35,6 +35,13 @@
         </x-datatable>
 
     </div>
+
+    <x-confirm-modal
+        id="receiptDeleteModal"
+        ajax-method="DELETE"
+        :title="__('general.confirm_delete_receipt_title')"
+        :description="__('general.confirm_delete_receipt')"
+        :confirm-label="__('general.delete')" />
 @endsection
 
 @push('scripts')
@@ -62,5 +69,10 @@
                 { data: 'action',         name: 'action', orderable: false, searchable: false },
             ],
         });
+    </script>
+    <script>
+    $(document).on('click', '.receipt-delete-btn', function () {
+        window.confirmModal_receiptDeleteModal.open($(this).data('url'));
+    });
     </script>
 @endpush

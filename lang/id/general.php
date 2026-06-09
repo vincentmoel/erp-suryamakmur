@@ -214,6 +214,7 @@ return [
     'no_open_invoices'                  => 'Tidak ada invoice terbuka untuk pelanggan ini.',
     'select_customer_first'             => 'Pilih pelanggan untuk melihat invoice terbuka mereka.',
     'confirm_delete_receipt'            => 'Hapus penerimaan ini? Status pembayaran invoice akan dihitung ulang.',
+    'confirm_delete_receipt_title'      => 'Hapus Penerimaan',
 
     // Vendor
     'vendors'                    => 'Vendor',

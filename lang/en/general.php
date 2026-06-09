@@ -214,6 +214,7 @@ return [
     'no_open_invoices'                 => 'No open invoices for this customer.',
     'select_customer_first'            => 'Select a customer to see their open invoices.',
     'confirm_delete_receipt'           => 'Delete this receipt? Invoice payment statuses will be recalculated.',
+    'confirm_delete_receipt_title'     => 'Delete Receipt',
 
     // Vendor
     'vendors'                    => 'Vendors',
