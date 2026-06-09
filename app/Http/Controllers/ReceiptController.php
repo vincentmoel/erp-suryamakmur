@@ -276,8 +276,8 @@ class ReceiptController extends BaseController
         foreach ($grouped as $invoiceId => $totalAllocated) {
             $invoice = Invoice::find($invoiceId);
 
-            if (!$invoice || !in_array($invoice->status, $payableStatuses)) {
-                return "Invoice #{$invoice?->code} is not in a payable status.";
+            if (!$invoice) {
+                return "Invoice not found.";
             }
 
             // Remaining = grand_total - paid_amount + what this receipt already paid (on edit)
@@ -286,6 +286,15 @@ class ReceiptController extends BaseController
                 $alreadyPaid = (int) $invoice->receiptDetails()
                     ->whereHas('receipt', fn($q) => $q->where('id', $excludeReceiptId))
                     ->sum('amount');
+            }
+
+            // On edit, a PAID invoice that was paid by this receipt is still valid to re-allocate.
+            // After recalculate its status will be updated correctly.
+            $isAlreadyInThisReceipt = $alreadyPaid > 0;
+            $isPayable = in_array($invoice->status, $payableStatuses);
+
+            if (!$isPayable && !$isAlreadyInThisReceipt) {
+                return "Invoice #{$invoice->code} is not in a payable status.";
             }
 
             $remaining = $invoice->amount - $invoice->paid_amount + $alreadyPaid;

@@ -140,7 +140,7 @@
             {{-- Form Actions --}}
             <div class="rounded-lg border bg-card text-card-foreground shadow-xs">
                 <div class="flex items-center justify-end gap-2 px-6 py-4">
-                    <button type="submit" class="btn btn-primary">
+                    <button type="button" id="btn-open-confirm" class="btn btn-primary">
                         <x-icon name="check" class="size-3.5" />
                         @lang('general.update')
                     </button>
@@ -149,6 +149,13 @@
 
         </form>
     </div>
+
+    <x-confirm-modal
+        trigger-id="btn-open-confirm"
+        form-id="receipt-form"
+        :title="__('general.confirm_update_receipt')"
+        :description="__('general.confirm_update_receipt_desc')"
+        :confirm-label="__('general.yes_update')" />
 @endsection
 
 @push('scripts')
@@ -307,5 +314,6 @@
 
     function formatNum(n) { return parseInt(n).toLocaleString('id-ID'); }
 })();
+
 </script>
 @endpush
