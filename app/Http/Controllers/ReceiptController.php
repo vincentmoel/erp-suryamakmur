@@ -249,9 +249,12 @@ class ReceiptController extends BaseController
                 'due_date'         => $inv->due_date?->translatedFormat('d F Y'),
                 'due_date_ts'      => $inv->due_date?->timestamp,
                 'grand_total'      => $inv->amount,
-                'paid_amount'      => $inv->paid_amount,
+                'paid_amount'      => $inv->paid_amount - $alreadyPaid,
                 'remaining_amount' => $inv->amount - $inv->paid_amount + $alreadyPaid,
                 'allocated_amount' => $alreadyPaid,
+                'status'           => $inv->status->value,
+                'status_label'     => $inv->status->label(),
+                'status_badge'     => $inv->status->badgeClass(),
             ];
         });
 

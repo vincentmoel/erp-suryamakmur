@@ -2,134 +2,98 @@
 
 namespace Database\Seeders;
 
-use App\Enums\InvoiceStatus;
 use App\Enums\PaymentMethod;
+use App\Http\Controllers\ReceiptController;
 use App\Models\Customer;
 use App\Models\Invoice;
-use App\Models\Receipt;
-use App\Services\InvoicePaymentService;
+use App\Models\User;
 use Illuminate\Database\Seeder;
-use Illuminate\Support\Facades\DB;
+use Illuminate\Http\Request;
+use Illuminate\Support\Facades\Auth;
 
 class ReceiptSeeder extends Seeder
 {
     public function run(): void
     {
-        $cust = fn(string $name) => Customer::where('name', $name)->first();
+        $user = User::first();
+        Auth::loginUsingId($user->id);
 
-        /**
-         * Find an invoice by customer + date.  Codes are generated at seed-time
-         * (depends on which month migrate:fresh runs), so we never hardcode them.
-         */
-        $invByDate = function (string $customerName, string $date) use ($cust) {
-            $customer = $cust($customerName);
-            if (! $customer) {
-                return null;
-            }
+        $invByDate = function (string $customerName, string $date): ?Invoice {
+            $customer = Customer::where('name', $customerName)->first();
+            if (! $customer) return null;
 
             return Invoice::where('customer_id', $customer->id)
                 ->where('invoice_date', $date)
                 ->first();
         };
 
-        /**
-         * Situasi setelah InvoiceSeeder (stok awal 2026-05-10 & 2026-05-15):
-         *   Budi Santoso  2026-05-20  Rp  271.000  WAITING_FOR_PAYMENT
-         *   Ibu Dewi      2026-05-25  Rp  815.000  WAITING_FOR_PAYMENT
-         *   Andi Wijaya   2026-06-01  Rp 1.020.000 WAITING_FOR_PAYMENT
-         *   Rina Kusuma   2026-06-04  Rp  565.000  DRAFT
-         *   Doni Prasetyo 2026-06-05  Rp 1.005.000 WAITING_FOR_PAYMENT
-         *
-         * Setelah seeder ini:
-         *   Budi Santoso  → PAID           (Rp 271.000 lunas)
-         *   Ibu Dewi      → PARTIALLY_PAID (Rp 400.000 dari Rp 815.000)
-         *   Andi Wijaya   → PARTIALLY_PAID (Rp 510.000 dari Rp 1.020.000)
-         */
         $receipts = [
 
-            // ── RCP 1 ─ Budi Santoso ─ Lunas ─────────────────────────────
+            // ── RCP 1 ─ Budi Santoso ─ Bayar invoice Apr-01 lunas + Apr-15 sebagian
             [
-                'customer'    => $cust('Budi Santoso'),
-                'date'        => '2026-06-02',
-                'method'      => PaymentMethod::CASH,
-                'reference'   => null,
-                'notes'       => 'Pembayaran tunai di tempat.',
-                'allocations' => [
-                    ['invoice' => $invByDate('Budi Santoso', '2026-05-20'), 'amount' => 271000],
+                'customer_name'    => 'Budi Santoso',
+                'receipt_date'     => '2026-05-01',
+                'payment_method'   => PaymentMethod::BANK_TRANSFER->value,
+                'reference_number' => 'TRF-20260501-001',
+                'notes'            => 'Transfer BCA pembayaran April batch 1.',
+                'allocations'      => [
+                    ['date' => '2026-04-01', 'amount' => 500000],   // lunas
+                    ['date' => '2026-04-15', 'amount' => 375000],   // 50%
                 ],
             ],
 
-            // ── RCP 2 ─ Ibu Dewi ─ Bayar sebagian ────────────────────────
+            // ── RCP 2 ─ Budi Santoso ─ Lunasi Apr-15 + sebagian Mei
             [
-                'customer'    => $cust('Ibu Dewi'),
-                'date'        => '2026-06-04',
-                'method'      => PaymentMethod::BANK_TRANSFER,
-                'reference'   => 'TRF-20260604-001',
-                'notes'       => 'Transfer BCA, bukti terlampir.',
-                'allocations' => [
-                    ['invoice' => $invByDate('Ibu Dewi', '2026-05-25'), 'amount' => 400000],
+                'customer_name'    => 'Budi Santoso',
+                'receipt_date'     => '2026-05-20',
+                'payment_method'   => PaymentMethod::CASH->value,
+                'reference_number' => null,
+                'notes'            => 'Pelunasan April + DP Mei.',
+                'allocations'      => [
+                    ['date' => '2026-04-15', 'amount' => 375000],   // sisa Apr-15
+                    ['date' => '2026-05-01', 'amount' => 500000],   // 50% Mei
                 ],
             ],
 
-            // ── RCP 3 ─ Andi Wijaya ─ DP 50% invoice distributor ─────────
-            [
-                'customer'    => $cust('Andi Wijaya'),
-                'date'        => '2026-06-06',
-                'method'      => PaymentMethod::BANK_TRANSFER,
-                'reference'   => 'TRF-20260606-MBS',
-                'notes'       => 'Down payment 50% distributor Jakarta.',
-                'allocations' => [
-                    ['invoice' => $invByDate('Andi Wijaya', '2026-06-01'), 'amount' => 510000],
-                ],
-            ],
         ];
 
         foreach ($receipts as $data) {
-            if (! $data['customer']) {
+            $customer = Customer::where('name', $data['customer_name'])->first();
+            if (! $customer) {
+                $this->command->warn("Customer [{$data['customer_name']}] tidak ditemukan, dilewati.");
                 continue;
             }
 
-            // Skip if any invoice in this receipt couldn't be resolved
+            $allocations = [];
             $valid = true;
             foreach ($data['allocations'] as $alloc) {
-                if (! $alloc['invoice']) {
+                $invoice = $invByDate($data['customer_name'], $alloc['date']);
+                if (! $invoice) {
+                    $this->command->warn("Invoice {$data['customer_name']} tanggal {$alloc['date']} tidak ditemukan, dilewati.");
                     $valid = false;
                     break;
                 }
+                $allocations[$invoice->id] = [
+                    'invoice_id' => $invoice->id,
+                    'amount'     => $alloc['amount'],
+                ];
             }
-            if (! $valid) {
-                continue;
-            }
 
-            DB::transaction(function () use ($data) {
-                $receipt = Receipt::firstOrCreate(
-                    [
-                        'customer_id'    => $data['customer']->id,
-                        'receipt_date'   => $data['date'],
-                        'payment_method' => $data['method']->value,
-                    ],
-                    [
-                        'reference_number' => $data['reference'],
-                        'notes'            => $data['notes'],
-                    ]
-                );
+            if (! $valid) continue;
 
-                if (! $receipt->wasRecentlyCreated) {
-                    return;
-                }
+            $request = Request::create('/receipts', 'POST', [
+                'customer_id'      => $customer->id,
+                'receipt_date'     => $data['receipt_date'],
+                'payment_method'   => $data['payment_method'],
+                'reference_number' => $data['reference_number'],
+                'notes'            => $data['notes'],
+                'allocations'      => $allocations,
+            ]);
 
-                $invoiceIds = [];
-
-                foreach ($data['allocations'] as $alloc) {
-                    $receipt->details()->create([
-                        'invoice_id' => $alloc['invoice']->id,
-                        'amount'     => $alloc['amount'],
-                    ]);
-                    $invoiceIds[] = $alloc['invoice']->id;
-                }
-
-                InvoicePaymentService::recalculateMany($invoiceIds);
-            });
+            app()->instance('request', $request);
+            app()->call([new ReceiptController, 'store'], ['request' => $request]);
         }
+
+        Auth::logout();
     }
 }

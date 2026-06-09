@@ -215,11 +215,13 @@
 
     function buildRow(inv) {
         var tr = document.createElement('tr');
-        tr.className = 'border-b last:border-0';
+        var isPaid = inv.status === 'paid';
+        tr.className = 'border-b last:border-0' + (isPaid ? ' opacity-70' : '');
         var nowTs    = Math.floor(Date.now() / 1000);
         var overdue  = inv.due_date_ts && inv.due_date_ts < nowTs;
         var dueCls   = overdue ? 'style="color:#dc2626"' : 'class="text-muted-foreground"';
         var dueText  = inv.due_date ? inv.due_date : '<span class="text-muted-foreground/50">—</span>';
+        var statusBadge = '<span class="badge ' + inv.status_badge + '">' + inv.status_label + '</span>';
 
         tr.dataset.remaining = inv.remaining_amount;
         var prefilledAmount = existingAllocations[inv.id] || 0;
@@ -232,41 +234,51 @@
             '<td class="px-4 py-3 text-right tabular-nums font-medium">Rp ' + formatNum(inv.remaining_amount) + '</td>' +
             '<td class="px-4 py-3">' +
                 '<input type="hidden" name="allocations[' + inv.id + '][invoice_id]" value="' + inv.id + '">' +
-                '<div class="flex items-center gap-1">' +
-                    '<div class="flex items-center rounded-md border border-input h-9 flex-1 min-w-0 overflow-hidden">' +
-                        '<span class="pl-2 pr-1 text-xs text-muted-foreground select-none shrink-0">Rp</span>' +
-                        '<input type="text" class="alloc-display flex-1 min-w-0 border-0 bg-transparent text-sm px-1 h-full outline-none text-right" placeholder="0" autocomplete="off"' +
-                            (prefilledAmount ? ' value="' + prefilledAmount.toLocaleString("id-ID") + '"' : '') + '>' +
-                    '</div>' +
-                    '<input type="hidden" name="allocations[' + inv.id + '][amount]" class="alloc-input" value="' + (prefilledAmount || '') + '">' +
-                    '<button type="button" class="btn-full-pay shrink-0 inline-flex items-center gap-1 rounded-md border text-xs font-medium px-2 h-9 transition-colors whitespace-nowrap" style="border-color:#16a34a;color:#16a34a;background:transparent" onmouseover="this.style.background=\'#f0fdf4\'" onmouseout="this.style.background=\'transparent\'" tabindex="-1">' + fullPayIcon + '{{ __('general.full_pay') }}</button>' +
-                '</div>' +
+                (isPaid
+                    ? '<div class="flex items-center justify-end gap-1">' +
+                          '<input type="hidden" name="allocations[' + inv.id + '][amount]" class="alloc-input" value="' + (prefilledAmount || '') + '">' +
+                          '<span class="text-sm tabular-nums text-muted-foreground">Rp ' + formatNum(prefilledAmount) + '</span>' +
+                          '<span class="badge badge-success ml-1">{{ __('general.paid') }}</span>' +
+                      '</div>'
+                    : '<div class="flex items-center gap-1">' +
+                          '<div class="flex items-center rounded-md border border-input h-9 flex-1 min-w-0 overflow-hidden">' +
+                              '<span class="pl-2 pr-1 text-xs text-muted-foreground select-none shrink-0">Rp</span>' +
+                              '<input type="text" class="alloc-display flex-1 min-w-0 border-0 bg-transparent text-sm px-1 h-full outline-none text-right" placeholder="0" autocomplete="off"' +
+                                  (prefilledAmount ? ' value="' + prefilledAmount.toLocaleString("id-ID") + '"' : '') + '>' +
+                          '</div>' +
+                          '<input type="hidden" name="allocations[' + inv.id + '][amount]" class="alloc-input" value="' + (prefilledAmount || '') + '">' +
+                          '<button type="button" class="btn-full-pay shrink-0 inline-flex items-center gap-1 rounded-md border text-xs font-medium px-2 h-9 transition-colors whitespace-nowrap" style="border-color:#16a34a;color:#16a34a;background:transparent" onmouseover="this.style.background=\'#f0fdf4\'" onmouseout="this.style.background=\'transparent\'" tabindex="-1">' + fullPayIcon + '{{ __('general.full_pay') }}</button>' +
+                      '</div>'
+                ) +
             '</td>';
 
-        var display = tr.querySelector('.alloc-display');
-        var hidden  = tr.querySelector('.alloc-input');
+        var hidden = tr.querySelector('.alloc-input');
 
-        display.addEventListener('input', function () {
-            var raw = parseMoney(this.value);
-            var max = parseInt(tr.dataset.remaining);
-            if (raw > max) raw = max;
-            var cur  = this.selectionStart;
-            var prev = this.value.length;
-            this.value = raw ? raw.toLocaleString('id-ID') : '';
-            var diff = this.value.length - prev;
-            try { this.setSelectionRange(cur + diff, cur + diff); } catch(e) {}
-            hidden.value = raw || '';
-            calcTotal();
-            updateQuickTotal();
-        });
+        if (!isPaid) {
+            var display = tr.querySelector('.alloc-display');
 
-        tr.querySelector('.btn-full-pay').addEventListener('click', function () {
-            var max = parseInt(tr.dataset.remaining) || 0;
-            display.value = max ? max.toLocaleString('id-ID') : '';
-            hidden.value  = max || '';
-            calcTotal();
-            updateQuickTotal();
-        });
+            display.addEventListener('input', function () {
+                var raw = parseMoney(this.value);
+                var max = parseInt(tr.dataset.remaining);
+                if (raw > max) raw = max;
+                var cur  = this.selectionStart;
+                var prev = this.value.length;
+                this.value = raw ? raw.toLocaleString('id-ID') : '';
+                var diff = this.value.length - prev;
+                try { this.setSelectionRange(cur + diff, cur + diff); } catch(e) {}
+                hidden.value = raw || '';
+                calcTotal();
+                updateQuickTotal();
+            });
+
+            tr.querySelector('.btn-full-pay').addEventListener('click', function () {
+                var max = parseInt(tr.dataset.remaining) || 0;
+                display.value = max ? max.toLocaleString('id-ID') : '';
+                hidden.value  = max || '';
+                calcTotal();
+                updateQuickTotal();
+            });
+        }
 
         return tr;
     }

@@ -28,6 +28,7 @@ return [
     // Status
     'active'   => 'Active',
     'inactive' => 'Inactive',
+    'paid'     => 'Paid',
 
     // Common fields
     'name'          => 'Name',

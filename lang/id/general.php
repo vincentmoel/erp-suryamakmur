@@ -28,6 +28,7 @@ return [
     // Status
     'active'   => 'Aktif',
     'inactive' => 'Tidak Aktif',
+    'paid'     => 'Lunas',
 
     // Common fields
     'name'          => 'Nama',
