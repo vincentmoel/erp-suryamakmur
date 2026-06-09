@@ -16,7 +16,7 @@ class InvoiceRequest extends FormRequest
 
     public function rules(): array
     {
-        $method = Route::getCurrentRoute()->getActionMethod();
+        $method = Route::getCurrentRoute()?->getActionMethod() ?? 'store';
 
         return match ($method) {
             'store'  => $this->store(),
