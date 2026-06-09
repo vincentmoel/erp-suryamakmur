@@ -49,6 +49,7 @@
                 <th>@lang('general.salesperson')</th>
                 <th>@lang('general.invoice_date')</th>
                 <th>@lang('general.total')</th>
+                <th>@lang('general.paid_amount')</th>
                 <th>@lang('general.status')</th>
                 <th>@lang('general.created_at')</th>
                 <th></th>
@@ -74,6 +75,7 @@
                 { data: 'salesperson_id', name: 'salesperson_id', orderable: false, className: 'dt-cell-muted' },
                 { data: 'invoice_date', name: 'invoice_date', className: 'dt-cell-muted' },
                 { data: 'amount', name: 'amount' },
+                { data: 'paid_amount', name: 'paid_amount', orderable: false, searchable: false },
                 { data: 'status', name: 'status' },
                 { data: 'created_at', name: 'created_at', className: 'dt-cell-muted' },
                 { data: 'action', name: 'action', orderable: false, searchable: false },

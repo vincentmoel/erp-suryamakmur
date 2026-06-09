@@ -22,7 +22,7 @@ class InvoiceDataTable extends BaseDataTable
 
     public function query(): QueryBuilder
     {
-        $query = Invoice::with('customer', 'salesperson')->withSum('details', 'amount');
+        $query = Invoice::with('customer', 'salesperson')->withSum('details', 'amount')->withSum('receiptDetails', 'amount');
 
         if ($customerId = request('filter_customer')) {
             $query->where('customer_id', $customerId);
@@ -54,6 +54,7 @@ class InvoiceDataTable extends BaseDataTable
             ->editColumn('salesperson_id', fn($row) => $row->salesperson->name ?? '-')
             ->editColumn('status', fn($row) => '<span class="badge ' . $row->status->badgeClass() . '">' . $row->status->icon() . $row->status->label() . '</span>')
             ->editColumn('amount', fn($row) => 'Rp ' . number_format($row->amount, 0, ',', '.'))
+            ->addColumn('paid_amount', fn($row) => 'Rp ' . number_format($row->paid_amount ?? 0, 0, ',', '.'))
             ->editColumn('invoice_date', fn($row) => $row->invoice_date->translatedFormat('d F Y'))
             ->filterColumn('customer_id', fn($q, $k) => $q->whereHas('customer', fn($r) => $r->where('name', 'LIKE', "%{$k}%")))
             ->filterColumn('salesperson_id', fn($q, $k) => $q->whereHas('salesperson', fn($r) => $r->where('name', 'LIKE', "%{$k}%")))

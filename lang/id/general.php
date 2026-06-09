@@ -28,7 +28,9 @@ return [
     // Status
     'active'   => 'Aktif',
     'inactive' => 'Tidak Aktif',
-    'paid'     => 'Lunas',
+    'paid'                => 'Lunas',
+    'locked_invoice_paid'       => 'Terkunci — invoice sudah lunas di receipt lain',
+    'locked_invoice_paid_short' => 'Terkunci · Invoice lunas oleh',
 
     // Common fields
     'name'          => 'Nama',
@@ -178,6 +180,7 @@ return [
     'invoice_date'                   => 'Tanggal Invoice',
     'due_date'                       => 'Jatuh Tempo',
     'paid_amount'                    => 'Jumlah Terbayar',
+    'previously_paid'                => 'Dibayar Sebelumnya',
     'items'                          => 'Item',
     'add_item'                       => 'Tambah Item',
     'product'                        => 'Produk',

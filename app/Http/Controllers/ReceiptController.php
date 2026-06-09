@@ -242,6 +242,23 @@ class ReceiptController extends BaseController
                     ->sum('amount');
             }
 
+            $paidByReceipts = [];
+            if ($inv->status->value === \App\Enums\InvoiceStatus::PAID->value) {
+                $paidByReceipts = $inv->receiptDetails()
+                    ->whereHas('receipt', fn($q) => $q->when($receiptId, fn($q) => $q->where('id', '!=', $receiptId)))
+                    ->with('receipt:id,code')
+                    ->get()
+                    ->pluck('receipt')
+                    ->filter()
+                    ->unique('id')
+                    ->map(fn($r) => [
+                        'code' => $r->code,
+                        'url'  => route('receipts.show', ['encryptedId' => \App\Helpers\Encryption::encrypt($r->id)]),
+                    ])
+                    ->values()
+                    ->all();
+            }
+
             return [
                 'id'               => $inv->id,
                 'code'             => $inv->code,
@@ -255,6 +272,7 @@ class ReceiptController extends BaseController
                 'status'           => $inv->status->value,
                 'status_label'     => $inv->status->label(),
                 'status_badge'     => $inv->status->badgeClass(),
+                'paid_by_receipts' => $paidByReceipts,
             ];
         });
 

@@ -116,7 +116,7 @@
                                     <th class="px-4 py-3 text-left font-medium text-muted-foreground">@lang('general.invoice_date')</th>
                                     <th class="px-4 py-3 text-left font-medium text-muted-foreground">@lang('general.due_date')</th>
                                     <th class="px-4 py-3 text-right font-medium text-muted-foreground">@lang('general.total')</th>
-                                    <th class="px-4 py-3 text-right font-medium text-muted-foreground">@lang('general.paid_amount')</th>
+                                    <th class="px-4 py-3 text-right font-medium text-muted-foreground">@lang('general.previously_paid')</th>
                                     <th class="px-4 py-3 text-right font-medium text-muted-foreground">@lang('general.invoice_remaining')</th>
                                     <th class="px-4 py-3 text-right font-medium text-muted-foreground w-64">@lang('general.allocation_amount')</th>
                                 </tr>

@@ -28,7 +28,9 @@ return [
     // Status
     'active'   => 'Active',
     'inactive' => 'Inactive',
-    'paid'     => 'Paid',
+    'paid'                => 'Paid',
+    'locked_invoice_paid'       => 'Locked — invoice fully paid by other receipts',
+    'locked_invoice_paid_short' => 'Locked · Invoice fully paid by',
 
     // Common fields
     'name'          => 'Name',
@@ -178,6 +180,7 @@ return [
     'invoice_date'                    => 'Invoice Date',
     'due_date'                        => 'Due Date',
     'paid_amount'                     => 'Paid Amount',
+    'previously_paid'                 => 'Previously Paid',
     'items'                           => 'Items',
     'add_item'                        => 'Add Item',
     'product'                         => 'Product',

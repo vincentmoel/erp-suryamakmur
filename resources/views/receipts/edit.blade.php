@@ -117,9 +117,9 @@
                                     <th class="px-4 py-3 text-left font-medium text-muted-foreground">@lang('general.invoice_date')</th>
                                     <th class="px-4 py-3 text-left font-medium text-muted-foreground">@lang('general.due_date')</th>
                                     <th class="px-4 py-3 text-right font-medium text-muted-foreground">@lang('general.total')</th>
-                                    <th class="px-4 py-3 text-right font-medium text-muted-foreground">@lang('general.paid_amount')</th>
+                                    <th class="px-4 py-3 text-right font-medium text-muted-foreground">@lang('general.previously_paid')</th>
                                     <th class="px-4 py-3 text-right font-medium text-muted-foreground">@lang('general.invoice_remaining')</th>
-                                    <th class="px-4 py-3 text-right font-medium text-muted-foreground w-64">@lang('general.allocation_amount')</th>
+                                    <th class="px-4 py-3 text-right font-medium text-muted-foreground w-80">@lang('general.allocation_amount')</th>
                                 </tr>
                             </thead>
                             <tbody id="allocation-tbody"></tbody>
@@ -173,6 +173,7 @@
     var existingAllocations = @json($data->details->keyBy('invoice_id')->map(fn($d) => $d->amount));
 
     var fullPayIcon = '<svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="1.5" stroke="currentColor" class="size-3.5"><path stroke-linecap="round" stroke-linejoin="round" d="M9 12.75 11.25 15 15 9.75M21 12a9 9 0 1 1-18 0 9 9 0 0 1 18 0Z"/></svg>';
+    var lockIcon    = '<svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="1.5" stroke="currentColor" class="size-3.5 shrink-0"><path stroke-linecap="round" stroke-linejoin="round" d="M16.5 10.5V6.75a4.5 4.5 0 1 0-9 0v3.75m-.75 11.25h10.5a2.25 2.25 0 0 0 2.25-2.25v-6.75a2.25 2.25 0 0 0-2.25-2.25H6.75a2.25 2.25 0 0 0-2.25 2.25v6.75a2.25 2.25 0 0 0 2.25 2.25Z"/></svg>';
 
     function showState(state) {
         loading.classList.add('hidden');
@@ -215,7 +216,7 @@
 
     function buildRow(inv) {
         var tr = document.createElement('tr');
-        var isPaid = inv.status === 'paid';
+        var isPaid = inv.status === 'paid' && inv.paid_by_receipts && inv.paid_by_receipts.length > 0;
         tr.className = 'border-b last:border-0' + (isPaid ? ' opacity-70' : '');
         var nowTs    = Math.floor(Date.now() / 1000);
         var overdue  = inv.due_date_ts && inv.due_date_ts < nowTs;
@@ -235,10 +236,19 @@
             '<td class="px-4 py-3">' +
                 '<input type="hidden" name="allocations[' + inv.id + '][invoice_id]" value="' + inv.id + '">' +
                 (isPaid
-                    ? '<div class="flex items-center justify-end gap-1">' +
+                    ? '<div class="flex flex-col items-end gap-0.5">' +
                           '<input type="hidden" name="allocations[' + inv.id + '][amount]" class="alloc-input" value="' + (prefilledAmount || '') + '">' +
-                          '<span class="text-sm tabular-nums text-muted-foreground">Rp ' + formatNum(prefilledAmount) + '</span>' +
-                          '<span class="badge badge-success ml-1">{{ __('general.paid') }}</span>' +
+                          '<span class="text-sm tabular-nums font-medium">Rp ' + formatNum(prefilledAmount) + '</span>' +
+                          '<span class="flex items-center gap-1 text-xs text-muted-foreground">' +
+                              lockIcon +
+                              '<span>{{ __('general.locked_invoice_paid_short') }}' +
+                                  (inv.paid_by_receipts && inv.paid_by_receipts.length
+                                      ? '<br>' + inv.paid_by_receipts.map(function(r) {
+                                            return '<a href="' + r.url + '" target="_blank" class="font-mono underline underline-offset-2 hover:text-foreground transition-colors">' + r.code + '</a>';
+                                        }).join(', ')
+                                      : '') +
+                              '</span>' +
+                          '</span>' +
                       '</div>'
                     : '<div class="flex items-center gap-1">' +
                           '<div class="flex items-center rounded-md border border-input h-9 flex-1 min-w-0 overflow-hidden">' +

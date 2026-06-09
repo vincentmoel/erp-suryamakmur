@@ -116,6 +116,7 @@
                 type: ajaxMethod,
                 data: { _token: '{{ csrf_token() }}' },
                 success: function () {
+                    resetBtnLoading(btnSubmit);
                     close();
                     $(document).trigger('dt:refresh');
                 },
