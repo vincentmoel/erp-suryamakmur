@@ -15,41 +15,41 @@ class InvoiceSeeder extends Seeder
 {
     public function run(): void
     {
-        // Seeder ini memanggil InvoiceController::store() secara langsung
-        // agar logika FIFO inventory deduction, CodeGenerator, dan snapshot tetap konsisten.
-
         $salesperson = User::first();
         Auth::loginUsingId($salesperson->id);
 
         $customer = Customer::where('name', 'Budi Santoso')->firstOrFail();
         $product  = Product::where('sku', 'NGT-AYM-500')->firstOrFail();
 
-        $qty        = 2;
-        $unitPrice  = 35000;
-        $amount     = $qty * $unitPrice;
+        $invoices = [
+            ['date' => '2026-04-01', 'qty' => 10, 'unit_price' => 50000],  // Rp 500.000
+            ['date' => '2026-04-15', 'qty' => 15, 'unit_price' => 50000],  // Rp 750.000
+            ['date' => '2026-05-01', 'qty' => 20, 'unit_price' => 50000],  // Rp 1.000.000
+        ];
 
-        $request = Request::create('/invoices', 'POST', [
-            'customer_id'    => $customer->id,
-            'salesperson_id' => $salesperson->id,
-            'invoice_date'   => '2026-06-09',
-            'due_date'       => '2026-07-09',
-            'status'         => InvoiceStatus::WAITING_FOR_PAYMENT->value,
-            'notes'          => '',
-            'details'        => [
-                [
-                    'product_id'      => $product->id,
-                    'quantity'        => $qty,
-                    'unit_price'      => $unitPrice,
-                    'subtotal_amount' => $amount,
-                    'amount'          => $amount,
+        foreach ($invoices as $inv) {
+            $amount  = $inv['qty'] * $inv['unit_price'];
+            $request = Request::create('/invoices', 'POST', [
+                'customer_id'    => $customer->id,
+                'salesperson_id' => $salesperson->id,
+                'invoice_date'   => $inv['date'],
+                'due_date'       => null,
+                'status'         => InvoiceStatus::WAITING_FOR_PAYMENT->value,
+                'notes'          => '',
+                'details'        => [
+                    [
+                        'product_id'      => $product->id,
+                        'quantity'        => $inv['qty'],
+                        'unit_price'      => $inv['unit_price'],
+                        'subtotal_amount' => $amount,
+                        'amount'          => $amount,
+                    ],
                 ],
-            ],
-        ]);
+            ]);
 
-        // Bind request ke container agar InvoiceRequest bisa di-resolve dengan data di atas
-        app()->instance('request', $request);
-
-        app()->call([new InvoiceController, 'store'], ['request' => $request]);
+            app()->instance('request', $request);
+            app()->call([new InvoiceController, 'store'], ['request' => $request]);
+        }
 
         Auth::logout();
     }

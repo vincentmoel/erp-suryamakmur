@@ -33,7 +33,7 @@ class ReceiptController extends BaseController
 
     private function customers()
     {
-        return Customer::orderBy('name')->get(['id', 'name']);
+        return Customer::orderBy('name')->get(['id', 'name', 'company_name', 'type', 'tax_number', 'email', 'phone', 'mobile', 'notes']);
     }
 
     public function create()
@@ -53,12 +53,21 @@ class ReceiptController extends BaseController
         $formRequest->validateResolved();
         $data = $formRequest->validated();
 
-        $error = $this->validateAllocations($data['allocations']);
+        $allocations = array_values(array_filter(
+            $data['allocations'],
+            fn($a) => !empty($a['amount']) && (int) $a['amount'] > 0
+        ));
+
+        if (empty($allocations)) {
+            return redirect()->back()->withErrors(['allocations' => __('general.allocations_required')])->withInput();
+        }
+
+        $error = $this->validateAllocations($allocations);
         if ($error) {
             return redirect()->back()->withErrors(['allocations' => $error])->withInput();
         }
 
-        DB::transaction(function () use ($data, $request) {
+        DB::transaction(function () use ($allocations, $data, $request) {
             $imagePath = $request->hasFile('image')
                 ? FileManager::store($request->file('image'), 'receipts')
                 : null;
@@ -72,7 +81,7 @@ class ReceiptController extends BaseController
                 'image'            => $imagePath,
             ]);
 
-            foreach ($data['allocations'] as $allocation) {
+            foreach ($allocations as $allocation) {
                 $receipt->details()->create([
                     'invoice_id' => $allocation['invoice_id'],
                     'amount'     => $allocation['amount'],
@@ -80,7 +89,7 @@ class ReceiptController extends BaseController
             }
 
             InvoicePaymentService::recalculateMany(
-                array_column($data['allocations'], 'invoice_id')
+                array_column($allocations, 'invoice_id')
             );
         });
 
@@ -125,12 +134,21 @@ class ReceiptController extends BaseController
         $formRequest->validateResolved();
         $data = $formRequest->validated();
 
-        $error = $this->validateAllocations($data['allocations'], $receipt->id);
+        $allocations = array_values(array_filter(
+            $data['allocations'],
+            fn($a) => !empty($a['amount']) && (int) $a['amount'] > 0
+        ));
+
+        if (empty($allocations)) {
+            return redirect()->back()->withErrors(['allocations' => __('general.allocations_required')])->withInput();
+        }
+
+        $error = $this->validateAllocations($allocations, $receipt->id);
         if ($error) {
             return redirect()->back()->withErrors(['allocations' => $error])->withInput();
         }
 
-        DB::transaction(function () use ($receipt, $data, $request) {
+        DB::transaction(function () use ($receipt, $allocations, $data, $request) {
             $oldInvoiceIds = $receipt->details->pluck('invoice_id')->all();
 
             $imagePath = $receipt->image;
@@ -149,7 +167,7 @@ class ReceiptController extends BaseController
 
             $receipt->details()->delete();
 
-            foreach ($data['allocations'] as $allocation) {
+            foreach ($allocations as $allocation) {
                 $receipt->details()->create([
                     'invoice_id' => $allocation['invoice_id'],
                     'amount'     => $allocation['amount'],
@@ -227,7 +245,9 @@ class ReceiptController extends BaseController
             return [
                 'id'               => $inv->id,
                 'code'             => $inv->code,
-                'invoice_date'     => $inv->invoice_date->translatedFormat('d M Y'),
+                'invoice_date'     => $inv->invoice_date->translatedFormat('d F Y'),
+                'due_date'         => $inv->due_date?->translatedFormat('d F Y'),
+                'due_date_ts'      => $inv->due_date?->timestamp,
                 'grand_total'      => $inv->amount,
                 'paid_amount'      => $inv->paid_amount,
                 'remaining_amount' => $inv->amount - $inv->paid_amount + $alreadyPaid,

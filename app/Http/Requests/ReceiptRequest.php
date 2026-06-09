@@ -46,7 +46,7 @@ class ReceiptRequest extends FormRequest
             'notes'                    => ['nullable', 'string'],
             'allocations'              => ['required', 'array', 'min:1'],
             'allocations.*.invoice_id' => ['required', 'integer', 'exists:invoices,id'],
-            'allocations.*.amount'     => ['required', 'integer', 'min:1'],
+            'allocations.*.amount'     => ['nullable', 'integer', 'min:1'],
         ];
     }
 }

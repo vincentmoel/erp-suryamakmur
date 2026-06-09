@@ -27,6 +27,7 @@
                 <th>@lang('general.receipt_date')</th>
                 <th>@lang('general.payment_method')</th>
                 <th>@lang('general.total')</th>
+                <th>@lang('general.invoices')</th>
                 <th>@lang('general.created_at')</th>
                 <th></th>
             </x-slot>
@@ -55,7 +56,8 @@
                 { data: 'customer_id',    name: 'customer_id' },
                 { data: 'receipt_date',   name: 'receipt_date', className: 'dt-cell-muted' },
                 { data: 'payment_method', name: 'payment_method', className: 'dt-cell-muted' },
-                { data: 'amount_total',   name: 'amount_total', orderable: false, searchable: false },
+                { data: 'amount_total',      name: 'amount_total', orderable: false, searchable: false },
+                { data: 'allocation_summary', name: 'allocation_summary', orderable: false, searchable: false, className: 'dt-cell-muted' },
                 { data: 'created_at',     name: 'created_at', className: 'dt-cell-muted' },
                 { data: 'action',         name: 'action', orderable: false, searchable: false },
             ],

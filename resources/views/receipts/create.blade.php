@@ -13,22 +13,17 @@
 
             {{-- Header --}}
             <div class="rounded-lg border bg-card text-card-foreground shadow-xs mb-4">
-                <div class="flex items-center gap-3 border-b px-6 py-4">
-                    <div class="flex size-8 items-center justify-center rounded-md bg-primary/10">
-                        <x-icon name="money" class="size-4 text-primary" />
-                    </div>
+                <div class="flex items-center gap-3 border-b px-6 py-5">
+                    <x-icon name="money" class="size-5 text-primary" />
                     <h3 class="text-sm font-semibold">@lang('general.receipt_information')</h3>
                 </div>
 
                 <div class="flex flex-col gap-6 p-6">
                     <div class="grid grid-cols-1 gap-6 sm:grid-cols-2">
-                        <x-form.field name="customer_id" :label="__('general.customer')" :required="true">
-                            <x-form.single-select
-                                name="customer_id"
-                                :placeholder="__('general.select_customer_placeholder')"
-                                :options="$customers->map(fn($c) => ['value' => $c->id, 'label' => $c->name])->toArray()"
-                                :selected="old('customer_id')" />
-                        </x-form.field>
+                        <x-form.customer-select
+                            :customers="$customers"
+                            :selected="old('customer_id')"
+                            :required="true" />
 
                         <x-form.field name="receipt_date" :label="__('general.receipt_date')" :required="true">
                             <input type="date"
@@ -56,29 +51,31 @@
                         </x-form.field>
                     </div>
 
-                    <div class="grid grid-cols-1 gap-6 sm:grid-cols-2">
-                        <x-form.field name="notes" :label="__('general.notes')">
-                            <textarea name="notes"
-                                      rows="2"
-                                      class="input {{ $errors->has('notes') ? 'border-destructive' : '' }}"
-                                      style="height: auto; padding-top: 0.5rem; padding-bottom: 0.5rem;">{{ old('notes') }}</textarea>
-                        </x-form.field>
+                    <x-form.field name="notes" :label="__('general.notes')">
+                        <textarea name="notes"
+                                  rows="2"
+                                  class="input {{ $errors->has('notes') ? 'border-destructive' : '' }}"
+                                  style="height: auto; padding-top: 0.5rem; padding-bottom: 0.5rem;">{{ old('notes') }}</textarea>
+                    </x-form.field>
 
-                        <x-form.field name="image" :label="__('general.image')">
-                            <x-form.file-upload name="image" :max-size-mb="2" />
-                        </x-form.field>
-                    </div>
+                    <x-form.field name="image" :label="__('general.image')">
+                        <x-form.file-upload name="image" :max-size-mb="2" />
+                    </x-form.field>
                 </div>
             </div>
 
             {{-- Allocation Table --}}
             <div class="rounded-lg border bg-card text-card-foreground shadow-xs mb-4">
-                <div class="flex items-center gap-3 border-b px-6 py-4">
-                    <div class="flex size-8 items-center justify-center rounded-md bg-primary/10">
-                        <x-icon name="invoice" class="size-4 text-primary" />
-                    </div>
+                <div class="flex items-center gap-3 border-b px-6 py-5">
+                    <x-icon name="invoice" class="size-5 text-primary" />
                     <h3 class="text-sm font-semibold">@lang('general.payment_allocations')</h3>
                 </div>
+
+                @error('allocations')
+                    <div class="px-6 pt-4">
+                        <p class="text-sm text-destructive">{{ $message }}</p>
+                    </div>
+                @enderror
 
                 <div id="allocation-placeholder" class="px-6 py-8 text-center text-sm text-muted-foreground">
                     @lang('general.select_customer_first')
@@ -97,25 +94,37 @@
                 </div>
 
                 <div id="allocation-table-wrap" class="hidden">
+                    {{-- Quick allocate bar --}}
+                    <div class="flex flex-wrap items-center gap-3 border-b px-6 py-3 bg-muted/20">
+                        <span class="text-sm font-medium shrink-0">@lang('general.total_transfer')</span>
+                        <div class="group/input-group relative flex items-center rounded-md border border-input shadow-xs h-9 overflow-hidden w-52">
+                            <span class="pl-3 text-sm font-medium text-muted-foreground select-none shrink-0">Rp</span>
+                            <input type="text" id="quick-total-display"
+                                   class="flex-1 border-0 bg-transparent text-sm px-2 h-full outline-none text-right focus-visible:outline-none"
+                                   placeholder="0" autocomplete="off">
+                        </div>
+                        <button type="button" id="btn-distribute" class="btn btn-outline btn-sm">
+                            <x-icon name="refresh" class="size-3.5" />
+                            @lang('general.auto_distribute')
+                        </button>
+                    </div>
                     <div class="overflow-x-auto">
                         <table class="w-full text-sm">
                             <thead>
                                 <tr class="border-b bg-muted/30">
                                     <th class="px-4 py-3 text-left font-medium text-muted-foreground">@lang('general.code')</th>
                                     <th class="px-4 py-3 text-left font-medium text-muted-foreground">@lang('general.invoice_date')</th>
+                                    <th class="px-4 py-3 text-left font-medium text-muted-foreground">@lang('general.due_date')</th>
                                     <th class="px-4 py-3 text-right font-medium text-muted-foreground">@lang('general.total')</th>
                                     <th class="px-4 py-3 text-right font-medium text-muted-foreground">@lang('general.paid_amount')</th>
                                     <th class="px-4 py-3 text-right font-medium text-muted-foreground">@lang('general.invoice_remaining')</th>
-                                    <th class="px-4 py-3 text-right font-medium text-muted-foreground w-44">@lang('general.allocation_amount')</th>
+                                    <th class="px-4 py-3 text-right font-medium text-muted-foreground w-64">@lang('general.allocation_amount')</th>
                                 </tr>
                             </thead>
                             <tbody id="allocation-tbody"></tbody>
                         </table>
                     </div>
 
-                    @error('allocations')
-                        <p class="px-6 py-2 text-sm text-destructive">{{ $message }}</p>
-                    @enderror
 
                     <div class="flex items-center justify-end gap-8 border-t px-6 py-4 text-sm font-semibold">
                         <span>@lang('general.total_allocated')</span>
@@ -127,11 +136,8 @@
             {{-- Form Actions --}}
             <div class="rounded-lg border bg-card text-card-foreground shadow-xs">
                 <div class="flex items-center justify-end gap-2 px-6 py-4">
-                    <a href="{{ route('receipts.index') }}" class="btn btn-outline">
-                        @lang('general.cancel')
-                    </a>
                     <button type="submit" class="btn btn-primary">
-                        <x-icon name="save" class="size-3.5" />
+                        <x-icon name="check" class="size-3.5" />
                         @lang('general.save')
                     </button>
                 </div>
@@ -144,14 +150,25 @@
 @push('scripts')
 <script>
 (function () {
-    var ajaxUrl         = '{{ route('ajax.customers.invoices', ['id' => '__CID__']) }}';
-    var tbody           = document.getElementById('allocation-tbody');
-    var summaryTotal    = document.getElementById('summary-total');
-    var placeholder     = document.getElementById('allocation-placeholder');
-    var loading         = document.getElementById('allocation-loading');
-    var emptyMsg        = document.getElementById('allocation-empty');
-    var tableWrap       = document.getElementById('allocation-table-wrap');
-    var currentInvoices = [];
+    var ajaxUrl            = '{{ route('ajax.customers.invoices', ['id' => '__CID__']) }}';
+    var tbody              = document.getElementById('allocation-tbody');
+    var summaryTotal       = document.getElementById('summary-total');
+    var placeholder        = document.getElementById('allocation-placeholder');
+    var loading            = document.getElementById('allocation-loading');
+    var emptyMsg           = document.getElementById('allocation-empty');
+    var tableWrap          = document.getElementById('allocation-table-wrap');
+    var quickTotalDisplay  = document.getElementById('quick-total-display');
+    var currentInvoices    = [];
+
+    // old() values keyed by invoice_id → amount (populated on validation failure)
+    var oldAllocations = (function () {
+        var map = {};
+        var raw = @json(collect(old('allocations', []))->mapWithKeys(fn($v, $k) => [$v['invoice_id'] ?? $k => (int)($v['amount'] ?? 0)]));
+        Object.keys(raw).forEach(function (k) { if (raw[k] > 0) map[k] = raw[k]; });
+        return map;
+    })();
+
+    var fullPayIcon = '<svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="1.5" stroke="currentColor" class="size-3.5"><path stroke-linecap="round" stroke-linejoin="round" d="M9 12.75 11.25 15 15 9.75M21 12a9 9 0 1 1-18 0 9 9 0 0 1 18 0Z"/></svg>';
 
     function showState(state) {
         placeholder.classList.add('hidden');
@@ -170,21 +187,53 @@
         summaryTotal.textContent = formatRupiah(total);
     }
 
+    function updateQuickTotal() {
+        var total = 0;
+        tbody.querySelectorAll('.alloc-input').forEach(function (inp) {
+            total += parseInt(inp.value) || 0;
+        });
+        quickTotalDisplay.value = total ? total.toLocaleString('id-ID') : '';
+    }
+
+    function autoDistribute(total) {
+        var remaining = total;
+        tbody.querySelectorAll('tr').forEach(function (tr) {
+            var max     = parseInt(tr.dataset.remaining) || 0;
+            var amount  = Math.min(remaining, max);
+            var display = tr.querySelector('.alloc-display');
+            var hidden  = tr.querySelector('.alloc-input');
+            display.value = amount ? amount.toLocaleString('id-ID') : '';
+            hidden.value  = amount || '';
+            remaining -= amount;
+        });
+        calcTotal();
+    }
+
     function buildRow(inv) {
         var tr = document.createElement('tr');
         tr.className = 'border-b last:border-0';
+        var nowTs    = Math.floor(Date.now() / 1000);
+        var overdue  = inv.due_date_ts && inv.due_date_ts < nowTs;
+        var dueCls   = overdue ? 'style="color:#dc2626"' : 'class="text-muted-foreground"';
+        var dueText  = inv.due_date ? inv.due_date : '<span class="text-muted-foreground/50">—</span>';
+
         tr.dataset.remaining = inv.remaining_amount;
         tr.innerHTML =
             '<td class="px-4 py-3 font-mono text-sm">' + inv.code + '</td>' +
             '<td class="px-4 py-3 text-muted-foreground">' + inv.invoice_date + '</td>' +
+            '<td class="px-4 py-3"><span ' + dueCls + '>' + dueText + '</span></td>' +
             '<td class="px-4 py-3 text-right tabular-nums">Rp ' + formatNum(inv.grand_total) + '</td>' +
             '<td class="px-4 py-3 text-right tabular-nums text-muted-foreground">Rp ' + formatNum(inv.paid_amount) + '</td>' +
             '<td class="px-4 py-3 text-right tabular-nums font-medium">Rp ' + formatNum(inv.remaining_amount) + '</td>' +
             '<td class="px-4 py-3">' +
                 '<input type="hidden" name="allocations[' + inv.id + '][invoice_id]" value="' + inv.id + '">' +
                 '<div class="flex items-center gap-1">' +
-                    '<input type="text" class="input input-sm text-right alloc-display" placeholder="0" autocomplete="off">' +
+                    '<div class="flex items-center rounded-md border border-input h-9 flex-1 min-w-0 overflow-hidden">' +
+                        '<span class="pl-2 pr-1 text-xs text-muted-foreground select-none shrink-0">Rp</span>' +
+                        '<input type="text" class="alloc-display flex-1 min-w-0 border-0 bg-transparent text-sm px-1 h-full outline-none text-right" placeholder="0" autocomplete="off">' +
+                    '</div>' +
                     '<input type="hidden" name="allocations[' + inv.id + '][amount]" class="alloc-input" value="">' +
+                    '<button type="button" class="btn-full-pay shrink-0 inline-flex items-center gap-1 rounded-md border text-xs font-medium px-2 h-9 transition-colors whitespace-nowrap" style="border-color:#16a34a;color:#16a34a;background:transparent" onmouseover="this.style.background=\'#f0fdf4\'" onmouseout="this.style.background=\'transparent\'" tabindex="-1">' + fullPayIcon + '{{ __('general.full_pay') }}</button>' +
                 '</div>' +
             '</td>';
 
@@ -202,6 +251,15 @@
             try { this.setSelectionRange(cur + diff, cur + diff); } catch(e) {}
             hidden.value = raw || '';
             calcTotal();
+            updateQuickTotal();
+        });
+
+        tr.querySelector('.btn-full-pay').addEventListener('click', function () {
+            var max = parseInt(tr.dataset.remaining) || 0;
+            display.value = max ? max.toLocaleString('id-ID') : '';
+            hidden.value  = max || '';
+            calcTotal();
+            updateQuickTotal();
         });
 
         return tr;
@@ -218,7 +276,19 @@
                 currentInvoices = invoices;
                 if (!invoices.length) { showState('empty'); return; }
                 invoices.forEach(function (inv) { tbody.appendChild(buildRow(inv)); });
+                // restore old values after validation failure
+                if (Object.keys(oldAllocations).length) {
+                    tbody.querySelectorAll('tr').forEach(function (tr) {
+                        var invoiceId = tr.querySelector('[name*="invoice_id"]').value;
+                        var amount    = oldAllocations[invoiceId] || 0;
+                        if (amount > 0) {
+                            tr.querySelector('.alloc-display').value = amount.toLocaleString('id-ID');
+                            tr.querySelector('.alloc-input').value   = amount;
+                        }
+                    });
+                }
                 calcTotal();
+                updateQuickTotal();
                 showState('table-wrap');
             })
             .catch(function () { showState('placeholder'); });
@@ -226,9 +296,26 @@
 
     var customerInput = document.querySelector('[name="customer_id"]');
     if (customerInput) {
-        customerInput.addEventListener('change', function () { loadInvoices(this.value); });
+        customerInput.addEventListener('change', function () {
+            quickTotalDisplay.value = '';
+            loadInvoices(this.value);
+        });
         if (customerInput.value) loadInvoices(customerInput.value);
     }
+
+    quickTotalDisplay.addEventListener('input', function () {
+        var raw = parseMoney(this.value);
+        var cur  = this.selectionStart;
+        var prev = this.value.length;
+        this.value = raw ? raw.toLocaleString('id-ID') : '';
+        var diff = this.value.length - prev;
+        try { this.setSelectionRange(cur + diff, cur + diff); } catch(e) {}
+        autoDistribute(raw || 0);
+    });
+
+    document.getElementById('btn-distribute').addEventListener('click', function () {
+        autoDistribute(parseMoney(quickTotalDisplay.value) || 0);
+    });
 
     function formatNum(n) { return parseInt(n).toLocaleString('id-ID'); }
 })();
