@@ -297,6 +297,19 @@ class InvoiceController extends BaseController
     {
         $invoice = Invoice::with('invoiceDetailBatches')->findOrFail(Encryption::decrypt($encryptedId));
 
+        $hasActiveReceipt = $invoice->receiptDetails()->whereHas('receipt')->exists();
+
+        if ($hasActiveReceipt) {
+            return response()->json([
+                'code'    => 422,
+                'message' => 'Error',
+                'error'   => [
+                    'title'   => 'Cannot Delete',
+                    'message' => 'Invoice cannot be deleted because it has associated receipts.',
+                ],
+            ], 422);
+        }
+
         if (! $invoice->status->canDelete()) {
             return response()->json([
                 'code'    => 422,
