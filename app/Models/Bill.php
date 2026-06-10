@@ -2,26 +2,28 @@
 
 namespace App\Models;
 
-use App\Enums\PurchaseStatus;
+use App\Enums\BillStatus;
 use App\Helpers\CodeGenerator;
 use Illuminate\Database\Eloquent\Relations\BelongsTo;
 use Illuminate\Database\Eloquent\Relations\HasMany;
 use Illuminate\Database\Eloquent\SoftDeletes;
 
-class Purchase extends BaseModel
+class Bill extends BaseModel
 {
     use SoftDeletes;
 
+    protected $table = 'bills';
+
     protected $casts = [
-        'status'        => PurchaseStatus::class,
-        'purchase_date' => 'date',
+        'status'    => BillStatus::class,
+        'bill_date' => 'date',
     ];
 
     protected static function booted(): void
     {
-        static::creating(function (Purchase $purchase) {
-            if (empty($purchase->code)) {
-                $purchase->code = CodeGenerator::purchase();
+        static::creating(function (Bill $bill) {
+            if (empty($bill->code)) {
+                $bill->code = CodeGenerator::bill();
             }
         });
     }
@@ -33,6 +35,6 @@ class Purchase extends BaseModel
 
     public function details(): HasMany
     {
-        return $this->hasMany(PurchaseDetail::class);
+        return $this->hasMany(BillDetail::class);
     }
 }

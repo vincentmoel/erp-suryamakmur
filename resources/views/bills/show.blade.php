@@ -4,7 +4,7 @@
     <div class="page-content">
 
         <div class="page-header">
-            <h1>@lang('general.purchase_detail')</h1>
+            <h1>@lang('general.bill_detail')</h1>
             <p>{{ $data->code }}</p>
         </div>
 
@@ -16,14 +16,14 @@
                     <div class="flex size-8 items-center justify-center rounded-md bg-primary/10">
                         <x-icon name="receipt" class="size-4 text-primary" />
                     </div>
-                    <h3 class="text-sm font-semibold">@lang('general.purchase_information')</h3>
+                    <h3 class="text-sm font-semibold">@lang('general.bill_information')</h3>
                 </div>
                 <span class="badge {{ $data->status->badgeClass() }}">{{ $data->status->label() }}</span>
             </div>
 
             <div class="grid grid-cols-1 gap-0 divide-y sm:grid-cols-2 sm:divide-y-0 sm:divide-x">
                 <div class="flex flex-col gap-1 px-6 py-4">
-                    <span class="text-xs font-medium text-muted-foreground uppercase tracking-wide">@lang('general.purchase_code')</span>
+                    <span class="text-xs font-medium text-muted-foreground uppercase tracking-wide">@lang('general.bill_code')</span>
                     <span class="text-sm font-medium font-mono">{{ $data->code }}</span>
                 </div>
                 <div class="flex flex-col gap-1 px-6 py-4">
@@ -34,8 +34,8 @@
 
             <div class="grid grid-cols-1 gap-0 divide-y border-t sm:grid-cols-2 sm:divide-y-0 sm:divide-x">
                 <div class="flex flex-col gap-1 px-6 py-4">
-                    <span class="text-xs font-medium text-muted-foreground uppercase tracking-wide">@lang('general.purchase_date')</span>
-                    <span class="text-sm font-medium">{{ $data->purchase_date->translatedFormat('d F Y') }}</span>
+                    <span class="text-xs font-medium text-muted-foreground uppercase tracking-wide">@lang('general.bill_date')</span>
+                    <span class="text-sm font-medium">{{ $data->bill_date->translatedFormat('d F Y') }}</span>
                 </div>
                 <div class="flex flex-col gap-1 px-6 py-4">
                     <span class="text-xs font-medium text-muted-foreground uppercase tracking-wide">@lang('general.vendor_invoice_no')</span>
@@ -136,14 +136,14 @@
             <div class="flex gap-2 px-6 py-4">
 
                 @if($data->status->canEdit())
-                    <a href="{{ route('purchases.edit', ['encryptedId' => $encryptedId]) }}" class="btn btn-ghost btn-sm">
+                    <a href="{{ route('bills.edit', ['encryptedId' => $encryptedId]) }}" class="btn btn-ghost btn-sm">
                         <x-icon name="edit" class="size-3.5" />
                         @lang('general.edit')
                     </a>
                 @endif
 
                 @if($data->status->canReceive())
-                    <form action="{{ route('purchases.receive', ['encryptedId' => $encryptedId]) }}"
+                    <form action="{{ route('bills.receive', ['encryptedId' => $encryptedId]) }}"
                           method="POST"
                           id="receive-form">
                         @csrf
@@ -158,7 +158,7 @@
                 @endif
 
                 @if($data->status->canCancel())
-                    <form action="{{ route('purchases.cancel', ['encryptedId' => $encryptedId]) }}"
+                    <form action="{{ route('bills.cancel', ['encryptedId' => $encryptedId]) }}"
                           method="POST"
                           id="cancel-form">
                         @csrf
@@ -167,12 +167,12 @@
                                 onclick="confirmCancel()"
                                 class="btn btn-ghost btn-sm text-destructive hover:bg-destructive/10">
                             <x-icon name="x-circle" class="size-3.5" />
-                            @lang('general.cancel_purchase')
+                            @lang('general.cancel_bill')
                         </button>
                     </form>
                 @endif
 
-                @if($data->status === \App\Enums\PurchaseStatus::RECEIVED)
+                @if($data->status === \App\Enums\BillStatus::RECEIVED)
                     <span class="flex items-center gap-1.5 text-sm text-success px-3">
                         <x-icon name="check-circle" class="size-4" />
                         @lang('general.goods_received_message')
@@ -193,7 +193,7 @@ function confirmReceive() {
     }
 }
 function confirmCancel() {
-    if (confirm('{{ __('general.confirm_cancel_purchase') }}')) {
+    if (confirm('{{ __('general.confirm_cancel_bill') }}')) {
         document.getElementById('cancel-form').submit();
     }
 }

@@ -1,4 +1,4 @@
-@extends('layouts.main', ['title' => __('general.purchases')])
+@extends('layouts.main', ['title' => __('general.bills')])
 
 @push('styles')
     <link rel="stylesheet" href="https://cdn.datatables.net/2.1.8/css/dataTables.dataTables.min.css">
@@ -8,15 +8,15 @@
     <div class="page-content">
 
         <div class="page-header">
-            <h1>@lang('general.purchases')</h1>
-            <p>@lang('general.purchases_desc')</p>
+            <h1>@lang('general.bills')</h1>
+            <p>@lang('general.bills_desc')</p>
         </div>
 
-        <x-datatable id="purchases-table" :search-placeholder="__('general.search')">
+        <x-datatable id="bills-table" :search-placeholder="__('general.search')">
 
             <x-slot name="actions">
-                <a href="{{ route('purchases.create') }}" class="btn btn-primary btn-sm">
-                    <x-icon name="plus" /> @lang('general.add_purchase')
+                <a href="{{ route('bills.create') }}" class="btn btn-primary btn-sm">
+                    <x-icon name="plus" /> @lang('general.add_bill')
                 </a>
             </x-slot>
 
@@ -24,7 +24,7 @@
                 <th>#</th>
                 <th>@lang('general.code')</th>
                 <th>@lang('general.vendor')</th>
-                <th>@lang('general.purchase_date')</th>
+                <th>@lang('general.bill_date')</th>
                 <th>@lang('general.grand_total')</th>
                 <th>@lang('general.status')</th>
                 <th>@lang('general.created_at')</th>
@@ -41,8 +41,8 @@
     <script src="{{ asset('src/js/datatable.js') }}"></script>
     <script>
         initDataTable({
-            tableId: 'purchases-table',
-            ajaxUrl: '{{ route('purchases.index') }}',
+            tableId: 'bills-table',
+            ajaxUrl: '{{ route('bills.index') }}',
             columns: [
                 {
                     data: 'DT_RowIndex',
@@ -53,7 +53,7 @@
                 },
                 { data: 'code', name: 'code' },
                 { data: 'vendor_id', name: 'vendor_id' },
-                { data: 'purchase_date', name: 'purchase_date', className: 'dt-cell-muted' },
+                { data: 'bill_date', name: 'bill_date', className: 'dt-cell-muted' },
                 { data: 'grand_total', name: 'grand_total' },
                 { data: 'status', name: 'status' },
                 { data: 'created_at', name: 'created_at', className: 'dt-cell-muted' },

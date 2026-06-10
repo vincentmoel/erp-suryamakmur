@@ -31,7 +31,7 @@ class DatabaseSeeder extends Seeder
             CustomerSeeder::class,
             ProductSeeder::class,
             VendorSeeder::class,
-            // PurchaseSeeder::class,   // adds inventory for RECEIVED purchases
+            BillSeeder::class,
             InvoiceSeeder::class,    // creates invoices + FIFO deductions
             ReceiptSeeder::class
         ]);

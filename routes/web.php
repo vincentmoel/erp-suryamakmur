@@ -7,7 +7,7 @@ use App\Http\Controllers\ConfigController;
 use App\Http\Controllers\CustomerController;
 use App\Http\Controllers\InvoiceController;
 use App\Http\Controllers\ReceiptController;
-use App\Http\Controllers\PurchaseController;
+use App\Http\Controllers\BillController;
 use App\Http\Controllers\SalesReturnController;
 use App\Http\Controllers\VendorController;
 use App\Http\Controllers\ProductController;
@@ -186,9 +186,9 @@ Route::group(['middleware' => ['revalidate']], function () {
             Route::patch('/{encryptedId}/toggle-active', 'toggleActive')->name('toggleActive')->middleware("check.permission:$module,update");
         });
 
-        // =============== PURCHASE =============== \\
-        $module = "Purchase";
-        Route::group(['prefix' => 'purchases', 'as' => 'purchases.', 'controller' => PurchaseController::class], function () use ($module) {
+        // =============== BILL =============== \\
+        $module = "Bill";
+        Route::group(['prefix' => 'bills', 'as' => 'bills.', 'controller' => BillController::class], function () use ($module) {
             Route::get('/trashed', 'trashed')->name('trashed')->middleware("check.permission:$module,restore");
             Route::patch('/{encryptedId}/restore', 'restore')->name('restore')->middleware("check.permission:$module,restore");
             Route::patch('/{encryptedId}/receive', 'receive')->name('receive')->middleware("check.permission:$module,update");

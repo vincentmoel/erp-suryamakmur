@@ -32,11 +32,11 @@ class CodeGenerator
         return $prefix . str_pad($next, 4, '0', STR_PAD_LEFT);
     }
 
-    public static function purchase(): string
+    public static function bill(): string
     {
-        $prefix = 'PUR-' . now()->format('Ym') . '-';
+        $prefix = 'BILL-' . now()->format('Ym') . '-';
 
-        $last = \App\Models\Purchase::withTrashed()
+        $last = \App\Models\Bill::withTrashed()
             ->where('code', 'like', $prefix . '%')
             ->orderByDesc('code')
             ->value('code');

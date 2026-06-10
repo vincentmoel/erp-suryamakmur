@@ -5,7 +5,7 @@ namespace App\Enums;
 use App\Traits\EnumLabel;
 use App\Traits\EnumToArray;
 
-enum PurchaseStatus: string
+enum BillStatus: string
 {
     use EnumToArray, EnumLabel;
 

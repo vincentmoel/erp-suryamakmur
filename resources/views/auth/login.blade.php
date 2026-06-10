@@ -26,6 +26,16 @@
                           style="display:flex; flex-direction:column; gap:1rem;">
                         @csrf
 
+                        {{-- Error Alert --}}
+                        @if(session('error'))
+                            <div style="display:flex; align-items:flex-start; gap:0.625rem; border-radius:0.5rem; border:1px solid var(--destructive); background-color:color-mix(in oklab, var(--destructive) 10%, transparent); padding:0.75rem 1rem; font-size:0.875rem; color:var(--destructive);">
+                                <svg xmlns="http://www.w3.org/2000/svg" style="width:1rem;height:1rem;flex-shrink:0;margin-top:0.1rem;" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="1.5">
+                                    <path stroke-linecap="round" stroke-linejoin="round" d="M12 9v3.75m-9.303 3.376c-.866 1.5.217 3.374 1.948 3.374h14.71c1.73 0 2.813-1.874 1.948-3.374L13.949 3.378c-.866-1.5-3.032-1.5-3.898 0L2.697 16.126ZM12 15.75h.007v.008H12v-.008Z"/>
+                                </svg>
+                                <span>{{ session('error.message') ?? 'Login failed.' }}</span>
+                            </div>
+                        @endif
+
                         {{-- Username --}}
                         <div style="display:grid; gap:0.5rem;">
                             <label for="username" style="font-size:0.875rem; font-weight:500; line-height:1; display:flex; align-items:center; gap:0.5rem; user-select:none;">

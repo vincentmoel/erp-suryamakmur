@@ -68,9 +68,9 @@ return [
         'group'    => 'general.group_purchase',
         'children' => [
             [
-                'title' => 'general.nav_purchases',
+                'title' => 'general.nav_bills',
                 'icon'  => 'receipt',
-                'route' => 'purchases.index',
+                'route' => 'bills.index',
             ],
             [
                 'title' => 'general.nav_vendors',
