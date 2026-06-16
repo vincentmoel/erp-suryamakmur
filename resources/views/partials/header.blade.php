@@ -9,6 +9,40 @@
         <button class="btn btn-outline hidden h-8 w-56 justify-start text-muted-foreground md:inline-flex"
             data-toggle-palette><x-icon name="search" class="size-4" /> Search... <kbd
                 class="ml-auto rounded border px-1 text-[10px]">⌘K</kbd></button>
+
+        {{-- Quick Actions --}}
+        <div class="relative" id="quick-actions">
+            <button type="button" id="quick-actions-btn"
+                class="btn btn-outline h-8 gap-1.5 px-3 text-sm"
+                aria-haspopup="true" aria-expanded="false">
+                <x-icon name="plus" class="size-4" />
+                <span class="hidden sm:inline">New</span>
+            </button>
+            <div id="quick-actions-dropdown"
+                class="absolute right-0 top-full mt-1 hidden w-48 rounded-lg border bg-card shadow-lg z-50 overflow-hidden py-1">
+                <a href="{{ route('invoices.create') }}"
+                    class="flex items-center gap-2.5 px-3 py-2 text-sm hover:bg-accent transition-colors">
+                    <x-icon name="invoice" class="size-4 text-muted-foreground" />
+                    <span>{{ __('general.nav_invoices') }}</span>
+                </a>
+                <a href="{{ route('bills.create') }}"
+                    class="flex items-center gap-2.5 px-3 py-2 text-sm hover:bg-accent transition-colors">
+                    <x-icon name="receipt" class="size-4 text-muted-foreground" />
+                    <span>{{ __('general.nav_bills') }}</span>
+                </a>
+                <div class="my-1 border-t"></div>
+                <a href="{{ route('customers.create') }}"
+                    class="flex items-center gap-2.5 px-3 py-2 text-sm hover:bg-accent transition-colors">
+                    <x-icon name="contact" class="size-4 text-muted-foreground" />
+                    <span>{{ __('general.nav_customers') }}</span>
+                </a>
+                <a href="{{ route('products.create') }}"
+                    class="flex items-center gap-2.5 px-3 py-2 text-sm hover:bg-accent transition-colors">
+                    <x-icon name="box" class="size-4 text-muted-foreground" />
+                    <span>{{ __('general.nav_products') }}</span>
+                </a>
+            </div>
+        </div>
         @auth
         <div class="relative" id="lang-switcher">
             <button type="button" id="lang-btn"
@@ -45,6 +79,26 @@
     </div>
 
 <script>
+(function () {
+    const btn = document.getElementById('quick-actions-btn');
+    const dropdown = document.getElementById('quick-actions-dropdown');
+    if (!btn || !dropdown) return;
+
+    btn.addEventListener('click', function (e) {
+        e.stopPropagation();
+        const open = !dropdown.classList.contains('hidden');
+        dropdown.classList.toggle('hidden', open);
+        btn.setAttribute('aria-expanded', String(!open));
+    });
+
+    document.addEventListener('click', function () {
+        dropdown.classList.add('hidden');
+        btn.setAttribute('aria-expanded', 'false');
+    });
+
+    dropdown.addEventListener('click', function (e) { e.stopPropagation(); });
+})();
+
 function changeLanguage(lang) {
     fetch('/language/' + lang, {
         method: 'PATCH',
