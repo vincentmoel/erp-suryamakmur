@@ -149,6 +149,7 @@ Route::group(['middleware' => ['revalidate']], function () {
             Route::get('/', 'index')->name('index')->middleware("check.permission:$module,read");
             Route::get('/create', 'create')->name('create')->middleware("check.permission:$module,create");
             Route::post('/', 'store')->name('store')->middleware("check.permission:$module,create");
+            Route::get('/{encryptedId}/pdf', 'pdf')->name('pdf')->middleware("check.permission:$module,read");
             Route::get('/{encryptedId}', 'show')->name('show')->middleware("check.permission:$module,read");
             Route::patch('/{encryptedId}', 'update')->name('update')->middleware("check.permission:$module,update");
             Route::get('/{encryptedId}/edit', 'edit')->name('edit')->middleware("check.permission:$module,update");

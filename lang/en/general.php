@@ -307,4 +307,13 @@ return [
     'filter' => 'Filter',
     'reset'  => 'Reset',
 
+    // Invoice actions
+    'print'           => 'Print',
+    'send'            => 'Send',
+    'download_pdf'    => 'Download PDF',
+    'bill_to'         => 'Bill to',
+    'invoice_from'    => 'From',
+    'send_invoice'    => 'Send Invoice',
+    'send_invoice_subject' => 'Invoice :code from :company',
+
 ];

@@ -307,4 +307,13 @@ return [
     'filter' => 'Filter',
     'reset'  => 'Reset',
 
+    // Invoice actions
+    'print'           => 'Cetak',
+    'send'            => 'Kirim',
+    'download_pdf'    => 'Unduh PDF',
+    'bill_to'         => 'Tagih ke',
+    'invoice_from'    => 'Dari',
+    'send_invoice'    => 'Kirim Invoice',
+    'send_invoice_subject' => 'Invoice :code dari :company',
+
 ];

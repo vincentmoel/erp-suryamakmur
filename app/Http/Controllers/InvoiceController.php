@@ -16,6 +16,7 @@ use App\Models\InvoiceDetail;
 use App\Models\Product;
 use App\Models\User;
 use App\Services\InventoryService;
+use Barryvdh\DomPDF\Facade\Pdf;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\DB;
 
@@ -154,6 +155,17 @@ class InvoiceController extends BaseController
         return redirect()->route('invoices.index')->with([
             'success' => ['title' => 'Invoice Created', 'message' => 'Invoice has been saved.'],
         ]);
+    }
+
+    public function pdf($encryptedId)
+    {
+        $invoice = Invoice::with('customer', 'salesperson', 'details')
+            ->findOrFail(Encryption::decrypt($encryptedId));
+
+        $pdf = Pdf::loadView('invoices.pdf', ['data' => $invoice])
+            ->setPaper('a4', 'portrait');
+
+        return $pdf->download($invoice->code . '.pdf');
     }
 
     public function show($encryptedId)
