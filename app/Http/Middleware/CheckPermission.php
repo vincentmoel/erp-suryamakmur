@@ -3,7 +3,7 @@
 namespace App\Http\Middleware;
 
 use App\Helpers\Response as HelpersResponse;
-use App\Models\Permission;
+use App\Services\PermissionService;
 use Closure;
 use Illuminate\Http\Request;
 use Symfony\Component\HttpFoundation\Response;
@@ -17,23 +17,11 @@ class CheckPermission
      */
     public function handle(Request $request, Closure $next, $module, $permissionType): Response
     {
-        $roleIds = auth()->user()->roles->pluck('id');
+        $permissions = app(PermissionService::class);
 
-        if ($roleIds->contains(1)) {
+        if ($permissions->isSuperAdmin() || $permissions->has($module, $permissionType)) {
             return $next($request);
-        }
-
-        $hasPermission = Permission::whereIn('role_id', $roleIds)
-            ->where('module', $module)
-            ->where('action', $permissionType)
-            ->exists();
-
-        if ($hasPermission)
-        {
-            return $next($request);
-        }
-        else
-        {
+        } else {
             if($request->expectsJson()){
                 return HelpersResponse::build(
                     403,

@@ -38,7 +38,7 @@ Route::group(['middleware' => ['revalidate']], function () {
     });
 
 
-    Route::group(['middleware' => ['auth', 'refresh.permission']], function () {
+    Route::group(['middleware' => ['auth']], function () {
         Route::get('dashboard', [DashboardController::class, 'index'])->name('dashboard')->middleware('check.permission:Dashboard,read');
 
         // =============== USER =============== \\ 

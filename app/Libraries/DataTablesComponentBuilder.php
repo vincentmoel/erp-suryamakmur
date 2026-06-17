@@ -2,9 +2,9 @@
 
 namespace App\Libraries;
 
+use App\Services\PermissionService;
 use Carbon\Carbon;
 use Illuminate\Support\Facades\Blade;
-use Illuminate\Support\Facades\Session;
 
 class DataTablesComponentBuilder
 {
@@ -55,12 +55,14 @@ class DataTablesComponentBuilder
 
     public static function actionButton(array $route, $module, $customButtons = []): string
     {
-        $renderCustom = function (string $position) use ($customButtons): string {
+        $perms = app(PermissionService::class);
+
+        $renderCustom = function (string $position) use ($customButtons, $perms): string {
             $html = '';
             foreach ($customButtons as $btn) {
                 $btnPosition = $btn['position'] ?? 'after';
                 if ($btnPosition !== $position) continue;
-                if ((Session::get('permissions')[$btn['module']][$btn['modulePermission']] ?? false) && isset($btn['html'])) {
+                if ($perms->has($btn['module'], $btn['modulePermission']) && isset($btn['html'])) {
                     $html .= $btn['html'];
                 }
             }
@@ -71,19 +73,19 @@ class DataTablesComponentBuilder
 
         $html .= $renderCustom('before');
 
-        if ((Session::get('permissions')[$module]['read'] ?? false) && isset($route['show'])) {
+        if ($perms->has($module, 'read') && isset($route['show'])) {
             $html .= '<a href="' . $route['show'] . '" class="dt-action-btn" title="View">' . self::icon('eye') . '</a>';
         }
 
-        if ((Session::get('permissions')[$module]['update'] ?? false) && isset($route['edit'])) {
+        if ($perms->has($module, 'update') && isset($route['edit'])) {
             $html .= '<a href="' . $route['edit'] . '" class="dt-action-btn" title="Edit">' . self::icon('edit') . '</a>';
         }
 
-        if ((Session::get('permissions')[$module]['delete'] ?? false) && isset($route['delete'])) {
+        if ($perms->has($module, 'delete') && isset($route['delete'])) {
             $html .= '<button type="button" class="dt-action-btn dt-action-btn--destructive dt-delete-btn" data-url="' . $route['delete'] . '" title="Delete">' . self::icon('delete') . '</button>';
         }
 
-        if ((Session::get('permissions')[$module]['restore'] ?? false) && isset($route['restore'])) {
+        if ($perms->has($module, 'restore') && isset($route['restore'])) {
             $html .= '<form action="' . $route['restore'] . '" method="POST" class="dt-restore-form">'
                 . '<input type="hidden" name="_method" value="PATCH">'
                 . '<input type="hidden" name="_token" value="' . csrf_token() . '">'

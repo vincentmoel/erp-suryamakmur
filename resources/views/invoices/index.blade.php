@@ -37,9 +37,11 @@
             </x-slot>
 
             <x-slot name="actions">
+                @if(app(\App\Services\PermissionService::class)->has('Invoice', 'create'))
                 <a href="{{ route('invoices.create') }}" class="btn btn-primary btn-sm">
                     <x-icon name="plus" /> @lang('general.add_invoice')
                 </a>
+                @endif
             </x-slot>
 
             <x-slot name="head">

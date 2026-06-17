@@ -12,21 +12,16 @@
         </div>
         @php
             use App\Enums\Module;
+            use App\Services\PermissionService;
 
-            $isSuperAdmin   = auth()->user()->roles->contains('id', 1);
-            $grantedModules = $isSuperAdmin ? null : \App\Models\Permission::whereIn('role_id', auth()->user()->roles->pluck('id'))
-                ->where('action', 'read')
-                ->pluck('module')
-                ->unique()
-                ->flip()
-                ->toArray();
+            $perms = app(PermissionService::class);
 
             // Build sidebar groups from Module enum — single source of truth.
             $sidebarGroups = [];
             $currentGroup  = '__none__';
             foreach (Module::cases() as $mod) {
                 if ($mod->route() === null) continue;
-                if (!$isSuperAdmin && !isset($grantedModules[$mod->value])) continue;
+                if (!$perms->has($mod->value, 'read')) continue;
 
                 $g = $mod->group() ?? '';
                 if ($g !== $currentGroup) {

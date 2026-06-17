@@ -15,9 +15,11 @@
         <x-datatable id="products-table" :search-placeholder="__('general.search')">
 
             <x-slot name="actions">
+@if(app(\App\Services\PermissionService::class)->has('Product', 'create'))
                 <a href="{{ route('products.create') }}" class="btn btn-primary btn-sm">
                     <x-icon name="plus" /> @lang('general.add_product')
                 </a>
+@endif
             </x-slot>
 
             <x-slot name="head">

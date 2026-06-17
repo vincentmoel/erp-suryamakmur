@@ -5,7 +5,6 @@ namespace App\Http;
 use App\Http\Middleware\CheckPermission;
 use App\Http\Middleware\CustomBasicAuth;
 use App\Http\Middleware\IsRole;
-use App\Http\Middleware\RefreshPermission;
 use App\Http\Middleware\RevalidateBackHistory;
 use Illuminate\Foundation\Http\Kernel as HttpKernel;
 
@@ -71,7 +70,6 @@ class Kernel extends HttpKernel
         'throttle' => \Illuminate\Routing\Middleware\ThrottleRequests::class,
         'verified' => \Illuminate\Auth\Middleware\EnsureEmailIsVerified::class,
         'revalidate' => RevalidateBackHistory::class,
-        'refresh.permission' => RefreshPermission::class,
         'check.permission' => CheckPermission::class,
         'is.role' => IsRole::class,
     ];

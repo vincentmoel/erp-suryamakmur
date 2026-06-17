@@ -15,9 +15,11 @@
         <x-datatable id="receipts-table" :search-placeholder="__('general.search')">
 
             <x-slot name="actions">
+@if(app(\App\Services\PermissionService::class)->has('Receipt', 'create'))
                 <a href="{{ route('receipts.create') }}" class="btn btn-primary btn-sm">
                     <x-icon name="plus" /> @lang('general.add_receipt')
                 </a>
+@endif
             </x-slot>
 
             <x-slot name="head">

@@ -15,9 +15,11 @@
         <x-datatable id="roles-table" search-placeholder="Search">
 
             <x-slot name="actions">
+                @if(app(\App\Services\PermissionService::class)->has('Role', 'create'))
                 <a href="{{ route('roles.create') }}" class="btn btn-primary btn-sm">
                     <x-icon name="plus" /> Add Role
                 </a>
+                @endif
             </x-slot>
 
             <x-slot name="head">

@@ -2,6 +2,7 @@
 
 namespace App\Providers;
 
+use App\Services\PermissionService;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Support\ServiceProvider;
 use Laravel\Telescope\TelescopeApplicationServiceProvider;
@@ -14,6 +15,8 @@ class AppServiceProvider extends ServiceProvider
      */
     public function register()
     {
+        $this->app->singleton(PermissionService::class);
+
         if (env('TELESCOPE_ENABLED')) {
             $this->app->register(TelescopeApplicationServiceProvider::class);
         }
