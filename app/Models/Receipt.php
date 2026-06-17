@@ -28,7 +28,7 @@ class Receipt extends BaseModel
 
     public function customer(): BelongsTo
     {
-        return $this->belongsTo(Customer::class);
+        return $this->belongsTo(Customer::class)->withTrashed();
     }
 
     public function details(): HasMany

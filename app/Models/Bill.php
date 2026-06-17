@@ -30,7 +30,7 @@ class Bill extends BaseModel
 
     public function vendor(): BelongsTo
     {
-        return $this->belongsTo(Vendor::class);
+        return $this->belongsTo(Vendor::class)->withTrashed();
     }
 
     public function details(): HasMany

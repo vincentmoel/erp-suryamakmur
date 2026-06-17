@@ -39,7 +39,7 @@ class Invoice extends BaseModel
 
     public function customer(): BelongsTo
     {
-        return $this->belongsTo(Customer::class);
+        return $this->belongsTo(Customer::class)->withTrashed();
     }
 
     public function salesperson(): BelongsTo
