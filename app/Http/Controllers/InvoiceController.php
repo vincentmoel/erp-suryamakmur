@@ -165,7 +165,7 @@ class InvoiceController extends BaseController
         $pdf = Pdf::loadView('invoices.pdf', ['data' => $invoice])
             ->setPaper('a4', 'portrait');
 
-        return $pdf->download($invoice->code . '.pdf');
+        return $pdf->stream($invoice->code . '.pdf');
     }
 
     public function show($encryptedId)

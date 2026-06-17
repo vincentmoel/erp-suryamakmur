@@ -307,6 +307,14 @@ return [
     'filter' => 'Filter',
     'reset'  => 'Reset',
 
+    'invoice'              => 'Invoice',
+    'price'                => 'Price',
+    'company_information'  => 'Company Information',
+    'bill_to_header'       => 'Bill To',
+    'payment_received'     => 'Payment Received',
+    'remaining_bill'       => 'Remaining Payment',
+    'reference'            => 'Reference',
+
     // Invoice actions
     'print'           => 'Print',
     'send'            => 'Send',

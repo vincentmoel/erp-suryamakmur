@@ -307,6 +307,14 @@ return [
     'filter' => 'Filter',
     'reset'  => 'Reset',
 
+    'invoice'              => 'Invoice',
+    'price'                => 'Harga',
+    'company_information'  => 'Informasi Perusahaan',
+    'bill_to_header'       => 'Tagihan Kepada',
+    'payment_received'     => 'Pembayaran Diterima',
+    'remaining_bill'       => 'Sisa Pembayaran',
+    'reference'            => 'Referensi',
+
     // Invoice actions
     'print'           => 'Cetak',
     'send'            => 'Kirim',
