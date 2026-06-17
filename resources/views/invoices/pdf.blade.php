@@ -81,8 +81,16 @@
         .t-sub td { padding: 3px 0; font-size: 11px; }
         .t-sub td.tr { text-align: right; }
 
+        /* ── PAYMENT INFO ── */
+        .payment-wrap { width: 100%; margin-top: 28px; clear: both; }
+        .payment-left  { float: left; width: 48%; }
+        .payment-right { float: right; width: 48%; }
+        .payment-label { font-size: 9px; text-transform: uppercase; letter-spacing: 0.1em; margin-bottom: 8px; }
+        .payment-table { width: 100%; border-collapse: collapse; }
+        .payment-table td { font-size: 11px; padding: 3px 0; vertical-align: top; }
+        .payment-table td.pk { width: 130px; }
+
         /* ── NOTES ── */
-        .notes { margin-top: 28px; padding-top: 20px; border-top: 1px solid #d0d0d0; clear: both; }
         .notes-label { font-size: 9px; text-transform: uppercase; letter-spacing: 0.1em; margin-bottom: 6px; }
         .notes-text  { font-size: 11px; line-height: 1.7; }
 
@@ -194,9 +202,19 @@
         </tbody>
     </table>
 
-    {{-- Totals --}}
-    <div class="totals-outer clearfix">
-        <div class="totals-inner">
+    {{-- Bottom: Notes kiri, Totals kanan --}}
+    <div class="clearfix" style="margin-top: 20px;">
+
+        {{-- Kiri: Notes --}}
+        <div style="float: left; width: 68%;">
+            @if($data->notes)
+                <div class="notes-label">{{ __('general.notes') }}</div>
+                <div class="notes-text" style="max-width: 70%;">{{ $data->notes }}</div>
+            @endif
+        </div>
+
+        {{-- Kanan: Totals --}}
+        <div style="float: right; width: 30%;">
             <table class="t-row">
                 <tr>
                     <td>{{ __('general.subtotal') }}</td>
@@ -234,14 +252,27 @@
                 </tr>
             </table>
         </div>
+
     </div>
 
-    @if($data->notes)
-        <div class="notes">
-            <div class="notes-label">{{ __('general.notes') }}</div>
-            <div class="notes-text">{{ $data->notes }}</div>
-        </div>
-    @endif
+    {{-- Bank Info --}}
+    <div style="margin-top: 28px; padding-top: 20px; border-top: 1px solid #d0d0d0; clear: both;">
+        <div class="payment-label">{{ __('general.bank_information') }}</div>
+        <table class="payment-table">
+            <tr>
+                <td class="pk">{{ __('general.bank_name') }}</td>
+                <td>: Bank Central Asia (BCA)</td>
+            </tr>
+            <tr>
+                <td class="pk">{{ __('general.account_number') }}</td>
+                <td>: 1234567890</td>
+            </tr>
+            <tr>
+                <td class="pk">{{ __('general.account_holder_name') }}</td>
+                <td>: CV. Surya Makmur</td>
+            </tr>
+        </table>
+    </div>
 
     <div class="footer">
         {{ config('app.name') }} &mdash; {{ now()->translatedFormat('d F Y') }}
