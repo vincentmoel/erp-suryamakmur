@@ -19,16 +19,16 @@
                     name="filter_customer"
                     placeholder="All Customers"
                     :searchable="true"
-                    :options="$customers->map(fn($c) => ['value' => $c->id, 'label' => $c->name])->toArray()" />
+                    :options="$customers->map(fn($c) => ['value' => $c->id, 'label' => $c->name, 'badge' => $c->trashed() ? 'Deleted' : null])->toArray()" />
                 <x-form.single-select
                     name="filter_salesperson"
                     placeholder="All Salespersons"
                     :searchable="true"
-                    :options="$salespersons->map(fn($s) => ['value' => $s->id, 'label' => $s->name])->toArray()" />
+                    :options="$salespersons->map(fn($s) => ['value' => $s->id, 'label' => $s->name, 'badge' => $s->trashed() ? 'Deleted' : null])->toArray()" />
                 <x-form.daterange
                     name-from="filter_date_from"
                     name-to="filter_date_to"
-                    placeholder="All Dates" />
+                    placeholder="All Invoice Dates" />
                 <x-form.single-select
                     name="filter_status"
                     placeholder="All Statuses"

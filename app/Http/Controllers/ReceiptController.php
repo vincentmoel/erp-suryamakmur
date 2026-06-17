@@ -31,9 +31,22 @@ class ReceiptController extends BaseController
         );
     }
 
+    public function index()
+    {
+        $dataTable = new ReceiptDataTable(false);
+
+        return $dataTable->render('receipts.index', [
+            'title'          => $this->title,
+            'route'          => $this->route,
+            'module'         => $this->module,
+            'customers'      => $this->customers(),
+            'paymentMethods' => PaymentMethod::cases(),
+        ]);
+    }
+
     private function customers()
     {
-        return Customer::orderBy('name')->get(['id', 'name', 'company_name', 'type', 'tax_number', 'email', 'phone', 'mobile', 'notes']);
+        return Customer::withTrashed()->orderBy('name')->get(['id', 'name', 'company_name', 'type', 'tax_number', 'email', 'phone', 'mobile', 'notes', 'deleted_at']);
     }
 
     public function create()

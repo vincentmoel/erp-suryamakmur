@@ -14,6 +14,24 @@
 
         <x-datatable id="products-table" :search-placeholder="__('general.search')">
 
+            <x-slot name="filters">
+                <x-form.single-select
+                    name="filter_category"
+                    placeholder="All Categories"
+                    :searchable="true"
+                    :options="$categories->map(fn($c) => ['value' => $c->id, 'label' => $c->name, 'badge' => $c->trashed() ? 'Deleted' : null])->toArray()" />
+                <x-form.single-select
+                    name="filter_unit"
+                    placeholder="All Units"
+                    :searchable="true"
+                    :options="$units->map(fn($u) => ['value' => $u->id, 'label' => $u->name, 'badge' => $u->trashed() ? 'Deleted' : null])->toArray()" />
+                <x-form.single-select
+                    name="filter_is_active"
+                    placeholder="All Statuses"
+                    :searchable="false"
+                    :options="[['value' => '1', 'label' => __('general.active')], ['value' => '0', 'label' => __('general.inactive')]]" />
+            </x-slot>
+
             <x-slot name="actions">
 @if(app(\App\Services\PermissionService::class)->has('Product', 'create'))
                 <a href="{{ route('products.create') }}" class="btn btn-primary btn-sm">
@@ -134,9 +152,10 @@
             });
         });
 
-        initDataTable({
+        const dt = initDataTable({
             tableId: 'products-table',
             ajaxUrl: '{{ route('products.index') }}',
+            order: [{ name: 'created_at', dir: 'desc' }],
             columns: [
                 {
                     data: 'DT_RowIndex',
@@ -155,5 +174,14 @@
                 { data: 'action', name: 'action', orderable: false, searchable: false },
             ],
         });
+
+        dt.settings()[0].ajax.data = function (d) {
+            d.filter_category  = document.querySelector('[name="filter_category"]').value;
+            d.filter_unit      = document.querySelector('[name="filter_unit"]').value;
+            d.filter_is_active = document.querySelector('[name="filter_is_active"]').value;
+        };
+
+        document.querySelectorAll('[name="filter_category"], [name="filter_unit"], [name="filter_is_active"]')
+            .forEach(function (el) { el.addEventListener('change', function () { dt.ajax.reload(); }); });
     </script>
 @endpush

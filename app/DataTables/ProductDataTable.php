@@ -23,12 +23,26 @@ class ProductDataTable extends BaseDataTable
 
     public function query(): QueryBuilder
     {
-        return $this->model::with('category', 'unit')
+        $query = $this->model::with('category', 'unit')
             ->addSelect([
                 'products.*',
                 \Illuminate\Support\Facades\DB::raw('(SELECT COALESCE(SUM(invd.quantity), 0) FROM inventory_details invd JOIN inventories inv ON inv.id = invd.inventory_id WHERE inv.product_id = products.id) as total_stock'),
             ])
-            ->latest()->newQuery();
+            ->latest();
+
+        if ($categoryId = request('filter_category')) {
+            $query->where('category_id', $categoryId);
+        }
+
+        if ($unitId = request('filter_unit')) {
+            $query->where('unit_id', $unitId);
+        }
+
+        if (request('filter_is_active') !== null && request('filter_is_active') !== '') {
+            $query->where('is_active', (int) request('filter_is_active'));
+        }
+
+        return $query;
     }
 
     public function dataTable(QueryBuilder $query): EloquentDataTable

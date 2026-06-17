@@ -65,8 +65,11 @@
                      data-value="{{ $option['value'] }}"
                      data-label="{{ $option['label'] }}"
                      aria-selected="{{ (string) $option['value'] === $oldValue ? 'true' : 'false' }}"
-                     class="select-item cursor-pointer">
-                    {{ $option['label'] }}
+                     class="select-item cursor-pointer flex items-center justify-between gap-2">
+                    <span class="truncate">{{ $option['label'] }}</span>
+                    @if(!empty($option['badge']))
+                        <span class="shrink-0 inline-flex items-center rounded-full px-2 py-0.5 text-xs font-medium bg-destructive/10 text-destructive">{{ $option['badge'] }}</span>
+                    @endif
                 </div>
             @endforeach
         </div>

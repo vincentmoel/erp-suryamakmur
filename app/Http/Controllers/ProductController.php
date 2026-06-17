@@ -35,6 +35,19 @@ class ProductController extends BaseController
         );
     }
 
+    public function index()
+    {
+        $dataTable = new ProductDataTable(false);
+
+        return $dataTable->render('products.index', [
+            'title'      => $this->title,
+            'route'      => $this->route,
+            'module'     => $this->module,
+            'categories' => Category::withTrashed()->orderBy('name')->get(['id', 'name', 'deleted_at']),
+            'units'      => Unit::withTrashed()->orderBy('name')->get(['id', 'name', 'deleted_at']),
+        ]);
+    }
+
     public function create()
     {
         return view('products.create', [

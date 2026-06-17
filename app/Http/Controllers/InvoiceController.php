@@ -42,8 +42,8 @@ class InvoiceController extends BaseController
             'title'        => $this->title,
             'route'        => $this->route,
             'module'       => $this->module,
-            'customers'    => Customer::orderBy('name')->get(['id', 'name']),
-            'salespersons' => User::orderBy('name')->get(['id', 'name']),
+            'customers'    => Customer::withTrashed()->orderBy('name')->get(['id', 'name', 'deleted_at']),
+            'salespersons' => User::withTrashed()->orderBy('name')->get(['id', 'name', 'deleted_at']),
             'statuses'     => InvoiceStatus::cases(),
         ]);
     }

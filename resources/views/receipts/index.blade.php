@@ -14,6 +14,23 @@
 
         <x-datatable id="receipts-table" :search-placeholder="__('general.search')">
 
+            <x-slot name="filters">
+                <x-form.single-select
+                    name="filter_customer"
+                    placeholder="All Customers"
+                    :searchable="true"
+                    :options="$customers->map(fn($c) => ['value' => $c->id, 'label' => $c->name, 'badge' => $c->trashed() ? 'Deleted' : null])->toArray()" />
+                <x-form.single-select
+                    name="filter_payment_method"
+                    placeholder="All Payment Methods"
+                    :searchable="false"
+                    :options="collect($paymentMethods)->map(fn($m) => ['value' => $m->value, 'label' => $m->label()])->toArray()" />
+                <x-form.daterange
+                    name-from="filter_date_from"
+                    name-to="filter_date_to"
+                    placeholder="All Receipt Dates" />
+            </x-slot>
+
             <x-slot name="actions">
 @if(app(\App\Services\PermissionService::class)->has('Receipt', 'create'))
                 <a href="{{ route('receipts.create') }}" class="btn btn-primary btn-sm">
@@ -50,9 +67,10 @@
     <script src="https://cdn.datatables.net/2.1.8/js/dataTables.min.js"></script>
     <script src="{{ asset('src/js/datatable.js') }}"></script>
     <script>
-        initDataTable({
+        const dt = initDataTable({
             tableId: 'receipts-table',
             ajaxUrl: '{{ route('receipts.index') }}',
+            order: [{ name: 'created_at', dir: 'desc' }],
             columns: [
                 {
                     data: 'DT_RowIndex',
@@ -71,6 +89,16 @@
                 { data: 'action',         name: 'action', orderable: false, searchable: false },
             ],
         });
+
+        dt.settings()[0].ajax.data = function (d) {
+            d.filter_customer       = document.querySelector('[name="filter_customer"]').value;
+            d.filter_payment_method = document.querySelector('[name="filter_payment_method"]').value;
+            d.filter_date_from      = document.querySelector('[name="filter_date_from"]').value;
+            d.filter_date_to        = document.querySelector('[name="filter_date_to"]').value;
+        };
+
+        document.querySelectorAll('[name="filter_customer"], [name="filter_payment_method"], [name="filter_date_from"]')
+            .forEach(function (el) { el.addEventListener('change', function () { dt.ajax.reload(); }); });
     </script>
     <script>
     $(document).on('click', '.receipt-delete-btn', function () {

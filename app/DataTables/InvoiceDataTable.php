@@ -44,7 +44,7 @@ class InvoiceDataTable extends BaseDataTable
             $query->where('status', $status);
         }
 
-        return $query->newQuery();
+        return $query;
     }
 
     public function dataTable(QueryBuilder $query): EloquentDataTable

@@ -25,11 +25,28 @@ class ReceiptDataTable extends BaseDataTable
 
     public function query(): QueryBuilder
     {
-        return Receipt::with('customer')
+        $query = Receipt::with('customer')
             ->withSum('details', 'amount')
             ->withCount('details')
-            ->latest()
-            ->newQuery();
+            ->latest();
+
+        if ($customerId = request('filter_customer')) {
+            $query->where('customer_id', $customerId);
+        }
+
+        if ($paymentMethod = request('filter_payment_method')) {
+            $query->where('payment_method', $paymentMethod);
+        }
+
+        if ($dateFrom = request('filter_date_from')) {
+            $query->whereDate('receipt_date', '>=', $dateFrom);
+        }
+
+        if ($dateTo = request('filter_date_to')) {
+            $query->whereDate('receipt_date', '<=', $dateTo);
+        }
+
+        return $query;
     }
 
     public function dataTable(QueryBuilder $query): EloquentDataTable
