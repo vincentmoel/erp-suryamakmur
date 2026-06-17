@@ -47,7 +47,7 @@ function _dismissToast(toast) {
 
 // ── TABLE SORT & FILTER ──────────────────────────────────────
 function enhanceTables() {
-  document.querySelectorAll("table").forEach((table) => {
+  document.querySelectorAll("table:not([data-no-sort])").forEach((table) => {
     table.querySelectorAll("th").forEach((th, index) => {
       th.classList.add("cursor-pointer", "select-none");
       th.addEventListener("click", () => {

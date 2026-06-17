@@ -10,69 +10,62 @@
             {{-- Mini logo: collapsed sidebar, dark mode --}}
             <img src="{{ asset('src/img/logo-mini-light.png') }}" alt="Logo" class="size-10 object-contain hidden dark:hidden sidebar-mini-logo-dark">
         </div>
+        @php
+            use App\Enums\Module;
+
+            $isSuperAdmin   = auth()->user()->roles->contains('id', 1);
+            $grantedModules = $isSuperAdmin ? null : \App\Models\Permission::whereIn('role_id', auth()->user()->roles->pluck('id'))
+                ->where('action', 'read')
+                ->pluck('module')
+                ->unique()
+                ->flip()
+                ->toArray();
+
+            // Build sidebar groups from Module enum — single source of truth.
+            $sidebarGroups = [];
+            $currentGroup  = '__none__';
+            foreach (Module::cases() as $mod) {
+                if ($mod->route() === null) continue;
+                if (!$isSuperAdmin && !isset($grantedModules[$mod->value])) continue;
+
+                $g = $mod->group() ?? '';
+                if ($g !== $currentGroup) {
+                    $sidebarGroups[] = ['group' => $mod->group(), 'items' => []];
+                    $currentGroup    = $g;
+                }
+                $sidebarGroups[count($sidebarGroups) - 1]['items'][] = $mod;
+            }
+        @endphp
+
         <nav data-sidebar="content" class="flex min-h-0 flex-1 flex-col gap-2 overflow-auto">
-            @foreach (config('sidebar') as $item)
+            @foreach ($sidebarGroups as $grp)
                 <div data-sidebar="group" class="relative flex w-full min-w-0 flex-col p-2">
-                    @if (!empty($item['group']))
+                    @if ($grp['group'])
                         <div data-sidebar="group-label"
                             class="sidebar-label flex h-8 shrink-0 items-center rounded-md px-2 text-xs font-medium text-sidebar-foreground/70">
-                            {{ __($item['group']) }}
+                            {{ $grp['group'] }}
                         </div>
                     @endif
 
                     <div data-sidebar="group-content" class="w-full text-sm">
                         <ul data-sidebar="menu" class="flex w-full min-w-0 flex-col gap-1">
-
-                            @if (!empty($item['children']) && empty($item['title']) && array_is_list($item['children']))
-                                @foreach ($item['children'] as $flatItem)
-                                    <li data-sidebar="menu-item" class="group/menu-item relative">
-                                        @php
-                                            $baseRoute = $flatItem['route'] ?? '';
-                                            $routePrefix = str_contains($baseRoute, '.')
-                                                ? substr($baseRoute, 0, strrpos($baseRoute, '.'))
-                                                : $baseRoute;
-                                            $isActive = request()->routeIs($baseRoute) || ($routePrefix !== $baseRoute && request()->routeIs($routePrefix . '.*'));
-                                        @endphp
-                                        <a class="nav-link {{ $isActive ? 'active' : '' }}"
-                                            href="{{ !empty($flatItem['route']) ? route($flatItem['route']) : ($flatItem['url'] ?? '#') }}">
-                                            <x-icon :name="$flatItem['icon']" class="size-4" />
-                                            <span class="sidebar-text">{{ __($flatItem['title']) }}</span>
-                                        </a>
-                                    </li>
-                                @endforeach
-                            @elseif (!empty($item['children']) && !array_is_list($item['children']))
+                            @foreach ($grp['items'] as $mod)
                                 @php
-                                    $dropdownTitle = $item['title'] ?? $item['children']['title'] ?? '';
-                                    $dropdownIcon  = $item['icon']  ?? $item['children']['icon']  ?? 'circle';
-                                    $dropdownSubs  = $item['children']['children'] ?? [];
+                                    $routeName   = $mod->route();
+                                    $routePrefix = str_contains($routeName, '.')
+                                        ? substr($routeName, 0, strrpos($routeName, '.'))
+                                        : $routeName;
+                                    $isActive = request()->routeIs($routeName)
+                                        || ($routePrefix !== $routeName && request()->routeIs($routePrefix . '.*'));
                                 @endphp
-                                <li data-nav-parent data-sidebar="menu-item" class="group/menu-item relative">
-                                    <button data-nav-toggle aria-expanded="false" class="nav-link" type="button">
-                                        <x-icon :name="$dropdownIcon" class="size-4" />
-                                        <span class="sidebar-text">{{ __($dropdownTitle) }}</span>
-                                        <x-icon name="chevron-right" class="nav-chevron" />
-                                    </button>
-                                    <ul data-nav-sub data-sidebar="menu-sub" class="nav-sub hidden">
-                                        @foreach ($dropdownSubs as $child)
-                                            <li data-sidebar="menu-sub-item" class="group/menu-sub-item relative">
-                                                <a class="nav-sub-link"
-                                                    href="{{ !empty($child['route']) ? route($child['route']) : ($child['url'] ?? '#') }}">
-                                                    <span>{{ __($child['title']) }}</span>
-                                                </a>
-                                            </li>
-                                        @endforeach
-                                    </ul>
-                                </li>
-                            @else
                                 <li data-sidebar="menu-item" class="group/menu-item relative">
-                                    <a class="nav-link {{ request()->routeIs($item['route'] ?? '') ? 'active' : '' }}"
-                                        href="{{ !empty($item['route']) ? route($item['route']) : ($item['url'] ?? '#') }}">
-                                        <x-icon :name="$item['icon']" class="size-4" />
-                                        <span class="sidebar-text">{{ __($item['title']) }}</span>
+                                    <a class="nav-link {{ $isActive ? 'active' : '' }}"
+                                        href="{{ route($routeName) }}">
+                                        <x-icon :name="$mod->icon()" class="size-4" />
+                                        <span class="sidebar-text">{{ $mod->label() }}</span>
                                     </a>
                                 </li>
-                            @endif
-
+                            @endforeach
                         </ul>
                     </div>
                 </div>

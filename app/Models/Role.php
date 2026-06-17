@@ -21,7 +21,12 @@ class Role extends Model
 
     public function permissions()
     {
-        return $this->hasMany(Permission::class);
+        return $this->hasMany(Permission::class, 'role_id');
+    }
+
+    public function permissionsGrouped(): array
+    {
+        return $this->permissions->groupBy('module')->map(fn($rows) => $rows->pluck('action')->toArray())->toArray();
     }
 
     public function users()

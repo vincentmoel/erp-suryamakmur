@@ -18,69 +18,38 @@ class RoleController extends Controller
 
     public function create()
     {
-        $modules = Module::array();
-
         return view('roles.create', [
-            'modules' => $modules
+            'modules' => $this->sortedModules(),
         ]);
     }
 
     public function store(RoleRequest $request)
     {
-        $role = Role::create([
-            'name'  => $request->name 
-        ]);
+        $role = Role::create(['name' => $request->name]);
 
-        $modules = Module::array();
-
-        $allPermissions = [];
-
-        foreach($modules as $moduleKey => $moduleValue){
-            $permission['role_id']  = $role->id;
-            $permission['module']   = $moduleKey;
-            $permission['menu']     = isset($request->permission[$moduleKey]['menu']) ? 1 : 0;
-            $permission['create']   = isset($request->permission[$moduleKey]['create']) ? 1 : 0;
-            $permission['read']     = isset($request->permission[$moduleKey]['read']) ? 1 : 0;
-            $permission['update']   = isset($request->permission[$moduleKey]['update']) ? 1 : 0;
-            $permission['delete']   = isset($request->permission[$moduleKey]['delete']) ? 1 : 0;
-            $permission['restore']  = isset($request->permission[$moduleKey]['restore']) ? 1 : 0;
-
-            array_push($allPermissions, $permission);
-        }
-
-        Permission::insert($allPermissions);
+        $this->syncPermissions($role, $request->input('permissions', []));
 
         return redirect('roles')->with([
-            'success'   => ["title" => "Success Add", "message" => "Your data has been saved."]
+            'success' => ["title" => "Success Add", "message" => "Role has been created."]
         ]);
     }
 
     public function show($encryptedId)
     {
-        $role = Role::with(['users.user_created_by', 'users.user_updated_by'])->findOrFail(Encryption::decrypt($encryptedId));
+        $role = Role::with(['permissions', 'users.user_created_by', 'users.user_updated_by'])
+            ->findOrFail(Encryption::decrypt($encryptedId));
 
-        if($role->editable == false)
-        {
+        if ($role->editable == false) {
             return redirect('roles')->with([
-                'error'   => [ "code"  => 403, "message" => "You cannot see this role."]
+                'error' => ["code" => 403, "message" => "You cannot view this role."]
             ]);
-        }
-        
-        $modules = Module::values();
-        
-        $permissions = $role->permissions;
-
-        $resultPermissionsArray = [];
-
-        foreach ($permissions as $innerArray) {
-            $module = $innerArray["module"];
-            $resultPermissionsArray[$module] = $innerArray;
         }
 
         return view('roles.show', [
-            "role"          => $role,
-            "modules"       => $modules,
-            "permissions"   => $resultPermissionsArray
+            'role'        => $role,
+            'encryptedId' => $encryptedId,
+            'modules'     => $this->sortedModules(),
+            'granted'     => $role->permissionsGrouped(),
         ]);
     }
 
@@ -88,18 +57,17 @@ class RoleController extends Controller
     {
         $role = Role::with('permissions')->findOrFail(Encryption::decrypt($encryptedId));
 
-        if($role->editable == false)
-        {
+        if ($role->editable == false) {
             return redirect('roles')->with([
-                'error'   => [ "code"  => 403, "message" => "You cannot edit this role."]
+                'error' => ["code" => 403, "message" => "You cannot edit this role."]
             ]);
         }
-        
-        $modules = Module::array();
 
-        return view('roles.edit',[
-            "role"      => $role,
-            "modules"   => $modules
+        return view('roles.edit', [
+            'role'        => $role,
+            'encryptedId' => $encryptedId,
+            'modules'     => $this->sortedModules(),
+            'granted'     => $role->permissionsGrouped(),
         ]);
     }
 
@@ -107,33 +75,18 @@ class RoleController extends Controller
     {
         $role = Role::findOrFail(Encryption::decrypt($encryptedId));
 
-        if($role->editable == false)
-        {
+        if ($role->editable == false) {
             return redirect('roles')->with([
-                'error'   => [ "code"  => 403, "message" => "You cannot edit this role."]
+                'error' => ["code" => 403, "message" => "You cannot edit this role."]
             ]);
         }
 
         $role->update($request->validated());
 
-        $modules = Module::array();
-
-        foreach($modules as $moduleKey => $moduleValue){
-            Permission::updateOrCreate(
-                ['role_id' => $role->id, 'module' => $moduleKey],
-                [
-                    'menu'      => isset($request->permission[$moduleKey]['menu']) ? 1 : 0,
-                    'create'    => isset($request->permission[$moduleKey]['create']) ? 1 : 0,
-                    'read'      => isset($request->permission[$moduleKey]['read']) ? 1 : 0,
-                    'update'    => isset($request->permission[$moduleKey]['update']) ? 1 : 0,
-                    'delete'    => isset($request->permission[$moduleKey]['delete']) ? 1 : 0,
-                    'restore'   => isset($request->permission[$moduleKey]['restore']) ? 1 : 0,
-                ]
-            );
-        }
+        $this->syncPermissions($role, $request->input('permissions', []));
 
         return redirect('roles')->with([
-            'success'   => ["title" => "Success Update", "message" => "Your data has been updated."]
+            'success' => ["title" => "Success Update", "message" => "Role has been updated."]
         ]);
     }
 
@@ -141,28 +94,52 @@ class RoleController extends Controller
     {
         $role = Role::findOrFail(Encryption::decrypt($encryptedId));
 
-        if($role->deletable == false)
-        {
-            return redirect('roles')->with([
-                'error'   => [ "code"  => 403, "message" => "You cannot delete this role."]
-            ]);
+        if ($role->deletable == false) {
+            return response()->json([
+                'error' => ["code" => 403, "message" => "You cannot delete this role."]
+            ], 403);
         }
 
         $role->delete();
 
-        return redirect()->back()->with([
-            'success'   => ["title" => "Success Delete", "message" => "Your data has been deleted."]
+        return response()->json([
+            'data' => ["title" => "Success Delete", "message" => "Role has been deleted."]
         ]);
     }
 
     public function deleteUserRole($encryptedRoleId, $encryptedUserId)
     {
         $role = Role::findOrFail(Encryption::decrypt($encryptedRoleId));
-        
         $role->users()->detach(Encryption::decrypt($encryptedUserId));
 
         return redirect()->back()->with([
-            'success'   => ["title" => "Success Delete", "message" => "Your data has been deleted."]
+            'success' => ["title" => "Success Delete", "message" => "User removed from role."]
         ]);
+    }
+
+    private function sortedModules(): array
+    {
+        return Module::cases();
+    }
+
+    private function syncPermissions(Role $role, array $incoming): void
+    {
+        $role->permissions()->delete();
+
+        $rows = [];
+        foreach (Module::cases() as $module) {
+            $moduleKey = $module->value;
+            $allowed   = $module->permissions();
+
+            foreach ($allowed as $action) {
+                if (!empty($incoming[$moduleKey][$action])) {
+                    $rows[] = ['role_id' => $role->id, 'module' => $moduleKey, 'action' => $action];
+                }
+            }
+        }
+
+        if (!empty($rows)) {
+            Permission::insert($rows);
+        }
     }
 }

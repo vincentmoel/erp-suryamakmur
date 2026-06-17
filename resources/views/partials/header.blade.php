@@ -16,7 +16,7 @@
                 class="btn btn-outline h-8 gap-1.5 px-3 text-sm"
                 aria-haspopup="true" aria-expanded="false">
                 <x-icon name="plus" class="size-4" />
-                <span class="hidden sm:inline">New</span>
+                <span class="hidden sm:inline">Quick Create</span>
             </button>
             <div id="quick-actions-dropdown"
                 class="absolute right-0 top-full mt-1 hidden w-48 rounded-lg border bg-card shadow-lg z-50 overflow-hidden py-1">

@@ -71,6 +71,7 @@ return [
     // Sidebar nav items
     'nav_dashboard'  => 'Dashboard',
     'nav_users'      => 'Pengguna',
+    'nav_roles'      => 'Role',
     'nav_categories' => 'Kategori',
     'nav_units'      => 'Satuan',
     'nav_customers'  => 'Pelanggan',

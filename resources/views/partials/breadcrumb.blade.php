@@ -33,35 +33,24 @@
         $resource    = $segments[0] ?? '';
         $action      = $segments[1] ?? 'index';
 
-        // Find menu title from sidebar config
-        $menuTitle   = null;
-        $indexRoute  = null;
-        foreach (config('sidebar', []) as $item) {
-            if (!empty($item['route'])) {
-                $r = explode('.', $item['route'])[0] ?? '';
-                if ($r === $resource) {
-                    $menuTitle  = $item['title'];
-                    $indexRoute = Route::has($resource . '.index') ? route($resource . '.index') : null;
-                    break;
-                }
-            }
-            foreach ($item['children'] ?? [] as $child) {
-                if (!empty($child['route'])) {
-                    $r = explode('.', $child['route'])[0] ?? '';
-                    if ($r === $resource) {
-                        $menuTitle  = $child['title'];
-                        $indexRoute = Route::has($resource . '.index') ? route($resource . '.index') : null;
-                        break 2;
-                    }
-                }
+        // Find menu title from Module enum
+        $menuTitle  = null;
+        $indexRoute = null;
+        foreach (\App\Enums\Module::cases() as $mod) {
+            if ($mod->route() === null) continue;
+            $r = explode('.', $mod->route())[0] ?? '';
+            if ($r === $resource) {
+                $menuTitle  = $mod->label();
+                $indexRoute = Route::has($resource . '.index') ? route($resource . '.index') : null;
+                break;
             }
         }
 
-        $fallbackTitle = $menuTitle ? __($menuTitle) : ucfirst($resource);
+        $fallbackTitle = $menuTitle ?? ucfirst($resource);
 
         $items = [$homeLink];
 
-        if ($action === 'index' || !$menuTitle) {
+        if ($action === 'index' || $menuTitle === null) {
             $items[] = $separator;
             $items[] = $activeItem($fallbackTitle);
         } elseif ($action === 'create') {

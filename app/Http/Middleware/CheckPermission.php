@@ -17,18 +17,18 @@ class CheckPermission
      */
     public function handle(Request $request, Closure $next, $module, $permissionType): Response
     {
-        $roles = auth()->user()->roles->pluck('id');
+        $roleIds = auth()->user()->roles->pluck('id');
 
-        if(in_array(1, auth()->user()->roles->pluck('id')->toArray()))
-        {
+        if ($roleIds->contains(1)) {
             return $next($request);
         }
 
-        $permissions = Permission::whereIn('role_id', $roles)
+        $hasPermission = Permission::whereIn('role_id', $roleIds)
             ->where('module', $module)
-            ->sum($permissionType);
+            ->where('action', $permissionType)
+            ->exists();
 
-        if($permissions > 0)
+        if ($hasPermission)
         {
             return $next($request);
         }

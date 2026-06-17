@@ -15,8 +15,6 @@ class RoleSeeder extends Seeder
      */
     public function run(): void
     {
-        $permissions = ['menu', 'create', 'read', 'update', 'delete', 'restore'];
-
         $role = Role::create([
             'name'      => 'Developer',
             'editable'  => false,
@@ -24,18 +22,13 @@ class RoleSeeder extends Seeder
             'hidden'    => true
         ]);
 
-        $modules = Module::names();
-
-        foreach ($modules as $module) {
-            $permission = new Permission();
-            $permission->role_id = $role->id;
-            $permission->module = $module;
-
-            foreach ($permissions as $field) {
-                $permission->{$field} = true;
+        $rows = [];
+        foreach (Module::cases() as $module) {
+            foreach ($module->permissions() as $action) {
+                $rows[] = ['role_id' => $role->id, 'module' => $module->value, 'action' => $action];
             }
-
-            $permission->save();
         }
+
+        Permission::insert($rows);
     }
 }

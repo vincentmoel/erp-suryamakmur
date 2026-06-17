@@ -1,28 +1,32 @@
 @php
-    $sidebarConfig = config('sidebar');
-    $menuGroups = [];
+    use App\Enums\Module;
 
-    foreach ($sidebarConfig as $section) {
-        $groupLabel = isset($section['group']) ? __($section['group']) : null;
-        $items = [];
+    $isSuperAdmin   = auth()->user()->roles->contains('id', 1);
+    $grantedModules = $isSuperAdmin ? null : \App\Models\Permission::whereIn('role_id', auth()->user()->roles->pluck('id'))
+        ->where('action', 'read')
+        ->pluck('module')
+        ->unique()
+        ->flip()
+        ->toArray();
 
-        foreach ($section['children'] ?? [] as $item) {
-            if (!isset($item['route'])) continue;
-            try {
-                $url = route($item['route']);
-            } catch (\Exception $e) {
-                continue;
-            }
-            $items[] = [
-                'title' => __($item['title']),
-                'icon'  => $item['icon'] ?? 'circle',
-                'url'   => $url,
-            ];
+    $menuGroups   = [];
+    $currentGroup = '__none__';
+    foreach (Module::cases() as $mod) {
+        if ($mod->route() === null) continue;
+        if (!$isSuperAdmin && !isset($grantedModules[$mod->value])) continue;
+
+        try { $url = route($mod->route()); } catch (\Exception $e) { continue; }
+
+        $g = $mod->group() ?? '';
+        if ($g !== $currentGroup) {
+            $menuGroups[] = ['label' => $mod->group(), 'items' => []];
+            $currentGroup = $g;
         }
-
-        if (count($items)) {
-            $menuGroups[] = ['label' => $groupLabel, 'items' => $items];
-        }
+        $menuGroups[count($menuGroups) - 1]['items'][] = [
+            'title' => $mod->label(),
+            'icon'  => $mod->icon(),
+            'url'   => $url,
+        ];
     }
 @endphp
 
@@ -122,4 +126,3 @@
 })();
 </script>
 @endpush
-

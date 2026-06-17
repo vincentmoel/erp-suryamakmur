@@ -71,6 +71,7 @@ return [
     // Sidebar nav items
     'nav_dashboard' => 'Dashboard',
     'nav_users'     => 'Users',
+    'nav_roles'     => 'Roles',
     'nav_categories' => 'Categories',
     'nav_units'     => 'Units',
     'nav_customers' => 'Customers',
