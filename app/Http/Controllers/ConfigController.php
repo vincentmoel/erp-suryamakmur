@@ -76,10 +76,12 @@ class ConfigController extends Controller
             Config::set($field, $request->input($field, ''));
         }
 
-        if ($request->hasFile('company_logo')) {
-            $request->validate(['company_logo' => 'image|max:2048']);
-            $path = FileManager::store($request->file('company_logo'), 'logos');
-            Config::set('company_logo', $path);
+        foreach (['logo_full_dark', 'logo_full_light', 'logo_mini_dark', 'logo_mini_light'] as $key) {
+            if ($request->hasFile($key)) {
+                $request->validate([$key => 'image|max:2048']);
+                $path = FileManager::store($request->file($key), 'logos');
+                Config::set($key, $path, 'company', 'image');
+            }
         }
     }
 

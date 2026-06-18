@@ -13,12 +13,26 @@ class Config extends Model
         return static::where('key', $key)->value('value') ?? $default;
     }
 
-    public static function set(string $key, ?string $value): void
+    public static function set(string $key, ?string $value, ?string $section = null, string $type = 'text'): void
     {
-        static::where('key', $key)->update([
-            'value'      => $value ?? '',
-            'updated_by' => auth()->id(),
-        ]);
+        $record = static::where('key', $key)->first();
+
+        if ($record) {
+            $record->update([
+                'value'      => $value ?? '',
+                'updated_by' => auth()->id(),
+            ]);
+        } else {
+            static::create([
+                'key'        => $key,
+                'name'       => $key,
+                'value'      => $value ?? '',
+                'type'       => $type,
+                'section'    => $section,
+                'created_by' => auth()->id(),
+                'updated_by' => auth()->id(),
+            ]);
+        }
     }
 
     public static function section(string $section): \Illuminate\Database\Eloquent\Collection

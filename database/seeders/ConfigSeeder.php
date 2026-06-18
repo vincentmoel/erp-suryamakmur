@@ -19,7 +19,10 @@ class ConfigSeeder extends Seeder
             ['key' => 'company_phone',   'name' => 'Company Phone',   'value' => '',                 'type' => 'text',     'section' => 'company'],
             ['key' => 'company_email',   'name' => 'Company Email',   'value' => '',                 'type' => 'text',     'section' => 'company'],
             ['key' => 'company_website', 'name' => 'Company Website', 'value' => '',                 'type' => 'text',     'section' => 'company'],
-            ['key' => 'company_logo',    'name' => 'Company Logo',    'value' => '',                 'type' => 'image',    'section' => 'company'],
+            ['key' => 'logo_full_dark',  'name' => 'Logo Full Dark',  'value' => '',                 'type' => 'image',    'section' => 'company'],
+            ['key' => 'logo_full_light', 'name' => 'Logo Full Light', 'value' => '',                 'type' => 'image',    'section' => 'company'],
+            ['key' => 'logo_mini_dark',  'name' => 'Logo Mini Dark',  'value' => '',                 'type' => 'image',    'section' => 'company'],
+            ['key' => 'logo_mini_light', 'name' => 'Logo Mini Light', 'value' => '',                 'type' => 'image',    'section' => 'company'],
 
             // ── Bank ─────────────────────────────────────────────────
             ['key' => 'bank_name',           'name' => 'Bank Name',           'value' => '', 'type' => 'text', 'section' => 'bank'],

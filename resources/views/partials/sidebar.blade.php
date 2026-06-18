@@ -1,14 +1,21 @@
     <aside
         class="app-sidebar fixed inset-y-0 left-0 z-40 flex h-svh w-64 -translate-x-full flex-col border-r bg-sidebar text-sidebar-foreground transition-[transform,width] duration-200 ease-linear lg:translate-x-0">
+        @php
+            use App\Models\Config as AppConfig;
+            $logoFullDark  = AppConfig::get('logo_full_dark');
+            $logoFullLight = AppConfig::get('logo_full_light');
+            $logoMiniDark  = AppConfig::get('logo_mini_dark');
+            $logoMiniLight = AppConfig::get('logo_mini_light');
+        @endphp
         <div data-sidebar="header" class="flex items-center p-4">
             {{-- Full logo: light mode --}}
-            <img src="{{ asset('src/img/logo-dark.png') }}" alt="Logo" class="h-10 w-auto dark:hidden sidebar-full-logo">
+            <img src="{{ $logoFullDark  ? asset('storage/' . $logoFullDark)  : asset('src/img/logo-dark.png')  }}" alt="Logo" class="h-10 w-auto dark:hidden sidebar-full-logo">
             {{-- Full logo: dark mode --}}
-            <img src="{{ asset('src/img/logo-light.png') }}" alt="Logo" class="h-10 w-auto hidden dark:block sidebar-full-logo">
+            <img src="{{ $logoFullLight ? asset('storage/' . $logoFullLight) : asset('src/img/logo-light.png') }}" alt="Logo" class="h-10 w-auto hidden dark:block sidebar-full-logo">
             {{-- Mini logo: collapsed sidebar, light mode --}}
-            <img src="{{ asset('src/img/logo-mini-dark.png') }}" alt="Logo" class="size-10 object-contain hidden dark:hidden sidebar-mini-logo">
+            <img src="{{ $logoMiniDark  ? asset('storage/' . $logoMiniDark)  : asset('src/img/logo-mini-dark.png')  }}" alt="Logo" class="size-10 object-contain hidden dark:hidden sidebar-mini-logo">
             {{-- Mini logo: collapsed sidebar, dark mode --}}
-            <img src="{{ asset('src/img/logo-mini-light.png') }}" alt="Logo" class="size-10 object-contain hidden dark:hidden sidebar-mini-logo-dark">
+            <img src="{{ $logoMiniLight ? asset('storage/' . $logoMiniLight) : asset('src/img/logo-mini-light.png') }}" alt="Logo" class="size-10 object-contain hidden dark:hidden sidebar-mini-logo-dark">
         </div>
         @php
             use App\Enums\Module;

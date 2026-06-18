@@ -111,9 +111,9 @@
             <div class="code-value">{{ $data->code }}</div>
         </div>
         <div class="top-logo">
-            @php $logo = \App\Models\Config::get('company_logo'); @endphp
+            @php $logo = \App\Models\Config::get('logo_full_dark'); @endphp
             @if($logo)
-                <img src="{{ public_path('storage/' . $logo) }}" class="logo" alt="{{ \App\Models\Config::get('company_name', config('app.name')) }}">
+                <img src="{{ storage_path('app/public/' . $logo) }}" class="logo" alt="{{ \App\Models\Config::get('company_name', config('app.name')) }}">
             @else
                 <img src="{{ public_path('src/img/logo-dark.png') }}" class="logo" alt="{{ config('app.name') }}">
             @endif
