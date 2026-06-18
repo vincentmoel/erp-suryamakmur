@@ -157,6 +157,23 @@ class InvoiceController extends BaseController
         ]);
     }
 
+    public function ajaxPreview($encryptedId)
+    {
+        $invoice = Invoice::with('customer', 'salesperson', 'details')
+            ->findOrFail(Encryption::decrypt($encryptedId));
+
+        return response()->json([
+            'html'             => view('invoices._preview', ['data' => $invoice])->render(),
+            'code'             => $invoice->code,
+            'status_label'     => $invoice->status->label(),
+            'status_badge_class' => $invoice->status->badgeClass(),
+            'pdf_url'          => route('invoices.pdf', ['encryptedId' => $encryptedId]),
+            'show_url'         => route('invoices.show', ['encryptedId' => $encryptedId]),
+            'email'            => $invoice->customer_snapshot['email'] ?? '',
+            'send_subject'     => urlencode(__('general.send_invoice_subject', ['code' => $invoice->code, 'company' => config('app.name')])),
+        ]);
+    }
+
     public function pdf($encryptedId)
     {
         $invoice = Invoice::with('customer', 'salesperson', 'details')
@@ -170,7 +187,7 @@ class InvoiceController extends BaseController
 
     public function show($encryptedId)
     {
-        $invoice = Invoice::with('customer', 'salesperson', 'details.product', 'user_created_by', 'user_updated_by')
+        $invoice = Invoice::with('customer', 'salesperson', 'details.product', 'receiptDetails.receipt', 'user_created_by', 'user_updated_by')
             ->findOrFail(Encryption::decrypt($encryptedId));
 
         return view('invoices.show', [

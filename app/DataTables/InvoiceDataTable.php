@@ -3,6 +3,7 @@
 namespace App\DataTables;
 
 use App\Enums\Module;
+use App\Helpers\Encryption;
 use App\Models\Invoice;
 use Illuminate\Database\Eloquent\Builder as QueryBuilder;
 use Yajra\DataTables\EloquentDataTable;
@@ -50,6 +51,11 @@ class InvoiceDataTable extends BaseDataTable
     public function dataTable(QueryBuilder $query): EloquentDataTable
     {
         return parent::dataTable($query)
+            ->setRowAttr([
+                'data-show-url'    => fn($row) => route('invoices.show', ['encryptedId' => Encryption::encrypt($row->id)]),
+                'data-preview-url' => fn($row) => route('ajax.invoices.preview', ['encryptedId' => Encryption::encrypt($row->id)]),
+                'style'            => 'cursor: pointer;',
+            ])
             ->editColumn('customer_id', fn($row) => $row->customer->name ?? '-')
             ->editColumn('salesperson_id', fn($row) => $row->salesperson->name ?? '-')
             ->editColumn('status', fn($row) => '<span class="badge ' . $row->status->badgeClass() . '">' . $row->status->icon() . $row->status->label() . '</span>')

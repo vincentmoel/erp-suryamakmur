@@ -314,6 +314,8 @@ return [
     'bill_to_header'       => 'Bill To',
     'payment_received'     => 'Payment Received',
     'remaining_bill'       => 'Remaining Payment',
+    'payment_history'      => 'Payment History',
+    'no_payments_yet'      => 'No payments yet.',
     'reference'            => 'Reference',
 
     // Invoice actions

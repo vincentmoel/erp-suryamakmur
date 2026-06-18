@@ -2002,6 +2002,9 @@
   .px-4 {
     padding-inline: calc(var(--spacing) * 4);
   }
+  .px-5 {
+    padding-inline: calc(var(--spacing) * 5);
+  }
   .px-6 {
     padding-inline: calc(var(--spacing) * 6);
   }
@@ -8162,3 +8165,34 @@ table.dataTable > tbody > tr:last-child > td {
     border-bottom: 1px solid color-mix(in oklab, var(--border) 50%, transparent);
 }
 .app-modal tr:last-child td { border-bottom: none; }
+
+/* ─── Invoice show layout ────────────────────────────────────── */
+.invoice-main {
+    flex: 7;
+    min-width: 0;
+}
+.invoice-side {
+    flex: 3;
+    min-width: 0;
+}
+.col-numeric {
+    width: 1px;
+    white-space: nowrap;
+}
+
+/* ─── Invoice line-item table ────────────────────────────────── */
+.invoice-table th,
+.invoice-table td {
+    padding-top: 0.625rem;
+    padding-bottom: 0.625rem;
+    padding-left: 0.75rem;
+    padding-right: 0.75rem;
+}
+.invoice-table th:first-child,
+.invoice-table td:first-child {
+    padding-left: 0;
+}
+.invoice-table th:last-child,
+.invoice-table td:last-child {
+    padding-right: 0;
+}

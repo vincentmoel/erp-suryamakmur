@@ -4,205 +4,146 @@
 <div class="page-content">
 
     <div class="page-header">
-        <h1>{{ $data->code }}</h1>
-        <p>@lang('general.invoice_detail')</p>
+        <h1>@lang('general.invoice_detail')</h1>
+        <p>{{ $data->code }}</p>
     </div>
 
-    {{-- Action buttons --}}
-    <div class="flex items-center gap-2 mb-6">
-        <button onclick="window.print()" class="btn btn-secondary btn-sm">
-            <x-icon name="print" class="size-3.5" />
-            @lang('general.print')
-        </button>
-        <a href="mailto:{{ $data->customer_snapshot['email'] ?? '' }}?subject={{ urlencode(__('general.send_invoice_subject', ['code' => $data->code, 'company' => config('app.name')])) }}"
-           class="btn btn-secondary btn-sm">
-            <x-icon name="mail" class="size-3.5" />
-            @lang('general.send')
-        </a>
-        <a href="{{ route('invoices.pdf', ['encryptedId' => $encryptedId]) }}"
-           target="_blank"
-           class="btn btn-secondary btn-sm">
-            <x-icon name="download" class="size-3.5" />
-            @lang('general.download_pdf')
-        </a>
-    </div>
+    <div class="flex gap-6 items-start">
 
-    {{-- Invoice Card --}}
-    <div class="rounded-lg border bg-card text-card-foreground shadow-xs" id="invoice-card">
-        <div class="p-6 space-y-6">
+        {{-- Kiri 70%: Invoice card --}}
+        <div class="invoice-main rounded-lg border border-border bg-card shadow-xs overflow-hidden">
 
-            {{-- Top: Invoice number + status / Company info --}}
-            <div class="flex flex-wrap items-start justify-between gap-4">
-                <div class="space-y-1">
-                    <p class="text-xs font-medium text-muted-foreground uppercase tracking-wider">@lang('general.invoice')</p>
-                    <h2 class="text-xl font-semibold font-mono">{{ $data->code }}</h2>
-                    <span class="badge {{ $data->status->badgeClass() }} mt-1">{{ $data->status->label() }}</span>
-                </div>
-                <div class="text-right text-sm">
-                    <p class="font-semibold text-sm">{{ config('app.name') }}</p>
-                    @if($data->salesperson)
-                        <p class="text-xs text-muted-foreground">{{ __('general.salesperson') }}: {{ $data->salesperson->name }}</p>
-                    @endif
-                </div>
-            </div>
-
-            <hr class="border-border">
-
-            {{-- Bill To / Invoice Date / Due Date --}}
-            <div class="grid grid-cols-1 gap-6 sm:grid-cols-3 text-sm">
-                <div class="space-y-1">
-                    <p class="text-xs text-muted-foreground">@lang('general.bill_to')</p>
-                    <p class="font-medium">{{ $data->customer_snapshot['name'] ?? $data->customer?->name ?? '-' }}</p>
-                    @if(!empty($data->customer_snapshot['company_name']))
-                        <p class="text-xs text-muted-foreground">{{ $data->customer_snapshot['company_name'] }}</p>
-                    @endif
-                    @if(!empty($data->customer_snapshot['address']))
-                        <p class="text-xs text-muted-foreground">{{ $data->customer_snapshot['address'] }}</p>
-                    @endif
-                    @if(!empty($data->customer_snapshot['phone']))
-                        <p class="text-xs text-muted-foreground">{{ $data->customer_snapshot['phone'] }}</p>
-                    @endif
-                    @if(!empty($data->customer_snapshot['email']))
-                        <p class="text-xs text-muted-foreground">{{ $data->customer_snapshot['email'] }}</p>
-                    @endif
-                </div>
-                <div class="space-y-1">
-                    <p class="text-xs text-muted-foreground">@lang('general.invoice_date')</p>
-                    <p class="font-medium">{{ $data->invoice_date->translatedFormat('d F Y') }}</p>
-                    <p class="text-xs text-muted-foreground mt-2">@lang('general.due_date')</p>
-                    <p class="font-medium">{{ $data->due_date ? $data->due_date->translatedFormat('d F Y') : '-' }}</p>
-                </div>
-                <div class="space-y-1">
-                    <p class="text-xs text-muted-foreground">@lang('general.paid_amount')</p>
-                    <p class="font-medium">Rp {{ number_format($data->paid_amount, 0, ',', '.') }}</p>
-                    @if($data->tax_number ?? $data->customer_snapshot['tax_number'] ?? null)
-                        <p class="text-xs text-muted-foreground mt-2">NPWP</p>
-                        <p class="font-medium">{{ $data->customer_snapshot['tax_number'] }}</p>
-                    @endif
-                </div>
-            </div>
-
-            <hr class="border-border my-2">
-
-            {{-- Line Items --}}
-            <div class="overflow-x-auto mt-6">
-                <table class="w-full text-sm" data-no-sort>
-                    <thead>
-                        <tr class="border-b">
-                            <th class="pb-3 text-left text-xs font-medium text-muted-foreground">#</th>
-                            <th class="pb-3 text-left text-xs font-medium text-muted-foreground">@lang('general.product')</th>
-                            <th class="pb-3 text-left text-xs font-medium text-muted-foreground">@lang('general.sku')</th>
-                            <th class="pb-3 text-right text-xs font-medium text-muted-foreground">@lang('general.qty')</th>
-                            <th class="pb-3 text-right text-xs font-medium text-muted-foreground">@lang('general.unit_price')</th>
-                            <th class="pb-3 text-right text-xs font-medium text-muted-foreground">@lang('general.discount')</th>
-                            <th class="pb-3 text-right text-xs font-medium text-muted-foreground">@lang('general.tax')</th>
-                            <th class="pb-3 text-right text-xs font-medium text-muted-foreground">@lang('general.amount')</th>
-                        </tr>
-                    </thead>
-                    <tbody>
-                        @foreach($data->details as $i => $detail)
-                            <tr class="border-b last:border-0">
-                                <td class="py-3 text-muted-foreground">{{ $i + 1 }}</td>
-                                <td class="py-3 font-medium">{{ $detail->product_snapshot['name'] ?? '-' }}</td>
-                                <td class="py-3 text-muted-foreground font-mono text-xs">{{ $detail->product_snapshot['sku'] ?? '-' }}</td>
-                                <td class="py-3 text-right">{{ number_format($detail->quantity, 0, ',', '.') }}</td>
-                                <td class="py-3 text-right">Rp {{ number_format($detail->unit_price, 0, ',', '.') }}</td>
-                                <td class="py-3 text-right text-muted-foreground">
-                                    {{ $detail->discount_amount ? 'Rp ' . number_format($detail->discount_amount, 0, ',', '.') : '-' }}
-                                </td>
-                                <td class="py-3 text-right text-muted-foreground">
-                                    {{ $detail->tax_amount ? 'Rp ' . number_format($detail->tax_amount, 0, ',', '.') : '-' }}
-                                </td>
-                                <td class="py-3 text-right font-medium">Rp {{ number_format($detail->amount, 0, ',', '.') }}</td>
-                            </tr>
-                        @endforeach
-                    </tbody>
-                </table>
-            </div>
-
-            {{-- Totals --}}
-            <div class="flex justify-end">
-                <div class="w-full max-w-xs space-y-2 text-sm">
-                    <div class="flex justify-between">
-                        <span class="text-muted-foreground">@lang('general.subtotal')</span>
-                        <span>Rp {{ number_format($data->subtotal_amount, 0, ',', '.') }}</span>
-                    </div>
-                    @if($data->discount_amount)
-                        <div class="flex justify-between">
-                            <span class="text-muted-foreground">
-                                @lang('general.discount')
-                                @if($data->discount_percent) ({{ $data->discount_percent }}%) @endif
-                            </span>
-                            <span>- Rp {{ number_format($data->discount_amount, 0, ',', '.') }}</span>
-                        </div>
-                    @endif
-                    @if($data->tax_amount)
-                        <div class="flex justify-between">
-                            <span class="text-muted-foreground">
-                                @lang('general.tax')
-                                @if($data->tax_percent) ({{ $data->tax_percent }}%) @endif
-                            </span>
-                            <span>Rp {{ number_format($data->tax_amount, 0, ',', '.') }}</span>
-                        </div>
-                    @endif
-                    <hr class="border-border">
-                    <div class="flex justify-between text-base font-semibold">
-                        <span>@lang('general.total')</span>
-                        <span>Rp {{ number_format($data->amount, 0, ',', '.') }}</span>
+            {{-- Header --}}
+            <div class="flex items-center justify-between px-6 py-4 border-b border-border">
+                <div>
+                    <p class="text-xs text-muted-foreground uppercase tracking-wider">@lang('general.invoice')</p>
+                    <div class="flex items-center gap-2 mt-0.5">
+                        <h2 class="text-lg font-bold font-mono">{{ $data->code }}</h2>
+                        <span class="badge {{ $data->status->badgeClass() }}">{{ $data->status->label() }}</span>
                     </div>
                 </div>
+                <div class="flex items-center gap-2">
+                    <a href="{{ route('invoices.pdf', ['encryptedId' => $encryptedId]) }}"
+                       target="_blank"
+                       class="btn btn-primary btn-sm">
+                        <x-icon name="download" class="size-3.5" />
+                        @lang('general.download_pdf')
+                    </a>
+                    <a href="{{ route('invoices.pdf', ['encryptedId' => $encryptedId]) }}"
+                       target="_blank"
+                       class="btn btn-secondary btn-sm">
+                        <x-icon name="print" class="size-3.5" />
+                        @lang('general.print')
+                    </a>
+                    <a href="mailto:{{ $data->customer_snapshot['email'] ?? '' }}?subject={{ urlencode(__('general.send_invoice_subject', ['code' => $data->code, 'company' => config('app.name')])) }}"
+                       class="btn btn-secondary btn-sm">
+                        <x-icon name="mail" class="size-3.5" />
+                        @lang('general.send')
+                    </a>
+                </div>
             </div>
 
-            @if($data->notes)
-                <hr class="border-border">
-                <div class="space-y-1">
-                    <p class="text-sm font-medium">@lang('general.notes')</p>
-                    <p class="text-xs text-muted-foreground">{{ $data->notes }}</p>
-                </div>
+            {{-- Body --}}
+            <div class="px-6 py-5" id="invoice-card">
+                @include('invoices._preview', ['data' => $data])
+            </div>
+
+            {{-- Footer: edit & cancel --}}
+            @if($data->status->canEdit() || $data->status->canCancel())
+            <div class="flex items-center gap-2 px-6 py-4 border-t border-border">
+                @if($data->status->canEdit())
+                    <a href="{{ route('invoices.edit', ['encryptedId' => $encryptedId]) }}"
+                       class="btn btn-ghost btn-sm">
+                        <x-icon name="edit" class="size-3.5" />
+                        @lang('general.edit')
+                    </a>
+                @endif
+                @if($data->status->canCancel())
+                    <form action="{{ route('invoices.cancel', ['encryptedId' => $encryptedId]) }}"
+                          method="POST"
+                          id="cancel-form">
+                        @csrf
+                        @method('PATCH')
+                        <button type="button"
+                                onclick="confirmCancel()"
+                                class="btn btn-ghost btn-sm text-destructive hover:bg-destructive/10">
+                            <x-icon name="x-circle" class="size-3.5" />
+                            @lang('general.cancel_invoice')
+                        </button>
+                    </form>
+                @endif
+            </div>
             @endif
 
         </div>
-    </div>
 
-    {{-- Footer Actions --}}
-    <div class="mt-4 flex gap-2">
-        @if($data->status->canEdit())
-            <a href="{{ route('invoices.edit', ['encryptedId' => $encryptedId]) }}"
-               class="btn btn-ghost btn-sm">
-                <x-icon name="edit" class="size-3.5" />
-                @lang('general.edit')
-            </a>
-        @endif
+        {{-- Kanan 30%: Payment history --}}
+        <div class="invoice-side rounded-lg border border-border bg-card shadow-xs overflow-hidden">
 
-        @if($data->status->canCancel())
-            <form action="{{ route('invoices.cancel', ['encryptedId' => $encryptedId]) }}"
-                  method="POST"
-                  id="cancel-form">
-                @csrf
-                @method('PATCH')
-                <button type="button"
-                        onclick="confirmCancel()"
-                        class="btn btn-ghost btn-sm text-destructive hover:bg-destructive/10">
-                    <x-icon name="x-circle" class="size-3.5" />
-                    @lang('general.cancel_invoice')
-                </button>
-            </form>
-        @endif
+            <div class="px-5 py-4 border-b border-border flex items-center gap-2">
+                <x-icon name="receipt" class="size-4 text-muted-foreground" />
+                <p class="text-sm font-semibold">@lang('general.payment_history')</p>
+            </div>
+
+            @php
+                $receipts = $data->receiptDetails->filter(fn($d) => $d->receipt !== null)->sortByDesc(fn($d) => $d->receipt->receipt_date);
+                $remaining = $data->amount - $data->paid_amount;
+            @endphp
+
+            <div class="px-5 py-4 space-y-4">
+
+                {{-- Summary --}}
+                <div class="space-y-2 text-sm">
+                    <div class="flex items-center gap-2">
+                        <span class="flex-1 text-muted-foreground">@lang('general.total')</span>
+                        <span class="font-medium">Rp {{ number_format($data->amount, 0, ',', '.') }}</span>
+                    </div>
+                    <div class="flex items-center gap-2">
+                        <span class="flex-1 text-muted-foreground">@lang('general.payment_received')</span>
+                        <span class="font-medium">Rp {{ number_format($data->paid_amount, 0, ',', '.') }}</span>
+                    </div>
+                    <hr class="border-border">
+                    <div class="flex items-center gap-2 font-semibold">
+                        <span class="flex-1">@lang('general.remaining_bill')</span>
+                        @if($remaining > 0)
+                            <span style="color: var(--destructive);">Rp {{ number_format($remaining, 0, ',', '.') }}</span>
+                        @else
+                            <span>Rp {{ number_format($remaining, 0, ',', '.') }}</span>
+                        @endif
+                    </div>
+                </div>
+
+                {{-- List pembayaran --}}
+                @if($receipts->isEmpty())
+                    <div class="text-center py-6 text-xs text-muted-foreground">
+                        @lang('general.no_payments_yet')
+                    </div>
+                @else
+                    <div class="space-y-3 pt-1">
+                        @foreach($receipts as $detail)
+                            @php $receipt = $detail->receipt; @endphp
+                            <div class="rounded-md border border-border p-4 text-sm space-y-2">
+                                <div class="flex items-center justify-between">
+                                    <span class="font-medium font-mono text-xs">{{ $receipt->code }}</span>
+                                    <span class="font-semibold">Rp {{ number_format($detail->amount, 0, ',', '.') }}</span>
+                                </div>
+                                <div class="flex items-center justify-between text-xs text-muted-foreground">
+                                    <span>{{ $receipt->receipt_date->translatedFormat('d F Y') }}</span>
+                                    <span>{{ $receipt->payment_method->label() }}</span>
+                                </div>
+                            </div>
+                        @endforeach
+                    </div>
+                @endif
+
+            </div>
+
+        </div>
+
     </div>
 
 </div>
 @endsection
-
-@push('styles')
-<style>
-@media print {
-    body * { visibility: hidden; }
-    #invoice-card, #invoice-card * { visibility: visible; }
-    #invoice-card { position: absolute; inset: 0; border: none; box-shadow: none; }
-    .badge { print-color-adjust: exact; -webkit-print-color-adjust: exact; }
-}
-</style>
-@endpush
 
 @push('scripts')
 <script>

@@ -314,6 +314,8 @@ return [
     'bill_to_header'       => 'Tagihan Kepada',
     'payment_received'     => 'Pembayaran Diterima',
     'remaining_bill'       => 'Sisa Pembayaran',
+    'payment_history'      => 'Riwayat Pembayaran',
+    'no_payments_yet'      => 'Belum ada pembayaran.',
     'reference'            => 'Referensi',
 
     // Invoice actions
