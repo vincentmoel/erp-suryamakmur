@@ -124,7 +124,9 @@
                             @php $receipt = $detail->receipt; @endphp
                             <div class="rounded-md border border-border p-4 text-sm space-y-2">
                                 <div class="flex items-center justify-between">
-                                    <span class="font-medium font-mono text-xs">{{ $receipt->code }}</span>
+                                    <a href="{{ route('receipts.show', ['encryptedId' => \App\Helpers\Encryption::encrypt($receipt->id)]) }}"
+                                       target="_blank"
+                                       class="font-medium font-mono text-xs hover:underline">{{ $receipt->code }}</a>
                                     <span class="font-semibold">Rp {{ number_format($detail->amount, 0, ',', '.') }}</span>
                                 </div>
                                 <div class="flex items-center justify-between text-xs text-muted-foreground">
