@@ -86,6 +86,7 @@ return [
     'group_master_data' => 'Master Data',
     'group_sales'       => 'Sales',
     'group_purchase'    => 'Purchase',
+    'group_setting'     => 'Setting',
 
     // Breadcrumb actions
     'breadcrumb_add'  => 'Add',
@@ -323,5 +324,33 @@ return [
     'invoice_from'    => 'From',
     'send_invoice'    => 'Send Invoice',
     'send_invoice_subject' => 'Invoice :code from :company',
+
+    // ── Config / Settings ─────────────────────────────────────────
+    'settings'                    => 'Settings',
+    'settings_desc'               => 'Manage company info, bank details, and document numbering.',
+    'company_information'         => 'Company Information',
+    'company_logo'                => 'Company Logo',
+    'company_logo_empty'          => 'Not set',
+    'company_logo_change'         => 'Change logo',
+    'company_logo_upload'         => 'Upload logo',
+    'company_logo_hint'           => 'PNG/JPG, max 2 MB',
+    'company_email'               => 'Email',
+    'company_website'             => 'Website',
+    'company_website_placeholder' => 'https://...',
+    'bank_account_holder'         => 'Account Holder',
+    'bank_section'                => 'Bank Information',
+    'invoice_numbering'           => 'Invoice Numbering',
+    'bill_numbering'              => 'Bill (Purchase) Numbering',
+    'numbering_format'            => 'Code Format',
+    'numbering_format_hint'       => 'Available tokens: {Y} year, {y} 2-digit year, {m} month, {d} day, {seq} sequence.',
+    'numbering_format_required'   => 'Format must contain the {seq} token.',
+    'numbering_padding'           => 'Sequence Length',
+    'numbering_padding_hint'      => 'Example: 4 → 0001, 5 → 00001',
+    'numbering_preview'           => 'Next code preview:',
+    'numbering_presets'           => 'Presets',
+    'settings_saved'              => 'Settings saved successfully.',
+    'settings_saved_title'        => 'Saved',
+    'settings_save_failed'        => 'Please check the form fields.',
+    'settings_save_error'         => 'Could not connect to server.',
 
 ];

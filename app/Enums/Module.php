@@ -43,6 +43,7 @@ enum Module : string {
             self::SalesReturn => 'sales-returns.index',
             self::Bill        => 'bills.index',
             self::Vendor      => 'vendors.index',
+            self::Config      => 'configs.index',
             default           => null,
         };
     }
@@ -51,9 +52,10 @@ enum Module : string {
     public function group(): ?string
     {
         return match($this) {
-            self::Category, self::Unit, self::Customer, self::Product => 'Master Data',
-            self::Invoice, self::Receipt, self::SalesReturn           => 'Sales',
-            self::Bill, self::Vendor                                  => 'Purchase',
+            self::Category, self::Unit, self::Customer, self::Product => __('general.group_master_data'),
+            self::Invoice, self::Receipt, self::SalesReturn           => __('general.group_sales'),
+            self::Bill, self::Vendor                                  => __('general.group_purchase'),
+            self::Config                                              => __('general.group_setting'),
             default                                                   => null,
         };
     }

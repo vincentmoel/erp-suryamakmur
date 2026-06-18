@@ -86,6 +86,7 @@ return [
     'group_master_data' => 'Master Data',
     'group_sales'       => 'Penjualan',
     'group_purchase'    => 'Pembelian',
+    'group_setting'     => 'Pengaturan',
 
     // Breadcrumb actions
     'breadcrumb_add'  => 'Tambah',
@@ -323,5 +324,33 @@ return [
     'invoice_from'    => 'Dari',
     'send_invoice'    => 'Kirim Invoice',
     'send_invoice_subject' => 'Invoice :code dari :company',
+
+    // ── Config / Settings ─────────────────────────────────────────
+    'settings'                    => 'Pengaturan',
+    'settings_desc'               => 'Kelola informasi perusahaan, bank, dan penomoran dokumen.',
+    'company_information'         => 'Informasi Perusahaan',
+    'company_logo'                => 'Logo Perusahaan',
+    'company_logo_empty'          => 'Belum ada',
+    'company_logo_change'         => 'Ganti logo',
+    'company_logo_upload'         => 'Upload logo',
+    'company_logo_hint'           => 'PNG/JPG, maks. 2 MB',
+    'company_email'               => 'Email',
+    'company_website'             => 'Website',
+    'company_website_placeholder' => 'https://...',
+    'bank_account_holder'         => 'Atas Nama',
+    'bank_section'                => 'Informasi Bank',
+    'invoice_numbering'           => 'Penomoran Invoice',
+    'bill_numbering'              => 'Penomoran Bill (Purchase)',
+    'numbering_format'            => 'Format Kode',
+    'numbering_format_hint'       => 'Gunakan token: {Y} tahun, {y} tahun 2 digit, {m} bulan, {d} hari, {seq} nomor urut.',
+    'numbering_format_required'   => 'Format harus mengandung token {seq}.',
+    'numbering_padding'           => 'Panjang Nomor Urut',
+    'numbering_padding_hint'      => 'Contoh: 4 → 0001, 5 → 00001',
+    'numbering_preview'           => 'Preview kode berikutnya:',
+    'numbering_presets'           => 'Preset',
+    'settings_saved'              => 'Pengaturan berhasil disimpan.',
+    'settings_saved_title'        => 'Berhasil',
+    'settings_save_failed'        => 'Periksa kembali isian form.',
+    'settings_save_error'         => 'Tidak dapat terhubung ke server.',
 
 ];

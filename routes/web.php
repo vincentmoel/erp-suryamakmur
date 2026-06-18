@@ -69,12 +69,10 @@ Route::group(['middleware' => ['revalidate']], function () {
             Route::delete('/{encryptedRoleId}/{encryptedUserId}/delete-user-role', 'deleteUserRole')->name('delete-user-role')->middleware("check.permission:$module,delete");
         });
 
-        // =============== CONFIG =============== \\ 
+        // =============== CONFIG =============== \\
         $module = "Config";
         Route::group(['prefix' => 'configs', 'as' => 'configs.', 'controller' => ConfigController::class], function () use ($module) {
             Route::get('/', 'index')->name('index')->middleware("check.permission:$module,read");
-            Route::patch('/{encryptedId}', 'update')->name('update')->middleware("check.permission:$module,update");
-            Route::get('/{encryptedId}/edit', 'edit')->name('edit')->middleware("check.permission:$module,update");
         });
 
         // =============== CATEGORY =============== \\

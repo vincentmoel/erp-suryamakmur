@@ -111,7 +111,12 @@
             <div class="code-value">{{ $data->code }}</div>
         </div>
         <div class="top-logo">
-            <img src="{{ public_path('src/img/logo-dark.png') }}" class="logo" alt="{{ config('app.name') }}">
+            @php $logo = \App\Models\Config::get('company_logo'); @endphp
+            @if($logo)
+                <img src="{{ public_path('storage/' . $logo) }}" class="logo" alt="{{ \App\Models\Config::get('company_name', config('app.name')) }}">
+            @else
+                <img src="{{ public_path('src/img/logo-dark.png') }}" class="logo" alt="{{ config('app.name') }}">
+            @endif
         </div>
     </div>
 
@@ -143,12 +148,21 @@
     <table class="col-table">
         <tr>
             <td>
+                @php
+                    $companyName    = \App\Models\Config::get('company_name', config('app.name'));
+                    $companyAddress = \App\Models\Config::get('company_address');
+                    $companyPhone   = \App\Models\Config::get('company_phone');
+                    $companyEmail   = \App\Models\Config::get('company_email');
+                @endphp
                 <div class="col-label">{{ __('general.company_information') }}</div>
-                <div class="col-name">{{ config('app.name') }}</div>
-                <div class="col-line">Jl. Contoh Alamat No. 1</div>
-                <div class="col-line">Surabaya, Jawa Timur 60111</div>
-                <div class="col-line">Telp: (031) 000-0000</div>
-                <div class="col-line">Email: info@surya-makmur.com</div>
+                <div class="col-name">{{ $companyName }}</div>
+                @if($companyAddress)
+                    @foreach(explode("\n", $companyAddress) as $line)
+                        <div class="col-line">{{ trim($line) }}</div>
+                    @endforeach
+                @endif
+                @if($companyPhone)   <div class="col-line">Telp: {{ $companyPhone }}</div> @endif
+                @if($companyEmail)   <div class="col-line">Email: {{ $companyEmail }}</div> @endif
             </td>
             <td>
                 <div class="col-label">{{ __('general.bill_to_header') }}</div>
@@ -257,21 +271,34 @@
 
     {{-- Bank Info --}}
     <div style="margin-top: 28px; padding-top: 20px; border-top: 1px solid #d0d0d0; clear: both;">
+        @php
+            $bankName   = \App\Models\Config::get('bank_name');
+            $bankNumber = \App\Models\Config::get('bank_account_number');
+            $bankHolder = \App\Models\Config::get('bank_account_holder');
+        @endphp
+        @if($bankName || $bankNumber || $bankHolder)
         <div class="payment-label">{{ __('general.bank_information') }}</div>
         <table class="payment-table">
+            @if($bankName)
             <tr>
                 <td class="pk">{{ __('general.bank_name') }}</td>
-                <td>: Bank Central Asia (BCA)</td>
+                <td>: {{ $bankName }}</td>
             </tr>
+            @endif
+            @if($bankNumber)
             <tr>
                 <td class="pk">{{ __('general.account_number') }}</td>
-                <td>: 1234567890</td>
+                <td>: {{ $bankNumber }}</td>
             </tr>
+            @endif
+            @if($bankHolder)
             <tr>
                 <td class="pk">{{ __('general.account_holder_name') }}</td>
-                <td>: CV. Surya Makmur</td>
+                <td>: {{ $bankHolder }}</td>
             </tr>
+            @endif
         </table>
+        @endif
     </div>
 
     <div class="footer">
