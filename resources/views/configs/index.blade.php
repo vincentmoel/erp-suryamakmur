@@ -243,7 +243,7 @@
                 cropperInstance = new Cropper(img, {
                     aspectRatio:  aspectRatio,
                     viewMode:     1,
-                    autoCropArea: 0.9,
+                    autoCropArea: 1,
                     movable:      true,
                     zoomable:     true,
                     rotatable:    false,
