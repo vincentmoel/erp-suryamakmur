@@ -38,12 +38,14 @@
 (function () {
     let cropperInstance = null;
     let activeCard      = null;
+    let activeMime      = 'image/jpeg';
 
     document.querySelectorAll('.logo-file-trigger').forEach(trigger => {
         trigger.addEventListener('change', function () {
             const file = this.files[0];
             if (!file) return;
             activeCard = this.closest('.logo-upload-card');
+            activeMime = file.type === 'image/png' ? 'image/png' : 'image/jpeg';
             const aspectRatio = parseFloat(activeCard.dataset.aspect);
             const reader = new FileReader();
             reader.onload = e => openCropModal(e.target.result, aspectRatio);
@@ -92,10 +94,13 @@
         const isMini  = parseFloat(activeCard.dataset.aspect) === 1;
         const maxSize = isMini ? 512 : 1920;
         const canvas  = cropperInstance.getCroppedCanvas({ maxWidth: maxSize, maxHeight: maxSize });
+        const mime    = activeMime;
+        const ext     = mime === 'image/png' ? '.png' : '.jpg';
+        const quality = mime === 'image/png' ? undefined : 0.85;
 
         canvas.toBlob(blob => {
             const key  = activeCard.dataset.key;
-            const file = new File([blob], key + '.jpg', { type: 'image/jpeg' });
+            const file = new File([blob], key + ext, { type: mime });
 
             const dt = new DataTransfer();
             dt.items.add(file);
@@ -104,11 +109,11 @@
             const previewImg   = activeCard.querySelector('.logo-preview-img');
             const previewEmpty = activeCard.querySelector('.logo-preview-empty');
             if (previewEmpty) previewEmpty.classList.add('hidden');
-            previewImg.src = canvas.toDataURL('image/jpeg', 0.85);
+            previewImg.src = canvas.toDataURL(mime, quality);
             previewImg.classList.remove('hidden');
 
             closeCropModal();
-        }, 'image/jpeg', 0.85);
+        }, mime, quality);
     });
 })();
 </script>
