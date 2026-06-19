@@ -61,6 +61,11 @@
 
     </div>
 
+    <iframe id="invoice-print-frame"
+            style="position:fixed;left:-9999px;top:-9999px;width:0;height:0;border:0;"
+            tabindex="-1"
+            aria-hidden="true"></iframe>
+
     {{-- Invoice Preview Drawer --}}
     <div id="invoice-drawer-overlay"
      class="fixed inset-0 bg-black/40 z-40 hidden transition-opacity duration-200 opacity-0"
@@ -114,12 +119,12 @@
             </svg>
             @lang('general.download_pdf')
         </a>
-        <a id="drawer-btn-print" href="#" target="_blank" class="btn btn-secondary btn-sm">
+        <button id="drawer-btn-print" type="button" class="btn btn-secondary btn-sm">
             <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="1.5" stroke="currentColor" class="size-3.5">
                 <path stroke-linecap="round" stroke-linejoin="round" d="M6.72 13.829c-.24.03-.48.062-.72.096m.72-.096a42.415 42.415 0 0 1 10.56 0m-10.56 0L6.34 18m10.94-4.171c.24.03.48.062.72.096m-.72-.096L17.66 18m0 0 .229 2.523a1.125 1.125 0 0 1-1.12 1.227H7.231c-.662 0-1.18-.568-1.12-1.227L6.34 18m11.318 0h1.091A2.25 2.25 0 0 0 21 15.75V9.456c0-1.081-.768-2.015-1.837-2.175a48.055 48.055 0 0 0-1.913-.247M6.34 18H5.25A2.25 2.25 0 0 1 3 15.75V9.456c0-1.081.768-2.015 1.837-2.175a48.041 48.041 0 0 1 1.913-.247m10.5 0a48.536 48.536 0 0 0-10.5 0m10.5 0V3.375c0-.621-.504-1.125-1.125-1.125h-8.25c-.621 0-1.125.504-1.125 1.125v3.659M18 10.5h.008v.008H18V10.5Zm-3 0h.008v.008H15V10.5Z"/>
             </svg>
             @lang('general.print')
-        </a>
+        </button>
         <a id="drawer-btn-send" href="#" class="btn btn-secondary btn-sm">
             <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="1.5" stroke="currentColor" class="size-3.5">
                 <path stroke-linecap="round" stroke-linejoin="round" d="M21.75 6.75v10.5a2.25 2.25 0 0 1-2.25 2.25h-15a2.25 2.25 0 0 1-2.25-2.25V6.75m19.5 0A2.25 2.25 0 0 0 19.5 4.5h-15a2.25 2.25 0 0 0-2.25 2.25m19.5 0v.243a2.25 2.25 0 0 1-1.07 1.916l-7.5 4.615a2.25 2.25 0 0 1-2.36 0L3.32 8.91a2.25 2.25 0 0 1-1.07-1.916V6.75"/>
@@ -204,7 +209,15 @@
                     badge.textContent = data.status_label;
                     document.getElementById('drawer-show-link').href    = data.show_url;
                     document.getElementById('drawer-btn-download').href = data.pdf_url;
-                    document.getElementById('drawer-btn-print').href    = data.pdf_url;
+                    const printFrame = document.getElementById('invoice-print-frame');
+                    printFrame.src = data.print_url;
+                    document.getElementById('drawer-btn-print').onclick = function () {
+                        if (printFrame.contentDocument && printFrame.contentDocument.readyState === 'complete') {
+                            printFrame.contentWindow.print();
+                        } else {
+                            printFrame.onload = () => printFrame.contentWindow.print();
+                        }
+                    };
                     document.getElementById('drawer-btn-send').href     = 'mailto:' + data.email + '?subject=' + data.send_subject;
                 })
                 .catch(() => {

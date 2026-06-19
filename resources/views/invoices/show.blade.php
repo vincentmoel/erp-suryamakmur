@@ -29,12 +29,12 @@
                         <x-icon name="download" class="size-3.5" />
                         @lang('general.download_pdf')
                     </a>
-                    <a href="{{ route('invoices.pdf', ['encryptedId' => $encryptedId]) }}"
-                       target="_blank"
-                       class="btn btn-secondary btn-sm">
+                    <button type="button"
+                            onclick="document.getElementById('invoice-print-frame').contentWindow.print()"
+                            class="btn btn-secondary btn-sm">
                         <x-icon name="print" class="size-3.5" />
                         @lang('general.print')
-                    </a>
+                    </button>
                     <a href="mailto:{{ $data->customer_snapshot['email'] ?? '' }}?subject={{ urlencode(__('general.send_invoice_subject', ['code' => $data->code, 'company' => config('app.name')])) }}"
                        class="btn btn-secondary btn-sm">
                         <x-icon name="mail" class="size-3.5" />
@@ -145,6 +145,13 @@
     </div>
 
 </div>
+
+<iframe id="invoice-print-frame"
+        src="{{ route('invoices.print', ['encryptedId' => $encryptedId]) }}"
+        style="position:fixed;left:-9999px;top:-9999px;width:0;height:0;border:0;"
+        tabindex="-1"
+        aria-hidden="true"></iframe>
+
 @endsection
 
 @push('scripts')

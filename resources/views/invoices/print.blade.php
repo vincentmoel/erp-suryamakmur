@@ -29,13 +29,13 @@
         .line       { border: none; border-top: 1px solid #d0d0d0; margin: 24px 0; clear: both; }
         .line-light { border: none; border-top: 1px solid #d0d0d0; margin: 20px 0; clear: both; }
 
-        /* ── META ROW: tanggal, jatuh tempo, salesperson ── */
+        /* ── META ROW ── */
         .meta-table { width: 100%; border-collapse: collapse; }
         .meta-table td { font-size: 11px; padding: 0; width: 33.33%; vertical-align: top; }
         .meta-label { font-size: 9px; text-transform: uppercase; letter-spacing: 0.1em; margin-bottom: 2px; }
         .meta-value { font-size: 11px; }
 
-        /* ── TWO COLUMNS: company / bill to ── */
+        /* ── TWO COLUMNS ── */
         .col-table { width: 100%; border-collapse: collapse; }
         .col-table td { vertical-align: top; width: 50%; padding: 0; }
         .col-table td + td { padding-left: 32px; }
@@ -68,8 +68,6 @@
         .items tbody td.num  { text-align: right; font-weight: 700; }
 
         /* ── TOTALS ── */
-        .totals-outer { width: 100%; margin-top: 20px; }
-        .totals-inner { float: right; width: 220px; }
         .t-row  { width: 100%; border-collapse: collapse; }
         .t-row td { padding: 4px 0; font-size: 11px; }
         .t-row td.tr { text-align: right; }
@@ -82,9 +80,6 @@
         .t-sub td.tr { text-align: right; }
 
         /* ── PAYMENT INFO ── */
-        .payment-wrap { width: 100%; margin-top: 28px; clear: both; }
-        .payment-left  { float: left; width: 48%; }
-        .payment-right { float: right; width: 48%; }
         .payment-label { font-size: 9px; text-transform: uppercase; letter-spacing: 0.1em; margin-bottom: 8px; }
         .payment-table { width: 100%; border-collapse: collapse; }
         .payment-table td { font-size: 11px; padding: 3px 0; vertical-align: top; }
@@ -96,6 +91,11 @@
 
         /* ── FOOTER ── */
         .footer { margin-top: 52px; text-align: center; font-size: 9px; color: #aaa; clear: both; }
+
+        @media print {
+            body { padding: 0; }
+            @page { margin: 14mm 16mm; }
+        }
     </style>
 </head>
 <body>
@@ -113,9 +113,9 @@
         <div class="top-logo">
             @php $logo = \App\Models\Config::get('logo_full_dark'); @endphp
             @if($logo)
-                <img src="{{ storage_path('app/public/' . $logo) }}" class="logo" alt="{{ \App\Models\Config::get('company_name', config('app.name')) }}">
+                <img src="{{ asset('storage/' . $logo) }}" class="logo" alt="{{ \App\Models\Config::get('company_name', config('app.name')) }}">
             @else
-                <img src="{{ public_path('src/img/logo-dark.png') }}" class="logo" alt="{{ config('app.name') }}">
+                <img src="{{ asset('src/img/logo-dark.png') }}" class="logo" alt="{{ config('app.name') }}">
             @endif
         </div>
     </div>
@@ -161,8 +161,8 @@
                         <div class="col-line">{{ trim($line) }}</div>
                     @endforeach
                 @endif
-                @if($companyPhone)   <div class="col-line">Telp: {{ $companyPhone }}</div> @endif
-                @if($companyEmail)   <div class="col-line">Email: {{ $companyEmail }}</div> @endif
+                @if($companyPhone) <div class="col-line">Telp: {{ $companyPhone }}</div> @endif
+                @if($companyEmail) <div class="col-line">Email: {{ $companyEmail }}</div> @endif
             </td>
             <td>
                 <div class="col-label">{{ __('general.bill_to_header') }}</div>

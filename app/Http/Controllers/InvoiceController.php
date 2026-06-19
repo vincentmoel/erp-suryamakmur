@@ -168,6 +168,7 @@ class InvoiceController extends BaseController
             'status_label'     => $invoice->status->label(),
             'status_badge_class' => $invoice->status->badgeClass(),
             'pdf_url'          => route('invoices.pdf', ['encryptedId' => $encryptedId]),
+            'print_url'        => route('invoices.print', ['encryptedId' => $encryptedId]),
             'show_url'         => route('invoices.show', ['encryptedId' => $encryptedId]),
             'email'            => $invoice->customer_snapshot['email'] ?? '',
             'send_subject'     => urlencode(__('general.send_invoice_subject', ['code' => $invoice->code, 'company' => config('app.name')])),
@@ -183,6 +184,14 @@ class InvoiceController extends BaseController
             ->setPaper('a4', 'portrait');
 
         return $pdf->stream($invoice->code . '.pdf');
+    }
+
+    public function print($encryptedId)
+    {
+        $invoice = Invoice::with('customer', 'salesperson', 'details')
+            ->findOrFail(Encryption::decrypt($encryptedId));
+
+        return view('invoices.print', ['data' => $invoice]);
     }
 
     public function show($encryptedId)
